@@ -1,12 +1,10 @@
 import "@/styles/globals.css";
 import clsx from "clsx";
-import { Metadata, Viewport } from "next";
-
+import type { Metadata, Viewport } from "next";
+import Head from "next/head";
 import { fontSans } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
-
 import { Providers } from "./providers";
-import Head from "next/head";
 
 export const metadata: Metadata = {
     description: siteConfig.description,
@@ -32,14 +30,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html suppressHydrationWarning lang="en">
+        <html lang="en" suppressHydrationWarning>
             <Head>
                 <script src="https://cdn.jsdelivr.net/npm/react-scan/dist/auto.global.js" />
             </Head>
             <body
                 className={clsx(
                     "min-h-screen bg-background font-sans antialiased",
-                    fontSans.variable,
+                    fontSans.variable
                 )}
             >
                 <Providers
