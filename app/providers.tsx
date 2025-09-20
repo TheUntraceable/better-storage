@@ -1,9 +1,10 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { convex } from "@convex-dev/better-auth/dist/commonjs/plugins";
+import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { HeroUIProvider } from "@heroui/system";
 import { ToastProvider } from "@heroui/toast";
+import { ConvexReactClient } from "convex/react";
 import type { ThemeProviderProps } from "next-themes";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useRouter } from "next/navigation";
@@ -22,11 +23,19 @@ declare module "@react-types/shared" {
     };
 }
 
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!, {
+    // Optionally pause queries until the user is authenticated
+    expectAuth: true,
+});
+
 export const Providers = ({ children, themeProps }: ProvidersProps) => {
     const router = useRouter();
 
     return (
-        <ConvexBetterAuthProvider authClient={authClient} client={convex}>
+        <ConvexBetterAuthProvider
+            authClient={authClient as any}
+            client={convex}
+        >
             <HeroUIProvider navigate={router.push}>
                 <ToastProvider />
                 <NextThemesProvider {...themeProps}>
