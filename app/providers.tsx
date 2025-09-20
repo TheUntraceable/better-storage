@@ -1,10 +1,12 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
+import { convex } from "@convex-dev/better-auth/dist/commonjs/plugins";
 import { HeroUIProvider } from "@heroui/system";
 import { ToastProvider } from "@heroui/toast";
-import { useRouter } from "next/navigation";
 import type { ThemeProviderProps } from "next-themes";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { useRouter } from "next/navigation";
 import type * as React from "react";
 
 export type ProvidersProps = {
