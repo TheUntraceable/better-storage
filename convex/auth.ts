@@ -2,10 +2,11 @@ import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
 import { admin, oidcProvider } from "better-auth/plugins";
+import { v } from "convex/values";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
-import { query } from "./_generated/server";
-import authSchema from "./betterAuth/schema"; 
+import { mutation, query } from "./_generated/server";
+import authSchema from "./betterAuth/schema";
 
 const siteUrl = process.env.SITE_URL!;
 // if (!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET)) {
@@ -71,6 +72,35 @@ export const getSession = query({
         const headers = await authComponent.getHeaders(ctx);
         return await createAuth(ctx, { optionsOnly: true }).api.getSession({
             headers,
+        });
+    },
+});
+
+export const createAdmin = mutation({
+    args: {
+        email: v.string(),
+        password: v.string(),
+        name: v.string(),
+        secret: v.string(),
+    },
+    async handler(ctx, { email, password, name, secret }) {
+        if (secret !== process.env.ADMIN_CREATION_SECRET) {
+            throw new Error("Invalid secret for admin creation");
+        }
+        const auth = createAuth(ctx);
+        const existingUser = await (
+            await auth.$context
+        ).internalAdapter.findUserByEmail(email);
+        if (existingUser) {
+            throw new Error("User with this email already exists");
+        }
+        return await auth.api.createUser({
+            body: {
+                email,
+                password,
+                name,
+                role: "admin",
+            },
         });
     },
 });
