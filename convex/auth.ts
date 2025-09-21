@@ -10,11 +10,6 @@ import { mutation, query } from "./_generated/server";
 import authSchema from "./betterAuth/schema";
 
 const siteUrl = process.env.SITE_URL!;
-// if (!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET)) {
-//     throw new Error(
-//         "GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET must be set in environment variables"
-//     );
-// }
 
 export const authComponent = createClient<DataModel, typeof authSchema>(
     components.betterAuth,
@@ -54,8 +49,8 @@ export const createAuth = (
         ],
         socialProviders: {
             github: {
-                clientId: "Ov23lioPWH4a9k19wn0h",
-                clientSecret: "62f2f5ce39765bedcd18579d3b5286821c87bb39",
+                clientId: process.env.GITHUB_CLIENT_ID!,
+                clientSecret: process.env.GITHUB_CLIENT_SECRET!,
             },
         },
     });
