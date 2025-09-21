@@ -24,8 +24,6 @@ const registerSchema = z
         path: ["confirmPassword"],
     });
 
-type AdminCreationData = z.infer<typeof registerSchema>;
-
 async function createAdminAccount(): Promise<void> {
     // Check for required environment variables
     if (!process.env.NEXT_PUBLIC_CONVEX_URL) {
