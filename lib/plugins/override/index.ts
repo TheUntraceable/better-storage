@@ -25,7 +25,7 @@ export const overrides = () => {
                     direction: ctx.query.sort ?? "asc",
                     field: "createdAt",
                 },
-            }
+            };
             if (user.role === "admin") {
                 const clients = await ctx.context.adapter.findMany(query);
                 return clients;
@@ -44,51 +44,58 @@ export const overrides = () => {
         }
     );
 
-    const deleteClient = createAuthEndpoint("/oauth2/clients/:clientId", {
-        method: "DELETE",
-        use: [sessionMiddleware],
-        params: z.object({
-            clientId: z.string()
-        }),
-    }, async (ctx) => {
-        const { user } = ctx.context.session;
-        const query: Where[] =[
-            {
-                field: "id",
-                operator: "eq",
-                value: ctx.params.clientId,
-            },
-        ]
-        if(user.role !== "admin") {
-            query[0].connector = "AND";
-            query.push({
-                field: "userId",
-                operator: "eq",
-                value: user.id,
-            })
+    const deleteClient = createAuthEndpoint(
+        "/oauth2/clients/:clientId",
+        {
+            method: "DELETE",
+            use: [sessionMiddleware],
+            params: z.object({
+                clientId: z.string(),
+            }),
+        },
+        async (ctx) => {
+            const { user } = ctx.context.session;
+            const query: Where[] = [
+                {
+                    field: "clientId",
+                    operator: "eq",
+                    value: ctx.params.clientId,
+                },
+            ];
+            if (user.role !== "admin") {
+                query[0].connector = "AND";
+                query.push({
+                    field: "userId",
+                    operator: "eq",
+                    value: user.id,
+                });
+            }
+
+            const client = await ctx.context.adapter.findOne({
+                model: "oauthApplication",
+                where: query,
+            });
+
+            if (!client) {
+                return ctx.error("NOT_FOUND", { message: "Client not found" });
+            }
+
+            await ctx.context.adapter.delete({
+                model: "oauthApplication",
+                where: query,
+            });
+
+            return ctx.json(
+                {
+                    message: "Client deleted successfully",
+                },
+                {
+                    status: 200,
+                }
+            );
         }
+    );
 
-        const client = await ctx.context.adapter.findOne({
-            model: "oauthApplication",
-            where: query,
-        });
-
-        if (!client) {
-            return ctx.error("NOT_FOUND" ,{ message: "Client not found", });
-        }
-
-        await ctx.context.adapter.delete({
-            model: "oauthApplication",
-            where: query,
-        });
-
-        return ctx.json({
-            message: "Client deleted successfully",
-        }, {
-            status: 200,
-        })
-    });
- 
     return {
         id: "overrides",
         endpoints: {
