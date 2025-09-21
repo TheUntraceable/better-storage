@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
 export function useLoadingCallback<
     // biome-ignore lint/suspicious/noExplicitAny: We do not know the types of the arguments or return value

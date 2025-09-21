@@ -1,9 +1,9 @@
 /** biome-ignore-all lint/suspicious/noConsole: Console logs in CLI tools are acceptable */
 
-import { api } from "@/convex/_generated/api";
 import { ConvexClient } from "convex/browser";
 import prompts from "prompts";
 import { z } from "zod";
+import { api } from "@/convex/_generated/api";
 
 const MIN_PASSWORD_LENGTH = 6;
 

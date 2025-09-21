@@ -1,9 +1,9 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
-import { useLoadingCallback } from "@/lib/hooks/use-loading-callback";
 import { Button } from "@heroui/button";
 import { GithubIcon } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { useLoadingCallback } from "@/lib/hooks/use-loading-callback";
 
 export function GithubLoginButton() {
     const [handleSignIn, isLoading] = useLoadingCallback(async () => {

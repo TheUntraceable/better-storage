@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useDebouncedSave<T>(
     onSave: (value: T, signal: AbortSignal) => Promise<void>,
@@ -37,7 +37,7 @@ export function useDebouncedSave<T>(
                         // Only reject if the error is not an abort error
                         if (
                             error instanceof DOMException &&
-                            error.name === 'AbortError'
+                            error.name === "AbortError"
                         ) {
                             // Request was aborted, do nothing
                         } else {
