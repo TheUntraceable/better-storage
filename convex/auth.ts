@@ -1,8 +1,9 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
-import { admin, oidcProvider } from "better-auth/plugins";
+import { admin, admin, oidcProvider } from "better-auth/plugins";
 import { v } from "convex/values";
+import { overrides } from "../lib/plugins/override";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
@@ -49,6 +50,7 @@ export const createAuth = (
                 loginPage: "/auth/login",
             }),
             admin(),
+            overrides(),
         ],
         socialProviders: {
             github: {
