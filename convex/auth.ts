@@ -1,7 +1,7 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
-import { admin, admin, oidcProvider } from "better-auth/plugins";
+import { admin, oidcProvider } from "better-auth/plugins";
 import { v } from "convex/values";
 import { overrides } from "../lib/plugins/override";
 import { components } from "./_generated/api";
