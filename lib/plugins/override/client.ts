@@ -1,7 +1,7 @@
 import type { BetterAuthClientPlugin } from "better-auth";
 import type { overrides } from ".";
 
-export const myPluginClient = () => {
+export const overrideClient = () => {
     return {
         id: "overrides",
         $InferServerPlugin: {} as ReturnType<typeof overrides>,
