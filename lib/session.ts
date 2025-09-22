@@ -15,5 +15,18 @@ export const requireSession = async (): Promise<Session["user"]> => {
     if (!user) {
         redirect("/auth");
     }
-    return user as Session["user"];
+    return {
+        id: user._id,
+        createdAt: new Date(user._creationTime),
+        updatedAt: new Date(user.updatedAt),
+        email: user.email,
+        emailVerified: user.emailVerified,
+        name: user.name,
+        image: user.image,
+        userId: user.userId,
+        banned: user.banned,
+        role: user.role,
+        banReason: user.banReason,
+        banExpires: user.banExpires,
+    } as Session["user"];
 };
