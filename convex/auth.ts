@@ -1,4 +1,5 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
+import { getToken as getTokenNextjs } from "@convex-dev/better-auth/nextjs";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
 import { admin, oidcProvider } from "better-auth/plugins";
@@ -57,17 +58,15 @@ export const createAuth = (
 };
 
 export const getCurrentUser = query({
-    args: {},
     handler: async (ctx) => {
         return await authComponent.getAuthUser(ctx);
     },
 });
 
 export const getSession = query({
-    args: {},
     handler: async (ctx) => {
         const headers = await authComponent.getHeaders(ctx);
-        return await createAuth(ctx, { optionsOnly: true }).api.getSession({
+        return await createAuth(ctx).api.getSession({
             headers,
         });
     },
@@ -102,4 +101,8 @@ export const createAdmin = mutation({
     },
 });
 
-export type Session = ReturnType<typeof createAuth>["$Infer"]["Session"]
+export type Session = ReturnType<typeof createAuth>["$Infer"]["Session"];
+
+export const getToken = () => {
+    return getTokenNextjs(createAuth);
+};

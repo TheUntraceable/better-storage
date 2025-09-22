@@ -1,12 +1,19 @@
 import { api } from "@/convex/_generated/api";
-import type { Session } from "@/convex/auth";
+import { getToken, type Session } from "@/convex/auth";
 import { fetchQuery } from "convex/nextjs";
 import { redirect } from "next/navigation";
 
-export const requireSession = async (): Promise<Session> => {
-    const session = await fetchQuery(api.auth.getSession);
-    if (!session) {
+export const requireSession = async (): Promise<Session["user"]> => {
+    const token = await getToken();
+    const user = await fetchQuery(
+        api.auth.getCurrentUser,
+        {},
+        {
+            token,
+        }
+    );
+    if (!user) {
         redirect("/auth");
     }
-    return session;
+    return user as Session["user"];
 };
