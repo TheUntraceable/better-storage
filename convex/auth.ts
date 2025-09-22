@@ -48,8 +48,7 @@ export const createAuth = (
             admin(),
             autumn({
                 secretKey: process.env.AUTUMN_SECRET_KEY!,
-                
-            })
+            }),
         ],
         socialProviders: {
             github: {
