@@ -101,3 +101,5 @@ export const createAdmin = mutation({
         });
     },
 });
+
+export type Session = ReturnType<typeof createAuth>["$Infer"]["Session"]
