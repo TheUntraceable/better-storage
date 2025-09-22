@@ -2,6 +2,7 @@ import type { BetterAuthPlugin, Where } from "better-auth";
 import { sessionMiddleware } from "better-auth/api";
 import { createAuthEndpoint } from "better-auth/plugins";
 import { z } from "zod";
+import { Client } from "better-auth/plugins";
 
 export const overrides = () => {
     const listClients = createAuthEndpoint(
@@ -27,10 +28,10 @@ export const overrides = () => {
                 },
             };
             if (user.role === "admin") {
-                const clients = await ctx.context.adapter.findMany(query);
+                const clients = await ctx.context.adapter.findMany<Client[]>(query);
                 return clients;
             }
-            const clients = await ctx.context.adapter.findMany({
+            const clients = await ctx.context.adapter.findMany<Client[]>({
                 ...query,
                 where: [
                     {
@@ -71,7 +72,7 @@ export const overrides = () => {
                 });
             }
 
-            const client = await ctx.context.adapter.findOne({
+            const client = await ctx.context.adapter.findOne<Client>({
                 model: "oauthApplication",
                 where: query,
             });
@@ -96,11 +97,60 @@ export const overrides = () => {
         }
     );
 
+    const updateClient = createAuthEndpoint(
+        "/oauth2/clients/:clientId/update",
+        {
+            method: "POST",
+            use: [sessionMiddleware],
+            body: z.object({
+                client_name: z.optional(z.string()),
+                metadata: z.optional(z.record(z.any(), z.any())),
+            }),
+        },
+        async (ctx) => {
+            const { clientId } = ctx.params;
+            const { user } = ctx.context.session;
+            const query: Where[] = [
+                {
+                    field: "clientId",
+                    operator: "eq",
+                    value: clientId,
+                },
+            ];
+            if (user.role !== "admin") {
+                query[0].connector = "AND";
+                query.push({
+                    field: "userId",
+                    operator: "eq",
+                    value: user.id,
+                });
+            }
+            const client = await ctx.context.adapter.findOne<Client>({
+                model: "oauthApplication",
+                where: query,
+            });
+            if (!client) {
+                return ctx.error("NOT_FOUND", { message: "Client not found" });
+            }
+            const { client_name, metadata } = ctx.body;
+            const updatedClient = await ctx.context.adapter.update<Client>({
+                model: "oauthApplication",
+                where: query,
+                update: {
+                    ...(client_name ? { name: client_name } : {}),
+                    ...(metadata ? { metadata } : {}),
+                },
+            });
+            return ctx.json(updatedClient, { status: 200 });
+        }
+    );
+
     return {
         id: "overrides",
         endpoints: {
             listClients,
             deleteClient,
+            updateClient
         },
     } satisfies BetterAuthPlugin;
 };
