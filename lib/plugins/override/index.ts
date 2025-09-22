@@ -1,8 +1,7 @@
 import type { BetterAuthPlugin, Where } from "better-auth";
 import { sessionMiddleware } from "better-auth/api";
-import { createAuthEndpoint } from "better-auth/plugins";
+import { type Client, createAuthEndpoint } from "better-auth/plugins";
 import { z } from "zod";
-import { Client } from "better-auth/plugins";
 
 export const overrides = () => {
     const listClients = createAuthEndpoint(
@@ -28,7 +27,8 @@ export const overrides = () => {
                 },
             };
             if (user.role === "admin") {
-                const clients = await ctx.context.adapter.findMany<Client[]>(query);
+                const clients =
+                    await ctx.context.adapter.findMany<Client[]>(query);
                 return clients;
             }
             const clients = await ctx.context.adapter.findMany<Client[]>({
@@ -150,7 +150,7 @@ export const overrides = () => {
         endpoints: {
             listClients,
             deleteClient,
-            updateClient
+            updateClient,
         },
     } satisfies BetterAuthPlugin;
 };
