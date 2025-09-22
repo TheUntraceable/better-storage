@@ -2,7 +2,7 @@ import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { getToken as getTokenNextjs } from "@convex-dev/better-auth/nextjs";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
-import { admin, oidcProvider } from "better-auth/plugins";
+import { admin } from "better-auth/plugins";
 import { v } from "convex/values";
 import { overrides } from "../lib/plugins/override";
 import { components } from "./_generated/api";
@@ -42,9 +42,9 @@ export const createAuth = (
         },
         plugins: [
             convex(),
-            oidcProvider({
-                loginPage: "/auth/login",
-            }),
+            // oidcProvider({
+            //     loginPage: "/auth/login",
+            // }),
             admin(),
             overrides(),
         ],
@@ -60,15 +60,6 @@ export const createAuth = (
 export const getCurrentUser = query({
     handler: async (ctx) => {
         return await authComponent.getAuthUser(ctx);
-    },
-});
-
-export const getSession = query({
-    handler: async (ctx) => {
-        const headers = await authComponent.getHeaders(ctx);
-        return await createAuth(ctx).api.getSession({
-            headers,
-        });
     },
 });
 
