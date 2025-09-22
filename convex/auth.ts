@@ -1,6 +1,7 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { getToken as getTokenNextjs } from "@convex-dev/better-auth/nextjs";
 import { convex } from "@convex-dev/better-auth/plugins";
+import {autumn} from "autumn-js/better-auth"
 import { betterAuth } from "better-auth";
 import { admin } from "better-auth/plugins";
 import { v } from "convex/values";
@@ -45,6 +46,10 @@ export const createAuth = (
             //     loginPage: "/auth/login",
             // }),
             admin(),
+            autumn({
+                secretKey: process.env.AUTUMN_SECRET_KEY!,
+                
+            })
         ],
         socialProviders: {
             github: {
