@@ -1,5 +1,5 @@
-import { requireSession } from "@/lib/session";
 import { Autumn as autumn } from "autumn-js";
+import { requireSession } from "@/lib/session";
 
 export default async function DashboardPage() {
     const user = await requireSession();

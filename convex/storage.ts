@@ -20,7 +20,7 @@ export const store = mutation({
     args: {
         storageId: v.id("_storage"),
     },
-    async handler(ctx, { storageId }) { 
+    async handler(ctx, { storageId }) {
         const user = await authComponent.safeGetAuthUser(ctx);
         if (!user) {
             throw new APIError("UNAUTHORIZED", {
@@ -35,7 +35,7 @@ export const store = mutation({
         const link = await ctx.storage.getUrl(storageId);
         const metadata = await ctx.db.system.get(storageId);
 
-        if (!link || !metadata) {
+        if (!(link && metadata)) {
             throw new APIError("NOT_FOUND", {
                 message: "Storage ID not found",
             });
@@ -44,9 +44,9 @@ export const store = mutation({
         await ctx.db.insert("uploads", {
             uploader: user._id,
             storageId,
-            link: link,
+            link,
             size: metadata.size || 0,
-            contentType: metadata.contentType || ""
+            contentType: metadata.contentType || "",
         });
     },
 });
@@ -89,7 +89,7 @@ export const remove = mutation({
             })
             .take(1);
 
-        if (!existing   ) {
+        if (!existing) {
             throw new APIError("NOT_FOUND", {
                 message: "Upload not found",
             });

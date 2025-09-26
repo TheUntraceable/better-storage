@@ -1,13 +1,23 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
+import {
+    ArrowUpDown,
+    Download,
+    Eye,
+    FileIcon,
+    FileTextIcon,
+    Filter,
+    ImageIcon,
+    Search,
+    Share,
+    Trash2,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -23,18 +33,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    Download,
-    Eye,
-    FileIcon,
-    FileTextIcon,
-    ImageIcon,
-    Search,
-    Share,
-    Trash2,
-    ArrowUpDown,
-    Filter,
-} from "lucide-react";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
 interface Upload {
     _id: Id<"uploads">;
@@ -42,6 +42,8 @@ interface Upload {
     uploader: string;
     storageId: Id<"_storage">;
     link: string;
+    size: number;
+    contentType: string;
 }
 
 type SortField = "name" | "type" | "date" | "size";
@@ -50,17 +52,22 @@ type FileType = "all" | "image" | "pdf" | "document" | "other";
 export function FilesTable() {
     const uploads = useQuery(api.storage.get);
     const deleteFile = useMutation(api.storage.remove);
-    
+
     // State for filtering and sorting
     const [searchTerm, setSearchTerm] = useState("");
     const [fileTypeFilter, setFileTypeFilter] = useState<FileType>("all");
     const [sortField, setSortField] = useState<SortField>("date");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-    const [deletingIds, setDeletingIds] = useState<Set<Id<"_storage">>>(new Set());
+    const [deletingIds, setDeletingIds] = useState<Set<Id<"_storage">>>(
+        new Set()
+    );
 
     // Helper functions
     const getFileType = (url: string): FileType => {
-        if (url.includes("image") || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url)) {
+        if (
+            url.includes("image") ||
+            /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url)
+        ) {
             return "image";
         }
         if (url.includes("pdf") || /\.pdf$/i.test(url)) {
@@ -88,42 +95,55 @@ export function FilesTable() {
 
     const getFileName = (url: string, storageId: string) => {
         // Try to extract filename from URL, fallback to storage ID
-        const urlParts = url.split('/');
+        const urlParts = url.split("/");
         const lastPart = urlParts[urlParts.length - 1];
-        return lastPart.includes('.') ? lastPart : `file-${storageId.slice(-8)}`;
+        return lastPart.includes(".")
+            ? lastPart
+            : `file-${storageId.slice(-8)}`;
     };
 
-    const formatFileSize = (url: string) => {
-        // This is a placeholder - in real app you'd store file size
-        return "-- KB";
+    const formatFileSize = (upload: Upload) => {
+        const bytes = upload.size;
+        if (bytes === 0) return "0 B";
+        const k = 1024;
+        const sizes = ["B", "KB", "MB", "GB", "TB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Number.parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
     };
 
     // Filtered and sorted data
     const filteredAndSortedUploads = useMemo(() => {
         if (!uploads) return [];
 
-        let filtered = uploads.filter((upload) => {
+        const filtered = uploads.filter((upload) => {
             const fileName = getFileName(upload.link, upload.storageId);
-            const matchesSearch = fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                upload.storageId.toLowerCase().includes(searchTerm.toLowerCase());
-            
+            const matchesSearch =
+                fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                upload.storageId
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase());
+
             const fileType = getFileType(upload.link);
-            const matchesType = fileTypeFilter === "all" || fileType === fileTypeFilter;
-            
+            const matchesType =
+                fileTypeFilter === "all" || fileType === fileTypeFilter;
+
             return matchesSearch && matchesType;
         });
 
         // Sort the filtered results
         filtered.sort((a, b) => {
             let comparison = 0;
-            
+
             switch (sortField) {
                 case "name":
-                    comparison = getFileName(a.link, a.storageId)
-                        .localeCompare(getFileName(b.link, b.storageId));
+                    comparison = getFileName(a.link, a.storageId).localeCompare(
+                        getFileName(b.link, b.storageId)
+                    );
                     break;
                 case "type":
-                    comparison = getFileType(a.link).localeCompare(getFileType(b.link));
+                    comparison = getFileType(a.link).localeCompare(
+                        getFileType(b.link)
+                    );
                     break;
                 case "date":
                     comparison = a._creationTime - b._creationTime;
@@ -133,7 +153,7 @@ export function FilesTable() {
                     comparison = 0;
                     break;
             }
-            
+
             return sortOrder === "asc" ? comparison : -comparison;
         });
 
@@ -151,12 +171,12 @@ export function FilesTable() {
 
     const handleDelete = async (storageId: Id<"_storage">) => {
         try {
-            setDeletingIds(prev => new Set(prev).add(storageId));
+            setDeletingIds((prev) => new Set(prev).add(storageId));
             await deleteFile({ storageId });
         } catch (error) {
             console.error("Delete failed:", error);
         } finally {
-            setDeletingIds(prev => {
+            setDeletingIds((prev) => {
                 const newSet = new Set(prev);
                 newSet.delete(storageId);
                 return newSet;
@@ -169,10 +189,13 @@ export function FilesTable() {
             <Card>
                 <CardContent className="p-6">
                     <div className="animate-pulse space-y-4">
-                        <div className="h-10 bg-muted rounded" />
+                        <div className="h-10 rounded bg-muted" />
                         <div className="space-y-2">
                             {[...Array(5)].map((_, i) => (
-                                <div key={i} className="h-12 bg-muted rounded" />
+                                <div
+                                    className="h-12 rounded bg-muted"
+                                    key={i}
+                                />
                             ))}
                         </div>
                     </div>
@@ -188,7 +211,8 @@ export function FilesTable() {
                     <FileIcon className="mb-4 h-12 w-12 text-muted-foreground" />
                     <h3 className="mb-2 font-medium">No files yet</h3>
                     <p className="text-muted-foreground text-sm">
-                        Upload some files using the uploader above to see them here.
+                        Upload some files using the uploader above to see them
+                        here.
                     </p>
                 </CardContent>
             </Card>
@@ -201,27 +225,30 @@ export function FilesTable() {
             <CardHeader className="space-y-4">
                 <CardTitle className="flex items-center justify-between">
                     <span>Files ({filteredAndSortedUploads.length})</span>
-                    <Badge variant="secondary">
-                        {uploads.length} total
-                    </Badge>
+                    <Badge variant="secondary">{uploads.length} total</Badge>
                 </CardTitle>
-                
-                <div className="flex gap-4 flex-wrap">
+
+                <div className="flex flex-wrap gap-4">
                     {/* Search Input */}
-                    <div className="relative flex-1 min-w-[200px]">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="relative min-w-[200px] flex-1">
+                        <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
                         <Input
+                            className="pl-10"
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search files..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10"
                         />
                     </div>
-                    
+
                     {/* File Type Filter */}
-                    <Select value={fileTypeFilter} onValueChange={(value: FileType) => setFileTypeFilter(value)}>
+                    <Select
+                        onValueChange={(value: FileType) =>
+                            setFileTypeFilter(value)
+                        }
+                        value={fileTypeFilter}
+                    >
                         <SelectTrigger className="w-[150px]">
-                            <Filter className="h-4 w-4 mr-2" />
+                            <Filter className="mr-2 h-4 w-4" />
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -243,130 +270,154 @@ export function FilesTable() {
                             <TableRow>
                                 <TableHead className="w-[50px]">Type</TableHead>
                                 <TableHead>
-                                    <Button 
-                                        variant="ghost" 
-                                        size="sm"
-                                        onClick={() => handleSort("name")}
+                                    <Button
                                         className="h-auto p-0 font-medium"
+                                        onClick={() => handleSort("name")}
+                                        size="sm"
+                                        variant="ghost"
                                     >
                                         Name
                                         <ArrowUpDown className="ml-2 h-3 w-3" />
                                     </Button>
                                 </TableHead>
                                 <TableHead className="w-[100px]">
-                                    <Button 
-                                        variant="ghost" 
-                                        size="sm"
-                                        onClick={() => handleSort("type")}
+                                    <Button
                                         className="h-auto p-0 font-medium"
+                                        onClick={() => handleSort("type")}
+                                        size="sm"
+                                        variant="ghost"
                                     >
                                         Type
                                         <ArrowUpDown className="ml-2 h-3 w-3" />
                                     </Button>
                                 </TableHead>
                                 <TableHead className="w-[80px]">
-                                    <Button 
-                                        variant="ghost" 
-                                        size="sm"
-                                        onClick={() => handleSort("size")}
+                                    <Button
                                         className="h-auto p-0 font-medium"
+                                        onClick={() => handleSort("size")}
+                                        size="sm"
+                                        variant="ghost"
                                     >
                                         Size
                                         <ArrowUpDown className="ml-2 h-3 w-3" />
                                     </Button>
                                 </TableHead>
                                 <TableHead className="w-[120px]">
-                                    <Button 
-                                        variant="ghost" 
-                                        size="sm"
-                                        onClick={() => handleSort("date")}
+                                    <Button
                                         className="h-auto p-0 font-medium"
+                                        onClick={() => handleSort("date")}
+                                        size="sm"
+                                        variant="ghost"
                                     >
                                         Date
                                         <ArrowUpDown className="ml-2 h-3 w-3" />
                                     </Button>
                                 </TableHead>
-                                <TableHead className="w-[150px]">Actions</TableHead>
+                                <TableHead className="w-[150px]">
+                                    Actions
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filteredAndSortedUploads.map((upload) => {
-                                const isDeleting = deletingIds.has(upload.storageId);
-                                const fileName = getFileName(upload.link, upload.storageId);
+                                const isDeleting = deletingIds.has(
+                                    upload.storageId
+                                );
+                                const fileName = getFileName(
+                                    upload.link,
+                                    upload.storageId
+                                );
                                 const fileType = getFileType(upload.link);
-                                
+
                                 return (
-                                    <TableRow 
-                                        key={upload._id} 
-                                        className={isDeleting ? "opacity-50" : ""}
+                                    <TableRow
+                                        className={
+                                            isDeleting ? "opacity-50" : ""
+                                        }
+                                        key={upload._id}
                                     >
                                         <TableCell>
                                             {getFileIcon(upload.link)}
                                         </TableCell>
                                         <TableCell className="font-medium">
                                             <div className="flex flex-col">
-                                                <span className="truncate max-w-[200px]" title={fileName}>
+                                                <span
+                                                    className="max-w-[200px] truncate"
+                                                    title={fileName}
+                                                >
                                                     {fileName}
                                                 </span>
-                                                <span className="text-xs text-muted-foreground">
+                                                <span className="text-muted-foreground text-xs">
                                                     {upload.storageId.slice(-8)}
                                                 </span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className="capitalize">
+                                            <Badge
+                                                className="capitalize"
+                                                variant="outline"
+                                            >
                                                 {fileType}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-muted-foreground text-sm">
-                                            {formatFileSize(upload.link)}
+                                            {formatFileSize(upload)}
                                         </TableCell>
                                         <TableCell className="text-muted-foreground text-sm">
-                                            {new Date(upload._creationTime).toLocaleDateString()}
+                                            {new Date(
+                                                upload._creationTime
+                                            ).toLocaleDateString()}
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex gap-1">
                                                 <Button
-                                                    variant="ghost"
-                                                    size="sm"
                                                     asChild
+                                                    size="sm"
                                                     title="Preview file"
+                                                    variant="ghost"
                                                 >
-                                                    <a 
-                                                        href={upload.link} 
-                                                        target="_blank" 
+                                                    <a
+                                                        href={upload.link}
                                                         rel="noopener noreferrer"
+                                                        target="_blank"
                                                     >
                                                         <Eye className="h-3 w-3" />
                                                     </a>
                                                 </Button>
-                                                
+
                                                 <Button
-                                                    variant="ghost"
-                                                    size="sm"
                                                     asChild
+                                                    size="sm"
                                                     title="Download file"
+                                                    variant="ghost"
                                                 >
-                                                    <a href={upload.link} download>
+                                                    <a
+                                                        download
+                                                        href={upload.link}
+                                                    >
                                                         <Download className="h-3 w-3" />
                                                     </a>
                                                 </Button>
-                                                
+
                                                 <Button
-                                                    variant="ghost"
                                                     size="sm"
                                                     title="Share file"
+                                                    variant="ghost"
                                                 >
                                                     <Share className="h-3 w-3" />
                                                 </Button>
-                                                
+
                                                 <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    disabled={isDeleting}
-                                                    onClick={() => handleDelete(upload.storageId)}
-                                                    title="Delete file"
                                                     className="text-destructive hover:text-destructive"
+                                                    disabled={isDeleting}
+                                                    onClick={() =>
+                                                        handleDelete(
+                                                            upload.storageId
+                                                        )
+                                                    }
+                                                    size="sm"
+                                                    title="Delete file"
+                                                    variant="ghost"
                                                 >
                                                     <Trash2 className="h-3 w-3" />
                                                 </Button>

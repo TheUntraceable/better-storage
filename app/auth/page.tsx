@@ -1,7 +1,7 @@
-import { api } from "@/convex/_generated/api";
-import { getToken } from "@/convex/auth";
 import { fetchQuery } from "convex/nextjs";
 import { redirect } from "next/navigation";
+import { api } from "@/convex/_generated/api";
+import { getToken } from "@/convex/auth";
 import { GithubLoginButton } from "./_components/github-login-button";
 
 export default async function AuthPage() {

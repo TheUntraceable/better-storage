@@ -1,8 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import {
     AlertCircle,
@@ -13,6 +10,9 @@ import {
 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { api } from "@/convex/_generated/api";
 
 interface UploadState {
     isUploading: boolean;

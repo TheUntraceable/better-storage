@@ -1,10 +1,10 @@
 "use client";
 
+import { Database, Home, LogOut, User } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
-import { Database, Home, LogOut, User } from "lucide-react";
-import Link from "next/link";
 
 export function NavigationHeader() {
     const { data: session } = authClient.useSession();

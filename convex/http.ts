@@ -61,7 +61,6 @@ app.get("/uploads/:uploadId", async (c) => {
     if (!uploadId) {
         return new Response("Missing storageId", { status: 400 });
     }
-    
-})
+});
 
 export default http;

@@ -48,14 +48,14 @@ export const createAuth = (
             admin(),
             autumn({
                 secretKey: process.env.AUTUMN_SECRET_KEY!,
-                
             }),
         ],
         socialProviders: {
             github: {
                 clientId: process.env.GITHUB_CLIENT_ID!,
                 clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-                redirectURI: "https://dev.untraceable.dev/api/auth/callback/github",
+                redirectURI:
+                    "https://dev.untraceable.dev/api/auth/callback/github",
             },
         },
     });
