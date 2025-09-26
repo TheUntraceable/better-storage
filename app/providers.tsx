@@ -33,7 +33,10 @@ export const Providers = ({ children, themeProps }: ProvidersProps) => {
     const router = useRouter();
 
     return (
-        <AutumnProvider betterAuthUrl="https://dev.untraceable.dev">
+        <AutumnProvider
+            betterAuthUrl="https://dev.untraceable.dev"
+            convex={convex}
+        >
             <ConvexBetterAuthProvider authClient={authClient} client={convex}>
                 <HeroUIProvider navigate={router.push}>
                     <ToastProvider />

@@ -140,7 +140,8 @@ export type Mounts = {
                 userId?: null | string;
               };
               model: "oauthConsent";
-            };
+            }
+          | { data: { storageId: string; uploader: string }; model: "uploads" };
         onCreateHandle?: string;
         select?: Array<string>;
       },
@@ -400,6 +401,31 @@ export type Mounts = {
                   | "updatedAt"
                   | "consentGiven"
                   | "id";
+                operator?:
+                  | "lt"
+                  | "lte"
+                  | "gt"
+                  | "gte"
+                  | "eq"
+                  | "in"
+                  | "ne"
+                  | "contains"
+                  | "starts_with"
+                  | "ends_with";
+                value:
+                  | string
+                  | number
+                  | boolean
+                  | Array<string>
+                  | Array<number>
+                  | null;
+              }>;
+            }
+          | {
+              model: "uploads";
+              where?: Array<{
+                connector?: "AND" | "OR";
+                field: "uploader" | "storageId" | "id";
                 operator?:
                   | "lt"
                   | "lte"
@@ -705,6 +731,31 @@ export type Mounts = {
                   | Array<number>
                   | null;
               }>;
+            }
+          | {
+              model: "uploads";
+              where?: Array<{
+                connector?: "AND" | "OR";
+                field: "uploader" | "storageId" | "id";
+                operator?:
+                  | "lt"
+                  | "lte"
+                  | "gt"
+                  | "gte"
+                  | "eq"
+                  | "in"
+                  | "ne"
+                  | "contains"
+                  | "starts_with"
+                  | "ends_with";
+                value:
+                  | string
+                  | number
+                  | boolean
+                  | Array<string>
+                  | Array<number>
+                  | null;
+              }>;
             };
         onDeleteHandle?: string;
       },
@@ -723,7 +774,8 @@ export type Mounts = {
           | "jwks"
           | "oauthApplication"
           | "oauthAccessToken"
-          | "oauthConsent";
+          | "oauthConsent"
+          | "uploads";
         offset?: number;
         paginationOpts: {
           cursor: string | null;
@@ -771,7 +823,8 @@ export type Mounts = {
           | "jwks"
           | "oauthApplication"
           | "oauthAccessToken"
-          | "oauthConsent";
+          | "oauthConsent"
+          | "uploads";
         select?: Array<string>;
         where?: Array<{
           connector?: "AND" | "OR";
@@ -1152,6 +1205,32 @@ export type Mounts = {
                   | Array<number>
                   | null;
               }>;
+            }
+          | {
+              model: "uploads";
+              update: { storageId?: string; uploader?: string };
+              where?: Array<{
+                connector?: "AND" | "OR";
+                field: "uploader" | "storageId" | "id";
+                operator?:
+                  | "lt"
+                  | "lte"
+                  | "gt"
+                  | "gte"
+                  | "eq"
+                  | "in"
+                  | "ne"
+                  | "contains"
+                  | "starts_with"
+                  | "ends_with";
+                value:
+                  | string
+                  | number
+                  | boolean
+                  | Array<string>
+                  | Array<number>
+                  | null;
+              }>;
             };
         onUpdateHandle?: string;
         paginationOpts: {
@@ -1500,6 +1579,32 @@ export type Mounts = {
                   | "updatedAt"
                   | "consentGiven"
                   | "id";
+                operator?:
+                  | "lt"
+                  | "lte"
+                  | "gt"
+                  | "gte"
+                  | "eq"
+                  | "in"
+                  | "ne"
+                  | "contains"
+                  | "starts_with"
+                  | "ends_with";
+                value:
+                  | string
+                  | number
+                  | boolean
+                  | Array<string>
+                  | Array<number>
+                  | null;
+              }>;
+            }
+          | {
+              model: "uploads";
+              update: { storageId?: string; uploader?: string };
+              where?: Array<{
+                connector?: "AND" | "OR";
+                field: "uploader" | "storageId" | "id";
                 operator?:
                   | "lt"
                   | "lte"

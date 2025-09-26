@@ -1,9 +1,10 @@
+import { NavigationHeader } from "@/components/navigation-header";
+import { fontSans } from "@/config/fonts";
+import { siteConfig } from "@/config/site";
 import "@/styles/globals.css";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
 import Head from "next/head";
-import { fontSans } from "@/config/fonts";
-import { siteConfig } from "@/config/site";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
@@ -43,7 +44,8 @@ export default function RootLayout({
                 <Providers
                     themeProps={{ attribute: "class", defaultTheme: "dark" }}
                 >
-                    <div className="flex flex-col">
+                    <div className="flex min-h-screen flex-col">
+                        <NavigationHeader />
                         <main className="grow">{children}</main>
                     </div>
                 </Providers>

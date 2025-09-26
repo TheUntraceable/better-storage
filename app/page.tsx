@@ -1,5 +1,5 @@
-import { Button } from "@heroui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@heroui/button";
 
 export default function Home() {
     return (
@@ -21,6 +21,15 @@ export default function Home() {
                     </Button>
                     <Button size="lg" variant="bordered">
                         View Demo
+                    </Button>
+                    <Button
+                        as="a"
+                        color="secondary"
+                        href="/storage-test"
+                        size="lg"
+                        variant="flat"
+                    >
+                        🗄️ Test Storage MVP
                     </Button>
                 </div>
 

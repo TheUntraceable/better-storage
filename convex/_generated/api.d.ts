@@ -14,6 +14,7 @@ import type * as betterAuth__generated_server from "../betterAuth/_generated/ser
 import type * as betterAuth_adapter from "../betterAuth/adapter.js";
 import type * as betterAuth_auth from "../betterAuth/auth.js";
 import type * as http from "../http.js";
+import type * as storage from "../storage.js";
 
 import type {
   ApiFromModules,
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   "betterAuth/adapter": typeof betterAuth_adapter;
   "betterAuth/auth": typeof betterAuth_auth;
   http: typeof http;
+  storage: typeof storage;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
@@ -160,6 +162,10 @@ export declare const components: {
                   userId?: null | string;
                 };
                 model: "oauthConsent";
+              }
+            | {
+                data: { storageId: string; uploader: string };
+                model: "uploads";
               };
           onCreateHandle?: string;
           select?: Array<string>;
@@ -420,6 +426,31 @@ export declare const components: {
                     | "updatedAt"
                     | "consentGiven"
                     | "id";
+                  operator?:
+                    | "lt"
+                    | "lte"
+                    | "gt"
+                    | "gte"
+                    | "eq"
+                    | "in"
+                    | "ne"
+                    | "contains"
+                    | "starts_with"
+                    | "ends_with";
+                  value:
+                    | string
+                    | number
+                    | boolean
+                    | Array<string>
+                    | Array<number>
+                    | null;
+                }>;
+              }
+            | {
+                model: "uploads";
+                where?: Array<{
+                  connector?: "AND" | "OR";
+                  field: "uploader" | "storageId" | "id";
                   operator?:
                     | "lt"
                     | "lte"
@@ -725,6 +756,31 @@ export declare const components: {
                     | Array<number>
                     | null;
                 }>;
+              }
+            | {
+                model: "uploads";
+                where?: Array<{
+                  connector?: "AND" | "OR";
+                  field: "uploader" | "storageId" | "id";
+                  operator?:
+                    | "lt"
+                    | "lte"
+                    | "gt"
+                    | "gte"
+                    | "eq"
+                    | "in"
+                    | "ne"
+                    | "contains"
+                    | "starts_with"
+                    | "ends_with";
+                  value:
+                    | string
+                    | number
+                    | boolean
+                    | Array<string>
+                    | Array<number>
+                    | null;
+                }>;
               };
           onDeleteHandle?: string;
         },
@@ -743,7 +799,8 @@ export declare const components: {
             | "jwks"
             | "oauthApplication"
             | "oauthAccessToken"
-            | "oauthConsent";
+            | "oauthConsent"
+            | "uploads";
           offset?: number;
           paginationOpts: {
             cursor: string | null;
@@ -791,7 +848,8 @@ export declare const components: {
             | "jwks"
             | "oauthApplication"
             | "oauthAccessToken"
-            | "oauthConsent";
+            | "oauthConsent"
+            | "uploads";
           select?: Array<string>;
           where?: Array<{
             connector?: "AND" | "OR";
@@ -1172,6 +1230,32 @@ export declare const components: {
                     | Array<number>
                     | null;
                 }>;
+              }
+            | {
+                model: "uploads";
+                update: { storageId?: string; uploader?: string };
+                where?: Array<{
+                  connector?: "AND" | "OR";
+                  field: "uploader" | "storageId" | "id";
+                  operator?:
+                    | "lt"
+                    | "lte"
+                    | "gt"
+                    | "gte"
+                    | "eq"
+                    | "in"
+                    | "ne"
+                    | "contains"
+                    | "starts_with"
+                    | "ends_with";
+                  value:
+                    | string
+                    | number
+                    | boolean
+                    | Array<string>
+                    | Array<number>
+                    | null;
+                }>;
               };
           onUpdateHandle?: string;
           paginationOpts: {
@@ -1520,6 +1604,32 @@ export declare const components: {
                     | "updatedAt"
                     | "consentGiven"
                     | "id";
+                  operator?:
+                    | "lt"
+                    | "lte"
+                    | "gt"
+                    | "gte"
+                    | "eq"
+                    | "in"
+                    | "ne"
+                    | "contains"
+                    | "starts_with"
+                    | "ends_with";
+                  value:
+                    | string
+                    | number
+                    | boolean
+                    | Array<string>
+                    | Array<number>
+                    | null;
+                }>;
+              }
+            | {
+                model: "uploads";
+                update: { storageId?: string; uploader?: string };
+                where?: Array<{
+                  connector?: "AND" | "OR";
+                  field: "uploader" | "storageId" | "id";
                   operator?:
                     | "lt"
                     | "lte"

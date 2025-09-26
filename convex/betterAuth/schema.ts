@@ -108,6 +108,10 @@ export const tables = {
     })
         .index("clientId_userId", ["clientId", "userId"])
         .index("userId", ["userId"]),
+    uploads: defineTable({
+        uploader: v.id("user"),
+        storageId: v.id("_storage"),
+    }).index("by_uploader", ["uploader"]),
 };
 
 const schema = defineSchema(tables);
