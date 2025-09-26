@@ -6,6 +6,8 @@ export default defineSchema({
         uploader: v.string(),
         storageId: v.id("_storage"),
         link: v.string(),
+        size: v.number(),
+        contentType: v.string()
     })
         .index("by_uploader_and_id", ["uploader", "storageId"])
         .index("by_storageId", ["storageId"]),
