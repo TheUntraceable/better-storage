@@ -67,7 +67,7 @@
 
 @layer base {
     * {
-        @apply border-border;
+        @apply border-zinc-200 dark:border-zinc-700;
     }
     body {
         @apply bg-background text-foreground;

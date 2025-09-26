@@ -1,19 +1,4 @@
 "use client";
-
-import { useMutation, useQuery } from "convex/react";
-import {
-    ArrowUpDown,
-    Download,
-    Eye,
-    FileIcon,
-    FileTextIcon,
-    Filter,
-    ImageIcon,
-    Search,
-    Share,
-    Trash2,
-} from "lucide-react";
-import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,6 +20,21 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import {
+    ArrowUpDown,
+    Download,
+    Eye,
+    FileIcon,
+    FileTextIcon,
+    Filter,
+    ImageIcon,
+    Search,
+    Share,
+    Trash2,
+} from "lucide-react";
+import { useMemo, useState } from "react";
+import { InviteDialog } from "./invite-dialog";
 
 interface Upload {
     _id: Id<"uploads">;
@@ -61,6 +61,8 @@ export function FilesTable() {
     const [deletingIds, setDeletingIds] = useState<Set<Id<"_storage">>>(
         new Set()
     );
+    const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+    const [selectedFileForInvite, setSelectedFileForInvite] = useState<Upload | null>(null);
 
     // Helper functions
     const getFileType = (url: string): FileType => {
@@ -184,6 +186,16 @@ export function FilesTable() {
         }
     };
 
+    const handleOpenInviteDialog = (upload: Upload) => {
+        setSelectedFileForInvite(upload);
+        setInviteDialogOpen(true);
+    };
+
+    const handleCloseInviteDialog = () => {
+        setInviteDialogOpen(false);
+        setSelectedFileForInvite(null);
+    };
+
     if (uploads === undefined) {
         return (
             <Card>
@@ -220,6 +232,7 @@ export function FilesTable() {
     }
 
     return (
+        <>
         <Card>
             {/* Search and Filter Header */}
             <CardHeader className="space-y-4">
@@ -403,6 +416,7 @@ export function FilesTable() {
                                                     size="sm"
                                                     title="Share file"
                                                     variant="ghost"
+                                                    onClick={() => handleOpenInviteDialog(upload)}
                                                 >
                                                     <Share className="h-3 w-3" />
                                                 </Button>
@@ -431,5 +445,16 @@ export function FilesTable() {
                 </div>
             </CardContent>
         </Card>
+        
+        {/* Invite Dialog */}
+        {selectedFileForInvite && (
+            <InviteDialog
+                isOpen={inviteDialogOpen}
+                onClose={handleCloseInviteDialog}
+                upload={selectedFileForInvite}
+                fileName={getFileName(selectedFileForInvite.link, selectedFileForInvite.storageId)}
+            />
+        )}
+        </>
     );
 }
