@@ -30,7 +30,7 @@ export function FileUploader() {
     });
 
     const generateUploadLink = useMutation(api.storage.generateLink);
-    const uploadImage = useMutation(api.storage.store);
+    const storeFile = useMutation(api.storage.store);
 
     const handleUpload = useCallback(
         async (file: File) => {
@@ -62,7 +62,7 @@ export function FileUploader() {
 
                 // Step 3: Save metadata to database
                 setUploadState((prev) => ({ ...prev, progress: 75 }));
-                await uploadImage({ storageId });
+                await storeFile({ storageId });
 
                 // Step 4: Complete
                 setUploadState({
@@ -93,7 +93,7 @@ export function FileUploader() {
                 });
             }
         },
-        [generateUploadLink, uploadImage]
+        [generateUploadLink, storeFile]
     );
 
     const onDrop = useCallback(
@@ -210,12 +210,8 @@ export function FileUploader() {
             {/* Upload Info */}
             <div className="space-y-1 text-muted-foreground text-xs">
                 <p>
-                    <strong>Testing:</strong> generateUploadLink → fetch upload
-                    → uploadImage
-                </p>
-                <p>
                     <strong>Max size:</strong> 10MB | <strong>Formats:</strong>{" "}
-                    Images, PDF, Text
+                    Images, PDF, Text files
                 </p>
             </div>
         </div>

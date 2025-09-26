@@ -57,12 +57,11 @@ export default function StorageTestPage() {
             {/* Header */}
             <div className="space-y-4 text-center">
                 <h1 className="font-bold text-4xl tracking-tight">
-                    Storage MVP Test
+                    File Manager Dashboard
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                    Test your Convex storage setup with file uploads, viewing,
-                    and deletion. This MVP demonstrates all the core
-                    functionality from your storage.ts file.
+                    Upload, organize, and share your files. Invite others to
+                    collaborate and manage your digital assets securely.
                 </p>
                 <div className="flex justify-center gap-2">
                     <Badge
@@ -70,14 +69,14 @@ export default function StorageTestPage() {
                         variant="secondary"
                     >
                         <CheckCircle className="h-3 w-3" />
-                        Authentication: Active
+                        Connected
                     </Badge>
                     <Badge
                         className="flex items-center gap-1"
                         variant="outline"
                     >
                         <Upload className="h-3 w-3" />
-                        Upload Ready
+                        Ready to Upload
                     </Badge>
                 </div>
             </div>
@@ -102,12 +101,12 @@ export default function StorageTestPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Upload className="h-5 w-5" />
-                        File Upload
+                        Upload Files
                     </CardTitle>
                     <CardDescription>
-                        Upload files to test the generateUploadLink and
-                        uploadImage mutations. Supports images and documents up
-                        to 10MB.
+                        Upload and store your files securely. Share with others
+                        using invite links. Supports images, documents, and more
+                        up to 10MB.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -115,57 +114,20 @@ export default function StorageTestPage() {
                 </CardContent>
             </Card>
 
-            {/* Gallery Section */}
+            {/* Files Section */}
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <ImageIcon className="h-5 w-5" />
-                        Your Uploads
+                        Your Files
                     </CardTitle>
                     <CardDescription>
-                        View and manage all your uploaded files. Tests the get
-                        query and deleteUpload mutation.
+                        View, organize, and share your uploaded files. Create
+                        invite links for collaboration.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ImageGallery />
-                </CardContent>
-            </Card>
-
-            {/* API Testing Info */}
-            <Card className="border-dashed">
-                <CardHeader>
-                    <CardTitle className="font-medium text-sm">
-                        Storage API Functions Being Tested
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                    <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2 lg:grid-cols-4">
-                        <div className="space-y-1">
-                            <Badge variant="outline">generateUploadLink</Badge>
-                            <p className="text-muted-foreground">
-                                Creates secure upload URLs
-                            </p>
-                        </div>
-                        <div className="space-y-1">
-                            <Badge variant="outline">uploadImage</Badge>
-                            <p className="text-muted-foreground">
-                                Saves file metadata to DB
-                            </p>
-                        </div>
-                        <div className="space-y-1">
-                            <Badge variant="outline">get</Badge>
-                            <p className="text-muted-foreground">
-                                Retrieves user uploads
-                            </p>
-                        </div>
-                        <div className="space-y-1">
-                            <Badge variant="outline">deleteUpload</Badge>
-                            <p className="text-muted-foreground">
-                                Removes files and metadata
-                            </p>
-                        </div>
-                    </div>
                 </CardContent>
             </Card>
         </div>
