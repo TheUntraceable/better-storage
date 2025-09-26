@@ -26,7 +26,7 @@ const PDF_FILE_EXTENSION_REGEX = /\.pdf$/i;
 
 export function ImageGallery() {
     const uploads = useQuery(api.storage.get);
-    const deleteUpload = useMutation(api.storage.deleteUpload);
+    const deleteUpload = useMutation(api.storage.remove);
     const [deleteState, setDeleteState] = useState<DeleteState>({
         deleting: null,
         error: null,
@@ -123,7 +123,7 @@ export function ImageGallery() {
                 {uploads.map((upload) => {
                     const isDeleting =
                         deleteState.deleting === upload.storageId;
-
+                    console.log(upload)
                     return (
                         <Card
                             className={isDeleting ? "opacity-50" : ""}

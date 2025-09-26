@@ -29,8 +29,8 @@ export function FileUploader() {
         success: false,
     });
 
-    const generateUploadLink = useMutation(api.storage.generateUploadLink);
-    const uploadImage = useMutation(api.storage.uploadImage);
+    const generateUploadLink = useMutation(api.storage.generateLink);
+    const uploadImage = useMutation(api.storage.store);
 
     const handleUpload = useCallback(
         async (file: File) => {

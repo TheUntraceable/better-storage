@@ -4,7 +4,7 @@ import { mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
 import type { Id } from "./betterAuth/_generated/dataModel";
 
-export const generateUploadLink = mutation({
+export const generateLink = mutation({
     async handler(ctx) {
         const user = await authComponent.safeGetAuthUser(ctx);
         if (!user) {
@@ -16,37 +16,7 @@ export const generateUploadLink = mutation({
     },
 });
 
-export const generateGetLink = mutation({
-    args: {
-        storageId: v.id("_storage"),
-        emails: v.array(v.string()),
-    },
-    async handler(ctx, { storageId, emails }) {
-        const user = await authComponent.safeGetAuthUser(ctx);
-        if (!user) {
-            throw new APIError("UNAUTHORIZED", {
-                message: "Not authenticated",
-            });
-        }
-        const upload = await ctx.db
-            .query("uploads")
-            .withIndex("by_uploader_and_id", (q) => {
-                return q
-                    .eq("uploader", user._id as Id<"user">)
-                    .eq("storageId", storageId);
-            })
-            .collect();
-        if (!upload) {
-            throw new APIError("NOT_FOUND", {
-                message: "Upload not found",
-            });
-        }
-        const link = await ctx.storage.getUrl(storageId);
-        return { upload, link };
-    },
-});
-
-export const uploadImage = mutation({
+export const store = mutation({
     args: {
         storageId: v.id("_storage"),
     },
@@ -62,9 +32,11 @@ export const uploadImage = mutation({
                 message: "User ID not found",
             });
         }
+        const link = await ctx.storage.getUrl(storageId);
         await ctx.db.insert("uploads", {
             uploader: user._id,
             storageId,
+            link: link as string,
         });
     },
 });
@@ -79,7 +51,7 @@ export const get = query({
         }
         const uploads = await ctx.db
             .query("uploads")
-            .withIndex("by_uploader", (q) =>
+            .withIndex("by_uploader_and_id", (q) =>
                 q.eq("uploader", user._id as Id<"user">)
             )
             .collect();
@@ -87,7 +59,7 @@ export const get = query({
     },
 });
 
-export const deleteUpload = mutation({
+export const remove = mutation({
     args: {
         storageId: v.id("_storage"),
     },
@@ -100,13 +72,19 @@ export const deleteUpload = mutation({
         }
         const existing = await ctx.db
             .query("uploads")
-            .withIndex("by_storageId", (q) => q.eq("storageId", storageId))
-            .collect();
-        if (!existing || existing.length === 0) {
+            .withIndex("by_uploader_and_id", (q) => {
+                return q
+                    .eq("uploader", user._id as Id<"user">)
+                    .eq("storageId", storageId);
+            })
+            .take(1);
+
+        if (!existing   ) {
             throw new APIError("NOT_FOUND", {
                 message: "Upload not found",
             });
         }
+
         await ctx.db.delete(existing[0]._id);
     },
 });

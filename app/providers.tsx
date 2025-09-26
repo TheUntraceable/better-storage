@@ -36,6 +36,7 @@ export const Providers = ({ children, themeProps }: ProvidersProps) => {
         <AutumnProvider
             betterAuthUrl="https://dev.untraceable.dev"
             convex={convex}
+            includeCredentials
         >
             <ConvexBetterAuthProvider authClient={authClient} client={convex}>
                 <HeroUIProvider navigate={router.push}>
