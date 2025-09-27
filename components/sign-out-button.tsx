@@ -1,8 +1,8 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
 import { Button } from "@heroui/button";
 import { LogOut } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 export const SignOutButton = () => {
     return (

@@ -1,6 +1,6 @@
+import { Link } from "@heroui/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RainbowButton } from "@/components/ui/rainbow-button";
-import { Link } from "@heroui/link";
 
 export default function Home() {
     return (

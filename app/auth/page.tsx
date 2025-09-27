@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import {
     Card,
     CardContent,
@@ -6,7 +7,6 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { getSession } from "@/lib/session";
-import { redirect } from "next/navigation";
 import { GithubLoginButton } from "./_components/github-login-button";
 
 export default async function AuthPage({

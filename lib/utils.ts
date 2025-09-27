@@ -22,10 +22,7 @@ export const copyToClipboard = async (
     }
 };
 
-export const downloadFile = async (upload: {
-    name: string;
-    link: string;
-}) => {
+export const downloadFile = async (upload: { name: string; link: string }) => {
     const blob = await fetch(upload.link).then((res) => res.blob());
 
     const link = document.createElement("a");

@@ -12,7 +12,7 @@ export const sendInviteEmail = internalMutation({
         to: v.array(v.string()),
         from: v.string(),
         inviteId: v.id("invites"),
-        fileName: v.string()
+        fileName: v.string(),
     },
     handler: async (ctx, { to, from, inviteId, fileName }) => {
         for (const email of to) {

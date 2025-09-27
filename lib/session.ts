@@ -1,7 +1,7 @@
-import { api } from "@/convex/_generated/api";
-import { getToken, type Session } from "@/convex/auth";
 import { fetchQuery } from "convex/nextjs";
 import { redirect } from "next/navigation";
+import { api } from "@/convex/_generated/api";
+import { getToken, type Session } from "@/convex/auth";
 
 export const getSession = async () => {
     try {

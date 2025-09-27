@@ -7,7 +7,7 @@ export const autumn = new Autumn(components.autumn, {
     identify: async (ctx: any) => {
         const user = (await ctx.auth.getUserIdentity()) || ctx.user;
 
-		if (!user) {
+        if (!user) {
             return null;
         }
 

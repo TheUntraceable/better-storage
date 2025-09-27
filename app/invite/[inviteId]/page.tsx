@@ -1,3 +1,8 @@
+import { Link } from "@heroui/link";
+import { button as buttonStyles } from "@heroui/theme";
+import { fetchQuery } from "convex/nextjs";
+import type { FunctionReturnType } from "convex/server";
+import { Eye, FileIcon, Mail, Users } from "lucide-react";
 import { DownloadButton } from "@/components/download-button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,11 +15,6 @@ import {
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { requireSession } from "@/lib/session";
-import { Link } from "@heroui/link";
-import { button as buttonStyles } from "@heroui/theme";
-import { fetchQuery } from "convex/nextjs";
-import type { FunctionReturnType } from "convex/server";
-import { Eye, FileIcon, Mail, Users } from "lucide-react";
 
 interface InvitePageProps {
     params: Promise<{
@@ -52,7 +52,7 @@ const NotFound = () => {
 export default async function InvitePage({ params }: InvitePageProps) {
     const { inviteId } = await params;
     const user = await requireSession({
-        redirectTo: `/invite/${inviteId}`,    
+        redirectTo: `/invite/${inviteId}`,
     });
     let invite: null | FunctionReturnType<typeof api.invites.get> = null;
     try {

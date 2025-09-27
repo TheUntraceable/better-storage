@@ -8,7 +8,7 @@ export default defineSchema({
         link: v.string(),
         size: v.number(),
         contentType: v.string(),
-        name: v.string()
+        name: v.string(),
     })
         .index("by_uploader_and_id", ["uploader", "storageId"])
         .index("by_storageId", ["storageId"]),
@@ -16,6 +16,6 @@ export default defineSchema({
         ownerId: v.string(),
         emails: v.array(v.string()),
         link: v.string(),
-        fileName: v.string()
+        fileName: v.string(),
     }).index("by_ownerId", ["ownerId"]),
 });

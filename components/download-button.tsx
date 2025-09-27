@@ -1,8 +1,8 @@
 "use client";
 
-import { downloadFile } from "@/lib/utils";
 import { Button } from "@heroui/button";
 import { Download } from "lucide-react";
+import { downloadFile } from "@/lib/utils";
 
 export const DownloadButton = ({
     invite,

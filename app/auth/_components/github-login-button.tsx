@@ -1,15 +1,11 @@
 "use client";
 
+import { GithubIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useLoadingCallback } from "@/lib/hooks/use-loading-callback";
-import { GithubIcon, Loader2 } from "lucide-react";
 
-export function GithubLoginButton({
-    redirectTo
-}: {
-    redirectTo?: string;
-}) {
+export function GithubLoginButton({ redirectTo }: { redirectTo?: string }) {
     const [handleSignIn, isLoading] = useLoadingCallback(async () => {
         try {
             await authClient.signIn.social({

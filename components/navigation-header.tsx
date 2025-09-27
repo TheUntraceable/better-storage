@@ -1,4 +1,3 @@
-import { getSession } from "@/lib/session";
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import {
@@ -12,6 +11,7 @@ import {
 } from "@heroui/navbar";
 import { FileText, Home, User } from "lucide-react";
 import NextLink from "next/link";
+import { getSession } from "@/lib/session";
 import { SignOutButton } from "./sign-out-button";
 
 export async function NavigationHeader() {
@@ -42,7 +42,7 @@ export async function NavigationHeader() {
                         <p className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text font-bold text-transparent text-xl">
                             Better Files
                         </p>
-                        <p className="font-medium text-zinc-400 text-xs">
+                        <p className="font-medium text-xs text-zinc-400">
                             Secure & Simple
                         </p>
                     </div>

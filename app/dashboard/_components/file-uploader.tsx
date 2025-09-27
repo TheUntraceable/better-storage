@@ -1,15 +1,5 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { api } from "@/convex/_generated/api";
-import { showErrorToast, showSuccessToast } from "@/lib/toast";
 import { Button } from "@heroui/button";
 import { Image } from "@heroui/image";
 import { Input } from "@heroui/input";
@@ -24,6 +14,16 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { api } from "@/convex/_generated/api";
+import { showErrorToast, showSuccessToast } from "@/lib/toast";
 
 const BYTES_PER_KB = 1024; // 1 KB = 1024 bytes
 
