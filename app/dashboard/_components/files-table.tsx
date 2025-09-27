@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { InviteDialog } from "./invite-dialog";
+import { showErrorToast } from "@/lib/toast";
 
 // Constants
 const FILE_SIZE_CONSTANTS = {
@@ -252,9 +253,7 @@ export function FilesTable({
             setDeletingIds((prev) => new Set(prev).add(storageId));
             await deleteFile({ storageId });
         } catch {
-            // Error handling could be improved with toast notifications
-            // For now, just ensure the loading state is cleared
-            // TODO: Show user-friendly error message
+            showErrorToast("Failed to delete file. Please try again.");
         } finally {
             setDeletingIds((prev) => {
                 const newSet = new Set(prev);
@@ -565,7 +564,7 @@ export function FilesTable({
                                                         title="Delete file"
                                                         variant="faded"
                                                     >
-                                                        <Trash2 className="h-3 w-3" />
+                                                        <Trash2 className="h-3 w-3 text-danger" />
                                                     </Button>
                                                 </div>
                                             </TableCell>
