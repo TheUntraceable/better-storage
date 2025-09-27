@@ -256,7 +256,7 @@ function FilePreviewComponent({ file, preview }: FilePreviewProps) {
     );
 }
 
-export function FileUploader() {
+export function FileUploader({ remainingMb }: { remainingMb: number }) {
     // State
     const [uploadState, setUploadState] = useState<UploadState>({
         isUploading: false,
@@ -331,6 +331,15 @@ export function FileUploader() {
                 });
                 return;
             }
+            if (file.size > remainingMb * BYTES_PER_KB * BYTES_PER_KB) {
+                setUploadState({
+                    isUploading: false,
+                    progress: 0,
+                    error: `Insufficient storage space. You have ${remainingMb}MB remaining.`,
+                    success: false,
+                });
+                return;
+            }
 
             try {
                 setUploadState({
@@ -397,7 +406,7 @@ export function FileUploader() {
                 showErrorToast("Upload Failed", message);
             }
         },
-        [generateUploadLink, storeFile, resetDialog]
+        [generateUploadLink, storeFile, resetDialog, remainingMb]
     );
 
     // Dropzone handlers

@@ -21,8 +21,8 @@ export default async function DashboardPage() {
     const { data: customer } = await autumn.customers.get(user.id);
 
     const plan = customer?.products[0];
-    const mb_remaining = customer!.features.mb_storage.balance as number;
-    const mb_total = plan?.items[0].included_usage as number;
+    const mbRemaining = customer!.features.mb_storage.balance as number;
+    const totalMb = plan?.items[0].included_usage as number;
 
     const uploads = await preloadQuery(
         api.storage.get,
@@ -54,9 +54,9 @@ export default async function DashboardPage() {
                             unit: "megabyte",
                             unitDisplay: "short",
                         }}
-                        maxValue={mb_total!}
+                        maxValue={totalMb!}
                         showValueLabel
-                        value={mb_total - mb_remaining!}
+                        value={totalMb - mbRemaining!}
                     />
                 </CardContent>
             </Card>
@@ -73,7 +73,7 @@ export default async function DashboardPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <FileUploader />
+                    <FileUploader remainingMb={mbRemaining} />
                 </CardContent>
             </Card>
             <Card>
