@@ -33,6 +33,7 @@ export const createAuth = (
             "http://localhost:3000",
             siteUrl,
             "https://dev.untraceable.dev",
+            "https://better-storage.untraceable.dev",
         ],
         baseURL: siteUrl,
         database: authComponent.adapter(ctx),
@@ -55,7 +56,7 @@ export const createAuth = (
                 clientId: process.env.GITHUB_CLIENT_ID!,
                 clientSecret: process.env.GITHUB_CLIENT_SECRET!,
                 redirectURI:
-                    "https://dev.untraceable.dev/api/auth/callback/github",
+                    "https://better-storage.untraceable.dev/api/auth/callback/github",
             },
         },
     });
