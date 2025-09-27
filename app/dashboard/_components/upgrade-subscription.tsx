@@ -24,7 +24,7 @@ export const UpgradeSubscription = () => {
                 await checkout({
                     productId: "pro",
                     dialog: CheckoutDialog,
-                    successUrl: "https://dev.untraceable.dev/dashboard",
+                    successUrl: "https://better-storage.untraceable.dev/dashboard",
                 });
                 await refetch();
             }}

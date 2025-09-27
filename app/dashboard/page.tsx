@@ -20,13 +20,14 @@ import { UpgradeSubscription } from "./_components/upgrade-subscription";
 export default async function DashboardPage() {
     const user = await requireSession();
 
-    const { data: customer } = await autumn.customers.get(user.id);
+    let { data: customer } = await autumn.customers.get(user.id);
     if(!customer) {
-        await autumn.customers.create({
+        const result = await autumn.customers.create({
             email: user.email,
             id: user.id,
             name: user.name,
-        })
+        });
+        customer = result.data;
     }
     const mbRemaining = customer!.features.mb_storage.balance as number;
     const totalMb = customer!.features.mb_storage.included_usage as number;
