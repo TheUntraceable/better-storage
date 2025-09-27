@@ -429,7 +429,7 @@ export function FilesTable({
                                         upload.storageId
                                     );
                                     const fileName = upload.name;
-                                    const fileType = getFileType(upload.link);
+                                    const fileType = getFileType(upload.link, upload.contentType);
 
                                     return (
                                         <TableRow
