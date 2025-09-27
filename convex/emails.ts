@@ -24,7 +24,7 @@ export const sendInviteEmail = internalMutation({
                 to: email,
                 subject: "You've been invited to view a file",
                 html: `<p>You've been invited to view a ${fileName} from ${from}. Click the link below to access it:</p>
-                <p><a href="https://better-storage.untraceable.dev/invites/${inviteId}">View File</a></p>
+                <p><a href="https://better-storage.untraceable.dev/invite/${inviteId}">View File</a></p>
                 <p>If you did not expect this email, you can ignore it.</p>
                 `,
             });
