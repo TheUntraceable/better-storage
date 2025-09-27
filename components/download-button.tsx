@@ -6,23 +6,26 @@ import { Download } from "lucide-react";
 
 export const DownloadButton = ({
     invite,
+    isIconOnly,
 }: {
     invite: { link: string; fileName: string };
+    isIconOnly?: boolean;
 }) => {
     return (
         <Button
             className="flex-1"
-            color="primary"
+            isIconOnly={isIconOnly}
             onPress={async () => {
                 await downloadFile({
                     name: invite.fileName,
                     link: invite.link,
                 });
             }}
-            startContent={<Download className="mr-2 h-4 w-4" />}
-            variant="shadow"
+            size={isIconOnly ? "sm" : "md"}
+            startContent={!isIconOnly && <Download className="mr-2 h-4 w-4" />}
+            variant="faded"
         >
-            Download File
+            {isIconOnly ? <Download className="h-4 w-4" /> : "Download File"}
         </Button>
     );
 };

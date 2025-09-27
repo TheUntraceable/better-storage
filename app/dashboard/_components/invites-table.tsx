@@ -367,7 +367,7 @@ export function InvitesTable({
                                                         variant: "faded",
                                                         isIconOnly: true,
                                                     })}
-                                                    href={invite.link}
+                                                    href={`${window.origin}/invite/${invite._id}`}
                                                     isDisabled={isDeleting}
                                                     title="View file"
                                                 >

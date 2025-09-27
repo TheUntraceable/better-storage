@@ -604,6 +604,7 @@ export function FilesTable({
                                                             fileName:
                                                                 upload.name,
                                                         }}
+                                                        isIconOnly
                                                     />
                                                     <Button
                                                         isIconOnly
