@@ -6,6 +6,7 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -14,6 +15,7 @@ import { requireSession } from "@/lib/session";
 import { FileUploader } from "./_components/file-uploader";
 import { FilesTable } from "./_components/files-table";
 import { InvitesTable } from "./_components/invites-table";
+import { UpgradeSubscription } from "./_components/upgrade-subscription";
 
 export default async function DashboardPage() {
     const user = await requireSession();
@@ -58,6 +60,9 @@ export default async function DashboardPage() {
                         value={totalMb - mbRemaining!}
                     />
                 </CardContent>
+                <CardFooter>
+                    <UpgradeSubscription />
+                </CardFooter>
             </Card>
             <Card>
                 <CardHeader>
