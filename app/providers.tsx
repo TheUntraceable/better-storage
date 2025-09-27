@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import type { ThemeProviderProps } from "next-themes";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type * as React from "react";
+import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 
 export type ProvidersProps = {
@@ -36,6 +37,7 @@ export const Providers = ({ children, themeProps }: ProvidersProps) => {
         <AutumnProvider
             betterAuthUrl="https://dev.untraceable.dev"
             convex={convex}
+            convexApi={api}
             includeCredentials
         >
             <ConvexBetterAuthProvider authClient={authClient} client={convex}>

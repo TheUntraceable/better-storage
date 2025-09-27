@@ -1,7 +1,9 @@
 import { APIError } from "better-auth";
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { internalAction, mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
+import { autumn } from "./autumn";
 import type { Id } from "./betterAuth/_generated/dataModel";
 
 export const generateLink = mutation({
@@ -16,10 +18,29 @@ export const generateLink = mutation({
     },
 });
 
+export const trackUsage = internalAction({
+    args: {
+        size: v.number(),
+        customerEmail: v.string(),
+        userId: v.string()
+    },
+    handler: async (ctx, { size, customerEmail, userId }) => {
+        await autumn.track(
+            { ...ctx, user: { subject: userId, email: customerEmail } }, {
+            featureId: "mb_storage",
+            value: size / (1024 * 1024), // size in MB
+            customerData: {
+                email: customerEmail,
+            },
+        });
+    },
+});
+
 export const store = mutation({
     args: {
         storageId: v.id("_storage"),
     },
+
     async handler(ctx, { storageId }) {
         const user = await authComponent.safeGetAuthUser(ctx);
         if (!user) {
@@ -48,6 +69,12 @@ export const store = mutation({
             size: metadata.size || 0,
             contentType: metadata.contentType || "",
         });
+
+        await ctx.scheduler.runAfter(0, internal.storage.trackUsage, {
+            size: metadata.size,
+            customerEmail: user.email,
+            userId: user._id
+        })
     },
 });
 

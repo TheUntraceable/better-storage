@@ -1,12 +1,18 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Download, Eye, FileIcon, Mail, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
 interface InvitePageProps {
     params: {
@@ -15,8 +21,8 @@ interface InvitePageProps {
 }
 
 export default function InvitePage({ params }: InvitePageProps) {
-    const invite = useQuery(api.invites.get, { 
-        inviteId: params.inviteId as Id<"invites"> 
+    const invite = useQuery(api.invites.get, {
+        inviteId: params.inviteId as Id<"invites">,
     });
 
     if (invite === undefined) {
@@ -24,7 +30,7 @@ export default function InvitePage({ params }: InvitePageProps) {
             <div className="container mx-auto px-4 py-8">
                 <Card className="mx-auto max-w-md">
                     <CardContent className="flex items-center justify-center p-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <div className="h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
                     </CardContent>
                 </Card>
             </div>
@@ -36,13 +42,15 @@ export default function InvitePage({ params }: InvitePageProps) {
             <div className="container mx-auto px-4 py-8">
                 <Card className="mx-auto max-w-md border-destructive">
                     <CardHeader>
-                        <CardTitle className="text-destructive">Invite Not Found</CardTitle>
+                        <CardTitle className="text-destructive">
+                            Invite Not Found
+                        </CardTitle>
                         <CardDescription>
                             This invite link is invalid or has expired.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <Button asChild variant="outline" className="w-full">
+                        <Button asChild className="w-full" variant="outline">
                             <a href="/">Go to Homepage</a>
                         </Button>
                     </CardContent>
@@ -62,7 +70,8 @@ export default function InvitePage({ params }: InvitePageProps) {
                             You've been invited to view a file
                         </CardTitle>
                         <CardDescription>
-                            Someone has shared a file with you through our secure file sharing system.
+                            Someone has shared a file with you through our
+                            secure file sharing system.
                         </CardDescription>
                     </CardHeader>
                 </Card>
@@ -76,18 +85,20 @@ export default function InvitePage({ params }: InvitePageProps) {
                                 Shared File
                             </span>
                             <Badge variant="secondary">
-                                <Mail className="h-3 w-3 mr-1" />
-                                {invite.emails.length} recipient{invite.emails.length !== 1 ? 's' : ''}
+                                <Mail className="mr-1 h-3 w-3" />
+                                {invite.emails.length} recipient
+                                {invite.emails.length !== 1 ? "s" : ""}
                             </Badge>
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {/* File Preview/Info */}
-                        <div className="flex items-center justify-center p-8 bg-muted rounded-lg">
-                            <div className="text-center space-y-2">
-                                <FileIcon className="h-12 w-12 mx-auto text-muted-foreground" />
-                                <p className="text-sm text-muted-foreground">
-                                    Click the buttons below to view or download the file
+                        <div className="flex items-center justify-center rounded-lg bg-muted p-8">
+                            <div className="space-y-2 text-center">
+                                <FileIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+                                <p className="text-muted-foreground text-sm">
+                                    Click the buttons below to view or download
+                                    the file
                                 </p>
                             </div>
                         </div>
@@ -95,29 +106,39 @@ export default function InvitePage({ params }: InvitePageProps) {
                         {/* Action Buttons */}
                         <div className="flex gap-3">
                             <Button asChild className="flex-1" size="lg">
-                                <a 
-                                    href={invite.link} 
-                                    target="_blank" 
+                                <a
+                                    href={invite.link}
                                     rel="noopener noreferrer"
+                                    target="_blank"
                                 >
-                                    <Eye className="h-4 w-4 mr-2" />
+                                    <Eye className="mr-2 h-4 w-4" />
                                     Preview File
                                 </a>
                             </Button>
-                            
-                            <Button asChild variant="outline" className="flex-1" size="lg">
-                                <a href={invite.link} download>
-                                    <Download className="h-4 w-4 mr-2" />
+
+                            <Button
+                                asChild
+                                className="flex-1"
+                                size="lg"
+                                variant="outline"
+                            >
+                                <a download href={invite.link}>
+                                    <Download className="mr-2 h-4 w-4" />
                                     Download File
                                 </a>
                             </Button>
                         </div>
 
                         {/* Invite Info */}
-                        <div className="pt-4 border-t space-y-2">
-                            <div className="text-xs text-muted-foreground">
-                                <p><strong>Shared with:</strong> {invite.emails.join(", ")}</p>
-                                <p><strong>File ID:</strong> {invite._id}</p>
+                        <div className="space-y-2 border-t pt-4">
+                            <div className="text-muted-foreground text-xs">
+                                <p>
+                                    <strong>Shared with:</strong>{" "}
+                                    {invite.emails.join(", ")}
+                                </p>
+                                <p>
+                                    <strong>File ID:</strong> {invite._id}
+                                </p>
                             </div>
                         </div>
                     </CardContent>
@@ -126,9 +147,13 @@ export default function InvitePage({ params }: InvitePageProps) {
                 {/* Footer */}
                 <Card className="border-dashed">
                     <CardContent className="p-6 text-center">
-                        <p className="text-sm text-muted-foreground">
-                            Want to share files like this? 
-                            <Button asChild variant="link" className="p-0 ml-1 h-auto">
+                        <p className="text-muted-foreground text-sm">
+                            Want to share files like this?
+                            <Button
+                                asChild
+                                className="ml-1 h-auto p-0"
+                                variant="link"
+                            >
                                 <a href="/">Create your account</a>
                             </Button>
                         </p>

@@ -1,4 +1,18 @@
 "use client";
+import { useMutation, useQuery } from "convex/react";
+import {
+    ArrowUpDown,
+    Download,
+    Eye,
+    FileIcon,
+    FileTextIcon,
+    Filter,
+    ImageIcon,
+    Search,
+    Share,
+    Trash2,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,20 +34,6 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
-import {
-    ArrowUpDown,
-    Download,
-    Eye,
-    FileIcon,
-    FileTextIcon,
-    Filter,
-    ImageIcon,
-    Search,
-    Share,
-    Trash2,
-} from "lucide-react";
-import { useMemo, useState } from "react";
 import { InviteDialog } from "./invite-dialog";
 
 interface Upload {
@@ -62,7 +62,8 @@ export function FilesTable() {
         new Set()
     );
     const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-    const [selectedFileForInvite, setSelectedFileForInvite] = useState<Upload | null>(null);
+    const [selectedFileForInvite, setSelectedFileForInvite] =
+        useState<Upload | null>(null);
 
     // Helper functions
     const getFileType = (url: string): FileType => {
@@ -233,228 +234,243 @@ export function FilesTable() {
 
     return (
         <>
-        <Card>
-            {/* Search and Filter Header */}
-            <CardHeader className="space-y-4">
-                <CardTitle className="flex items-center justify-between">
-                    <span>Files ({filteredAndSortedUploads.length})</span>
-                    <Badge variant="secondary">{uploads.length} total</Badge>
-                </CardTitle>
+            <Card>
+                {/* Search and Filter Header */}
+                <CardHeader className="space-y-4">
+                    <CardTitle className="flex items-center justify-between">
+                        <span>Files ({filteredAndSortedUploads.length})</span>
+                        <Badge variant="secondary">
+                            {uploads.length} total
+                        </Badge>
+                    </CardTitle>
 
-                <div className="flex flex-wrap gap-4">
-                    {/* Search Input */}
-                    <div className="relative min-w-[200px] flex-1">
-                        <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
-                        <Input
-                            className="pl-10"
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search files..."
-                            value={searchTerm}
-                        />
+                    <div className="flex flex-wrap gap-4">
+                        {/* Search Input */}
+                        <div className="relative min-w-[200px] flex-1">
+                            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
+                            <Input
+                                className="pl-10"
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search files..."
+                                value={searchTerm}
+                            />
+                        </div>
+
+                        {/* File Type Filter */}
+                        <Select
+                            onValueChange={(value: FileType) =>
+                                setFileTypeFilter(value)
+                            }
+                            value={fileTypeFilter}
+                        >
+                            <SelectTrigger className="w-[150px]">
+                                <Filter className="mr-2 h-4 w-4" />
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All types</SelectItem>
+                                <SelectItem value="image">Images</SelectItem>
+                                <SelectItem value="pdf">PDFs</SelectItem>
+                                <SelectItem value="document">
+                                    Documents
+                                </SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
+                </CardHeader>
 
-                    {/* File Type Filter */}
-                    <Select
-                        onValueChange={(value: FileType) =>
-                            setFileTypeFilter(value)
-                        }
-                        value={fileTypeFilter}
-                    >
-                        <SelectTrigger className="w-[150px]">
-                            <Filter className="mr-2 h-4 w-4" />
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All types</SelectItem>
-                            <SelectItem value="image">Images</SelectItem>
-                            <SelectItem value="pdf">PDFs</SelectItem>
-                            <SelectItem value="document">Documents</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </CardHeader>
-
-            {/* Table */}
-            <CardContent>
-                <div className="rounded-md border">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[50px]">Type</TableHead>
-                                <TableHead>
-                                    <Button
-                                        className="h-auto p-0 font-medium"
-                                        onClick={() => handleSort("name")}
-                                        size="sm"
-                                        variant="ghost"
-                                    >
-                                        Name
-                                        <ArrowUpDown className="ml-2 h-3 w-3" />
-                                    </Button>
-                                </TableHead>
-                                <TableHead className="w-[100px]">
-                                    <Button
-                                        className="h-auto p-0 font-medium"
-                                        onClick={() => handleSort("type")}
-                                        size="sm"
-                                        variant="ghost"
-                                    >
+                {/* Table */}
+                <CardContent>
+                    <div className="rounded-md border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[50px]">
                                         Type
-                                        <ArrowUpDown className="ml-2 h-3 w-3" />
-                                    </Button>
-                                </TableHead>
-                                <TableHead className="w-[80px]">
-                                    <Button
-                                        className="h-auto p-0 font-medium"
-                                        onClick={() => handleSort("size")}
-                                        size="sm"
-                                        variant="ghost"
-                                    >
-                                        Size
-                                        <ArrowUpDown className="ml-2 h-3 w-3" />
-                                    </Button>
-                                </TableHead>
-                                <TableHead className="w-[120px]">
-                                    <Button
-                                        className="h-auto p-0 font-medium"
-                                        onClick={() => handleSort("date")}
-                                        size="sm"
-                                        variant="ghost"
-                                    >
-                                        Date
-                                        <ArrowUpDown className="ml-2 h-3 w-3" />
-                                    </Button>
-                                </TableHead>
-                                <TableHead className="w-[150px]">
-                                    Actions
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredAndSortedUploads.map((upload) => {
-                                const isDeleting = deletingIds.has(
-                                    upload.storageId
-                                );
-                                const fileName = getFileName(
-                                    upload.link,
-                                    upload.storageId
-                                );
-                                const fileType = getFileType(upload.link);
+                                    </TableHead>
+                                    <TableHead>
+                                        <Button
+                                            className="h-auto p-0 font-medium"
+                                            onClick={() => handleSort("name")}
+                                            size="sm"
+                                            variant="ghost"
+                                        >
+                                            Name
+                                            <ArrowUpDown className="ml-2 h-3 w-3" />
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead className="w-[100px]">
+                                        <Button
+                                            className="h-auto p-0 font-medium"
+                                            onClick={() => handleSort("type")}
+                                            size="sm"
+                                            variant="ghost"
+                                        >
+                                            Type
+                                            <ArrowUpDown className="ml-2 h-3 w-3" />
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead className="w-[80px]">
+                                        <Button
+                                            className="h-auto p-0 font-medium"
+                                            onClick={() => handleSort("size")}
+                                            size="sm"
+                                            variant="ghost"
+                                        >
+                                            Size
+                                            <ArrowUpDown className="ml-2 h-3 w-3" />
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead className="w-[120px]">
+                                        <Button
+                                            className="h-auto p-0 font-medium"
+                                            onClick={() => handleSort("date")}
+                                            size="sm"
+                                            variant="ghost"
+                                        >
+                                            Date
+                                            <ArrowUpDown className="ml-2 h-3 w-3" />
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead className="w-[150px]">
+                                        Actions
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredAndSortedUploads.map((upload) => {
+                                    const isDeleting = deletingIds.has(
+                                        upload.storageId
+                                    );
+                                    const fileName = getFileName(
+                                        upload.link,
+                                        upload.storageId
+                                    );
+                                    const fileType = getFileType(upload.link);
 
-                                return (
-                                    <TableRow
-                                        className={
-                                            isDeleting ? "opacity-50" : ""
-                                        }
-                                        key={upload._id}
-                                    >
-                                        <TableCell>
-                                            {getFileIcon(upload.link)}
-                                        </TableCell>
-                                        <TableCell className="font-medium">
-                                            <div className="flex flex-col">
-                                                <span
-                                                    className="max-w-[200px] truncate"
-                                                    title={fileName}
-                                                >
-                                                    {fileName}
-                                                </span>
-                                                <span className="text-muted-foreground text-xs">
-                                                    {upload.storageId.slice(-8)}
-                                                </span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge
-                                                className="capitalize"
-                                                variant="outline"
-                                            >
-                                                {fileType}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground text-sm">
-                                            {formatFileSize(upload)}
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground text-sm">
-                                            {new Date(
-                                                upload._creationTime
-                                            ).toLocaleDateString()}
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex gap-1">
-                                                <Button
-                                                    asChild
-                                                    size="sm"
-                                                    title="Preview file"
-                                                    variant="ghost"
-                                                >
-                                                    <a
-                                                        href={upload.link}
-                                                        rel="noopener noreferrer"
-                                                        target="_blank"
+                                    return (
+                                        <TableRow
+                                            className={
+                                                isDeleting ? "opacity-50" : ""
+                                            }
+                                            key={upload._id}
+                                        >
+                                            <TableCell>
+                                                {getFileIcon(upload.link)}
+                                            </TableCell>
+                                            <TableCell className="font-medium">
+                                                <div className="flex flex-col">
+                                                    <span
+                                                        className="max-w-[200px] truncate"
+                                                        title={fileName}
                                                     >
-                                                        <Eye className="h-3 w-3" />
-                                                    </a>
-                                                </Button>
-
-                                                <Button
-                                                    asChild
-                                                    size="sm"
-                                                    title="Download file"
-                                                    variant="ghost"
+                                                        {fileName}
+                                                    </span>
+                                                    <span className="text-muted-foreground text-xs">
+                                                        {upload.storageId.slice(
+                                                            -8
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge
+                                                    className="capitalize"
+                                                    variant="outline"
                                                 >
-                                                    <a
-                                                        download
-                                                        href={upload.link}
+                                                    {fileType}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground text-sm">
+                                                {formatFileSize(upload)}
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground text-sm">
+                                                {new Date(
+                                                    upload._creationTime
+                                                ).toLocaleDateString()}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex gap-1">
+                                                    <Button
+                                                        asChild
+                                                        size="sm"
+                                                        title="Preview file"
+                                                        variant="ghost"
                                                     >
-                                                        <Download className="h-3 w-3" />
-                                                    </a>
-                                                </Button>
+                                                        <a
+                                                            href={upload.link}
+                                                            rel="noopener noreferrer"
+                                                            target="_blank"
+                                                        >
+                                                            <Eye className="h-3 w-3" />
+                                                        </a>
+                                                    </Button>
 
-                                                <Button
-                                                    size="sm"
-                                                    title="Share file"
-                                                    variant="ghost"
-                                                    onClick={() => handleOpenInviteDialog(upload)}
-                                                >
-                                                    <Share className="h-3 w-3" />
-                                                </Button>
+                                                    <Button
+                                                        asChild
+                                                        size="sm"
+                                                        title="Download file"
+                                                        variant="ghost"
+                                                    >
+                                                        <a
+                                                            download
+                                                            href={upload.link}
+                                                        >
+                                                            <Download className="h-3 w-3" />
+                                                        </a>
+                                                    </Button>
 
-                                                <Button
-                                                    className="text-destructive hover:text-destructive"
-                                                    disabled={isDeleting}
-                                                    onClick={() =>
-                                                        handleDelete(
-                                                            upload.storageId
-                                                        )
-                                                    }
-                                                    size="sm"
-                                                    title="Delete file"
-                                                    variant="ghost"
-                                                >
-                                                    <Trash2 className="h-3 w-3" />
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </div>
-            </CardContent>
-        </Card>
-        
-        {/* Invite Dialog */}
-        {selectedFileForInvite && (
-            <InviteDialog
-                isOpen={inviteDialogOpen}
-                onClose={handleCloseInviteDialog}
-                upload={selectedFileForInvite}
-                fileName={getFileName(selectedFileForInvite.link, selectedFileForInvite.storageId)}
-            />
-        )}
+                                                    <Button
+                                                        onClick={() =>
+                                                            handleOpenInviteDialog(
+                                                                upload
+                                                            )
+                                                        }
+                                                        size="sm"
+                                                        title="Share file"
+                                                        variant="ghost"
+                                                    >
+                                                        <Share className="h-3 w-3" />
+                                                    </Button>
+
+                                                    <Button
+                                                        className="text-destructive hover:text-destructive"
+                                                        disabled={isDeleting}
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                upload.storageId
+                                                            )
+                                                        }
+                                                        size="sm"
+                                                        title="Delete file"
+                                                        variant="ghost"
+                                                    >
+                                                        <Trash2 className="h-3 w-3" />
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Invite Dialog */}
+            {selectedFileForInvite && (
+                <InviteDialog
+                    fileName={getFileName(
+                        selectedFileForInvite.link,
+                        selectedFileForInvite.storageId
+                    )}
+                    isOpen={inviteDialogOpen}
+                    onClose={handleCloseInviteDialog}
+                    upload={selectedFileForInvite}
+                />
+            )}
         </>
     );
 }

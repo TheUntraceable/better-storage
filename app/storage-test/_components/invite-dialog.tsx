@@ -1,5 +1,8 @@
 "use client";
 
+import { useMutation } from "convex/react";
+import { AlertCircle, Check, Copy, Mail, Plus, Users, X } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
-import { AlertCircle, Check, Copy, Mail, Plus, Users, X } from "lucide-react";
-import { useState } from "react";
 
 interface InviteDialogProps {
     isOpen: boolean;
@@ -29,7 +29,12 @@ interface InviteDialogProps {
     fileName: string;
 }
 
-export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialogProps) {
+export function InviteDialog({
+    isOpen,
+    onClose,
+    upload,
+    fileName,
+}: InviteDialogProps) {
     const [emails, setEmails] = useState<string>("");
     const [emailList, setEmailList] = useState<string[]>([]);
     const [isCreating, setIsCreating] = useState(false);
@@ -41,7 +46,7 @@ export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialog
     const handleAddEmail = () => {
         const email = emails.trim();
         if (!email) return;
-        
+
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -54,13 +59,13 @@ export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialog
             return;
         }
 
-        setEmailList(prev => [...prev, email]);
+        setEmailList((prev) => [...prev, email]);
         setEmails("");
         setError(null);
     };
 
     const handleRemoveEmail = (emailToRemove: string) => {
-        setEmailList(prev => prev.filter(email => email !== emailToRemove));
+        setEmailList((prev) => prev.filter((email) => email !== emailToRemove));
     };
 
     const handleCreateInvite = async () => {
@@ -76,14 +81,18 @@ export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialog
             const inviteId = await createInvite({
                 storageId: upload.storageId,
                 emails: emailList,
-                link: upload.link
+                link: upload.link,
             });
 
             // Create a shareable link (you'd replace this with your actual domain)
             const inviteLink = `${window.location.origin}/invite/${inviteId}`;
             setCreatedInvite(inviteLink);
         } catch (error) {
-            setError(error instanceof Error ? error.message : "Failed to create invite");
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Failed to create invite"
+            );
         } finally {
             setIsCreating(false);
         }
@@ -91,7 +100,7 @@ export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialog
 
     const handleCopyLink = async () => {
         if (!createdInvite) return;
-        
+
         try {
             await navigator.clipboard.writeText(createdInvite);
             setCopied(true);
@@ -120,7 +129,7 @@ export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialog
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleClose}>
+        <Dialog onOpenChange={handleClose} open={isOpen}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
@@ -128,37 +137,96 @@ export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialog
                         Share File
                     </DialogTitle>
                     <DialogDescription>
-                        Invite others to access "{fileName}" by email. They'll receive a secure link to view the file.
+                        Invite others to access "{fileName}" by email. They'll
+                        receive a secure link to view the file.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4">
                     {/* Error Display */}
                     {error && (
-                        <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+                        <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-destructive text-sm">
                             <AlertCircle className="h-4 w-4" />
                             {error}
                         </div>
                     )}
 
-                    {!createdInvite ? (
+                    {createdInvite ? (
+                        /* Created Invite Link */
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                                <Mail className="h-4 w-4 text-green-500" />
+                                <span className="font-medium text-sm">
+                                    Invite Created Successfully!
+                                </span>
+                                <Badge
+                                    className="text-green-600"
+                                    variant="outline"
+                                >
+                                    {emailList.length} recipient
+                                    {emailList.length !== 1 ? "s" : ""}
+                                </Badge>
+                            </div>
+
+                            <div className="space-y-3 rounded-lg bg-muted p-3">
+                                <div className="space-y-1">
+                                    <Label className="text-xs">
+                                        Share this link:
+                                    </Label>
+                                    <div className="flex gap-2">
+                                        <Input
+                                            className="font-mono text-xs"
+                                            onClick={(e) =>
+                                                e.currentTarget.select()
+                                            }
+                                            readOnly
+                                            value={createdInvite}
+                                        />
+                                        <Button
+                                            onClick={handleCopyLink}
+                                            size="sm"
+                                            variant="outline"
+                                        >
+                                            {copied ? (
+                                                <Check className="h-3 w-3 text-green-500" />
+                                            ) : (
+                                                <Copy className="h-3 w-3" />
+                                            )}
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                <div className="text-muted-foreground text-xs">
+                                    <p>📧 Invited: {emailList.join(", ")}</p>
+                                    <p>
+                                        🔗 Anyone with this link can access the
+                                        file
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
                         <>
                             {/* Email Input */}
                             <div className="space-y-2">
-                                <Label htmlFor="email">Add email addresses</Label>
+                                <Label htmlFor="email">
+                                    Add email addresses
+                                </Label>
                                 <div className="flex gap-2">
                                     <Input
-                                        id="email"
-                                        type="email"
-                                        placeholder="user@example.com"
-                                        value={emails}
-                                        onChange={(e) => setEmails(e.target.value)}
-                                        onKeyPress={handleKeyPress}
                                         disabled={isCreating}
+                                        id="email"
+                                        onChange={(e) =>
+                                            setEmails(e.target.value)
+                                        }
+                                        onKeyPress={handleKeyPress}
+                                        placeholder="user@example.com"
+                                        type="email"
+                                        value={emails}
                                     />
-                                    <Button 
-                                        onClick={handleAddEmail}
+                                    <Button
                                         disabled={!emails.trim() || isCreating}
+                                        onClick={handleAddEmail}
                                         size="sm"
                                     >
                                         <Plus className="h-4 w-4" />
@@ -169,15 +237,23 @@ export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialog
                             {/* Email List */}
                             {emailList.length > 0 && (
                                 <div className="space-y-2">
-                                    <Label>Invited emails ({emailList.length})</Label>
-                                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                                    <Label>
+                                        Invited emails ({emailList.length})
+                                    </Label>
+                                    <div className="flex max-h-32 flex-wrap gap-2 overflow-y-auto">
                                         {emailList.map((email) => (
-                                            <Badge key={email} variant="secondary" className="flex items-center gap-1">
+                                            <Badge
+                                                className="flex items-center gap-1"
+                                                key={email}
+                                                variant="secondary"
+                                            >
                                                 {email}
                                                 <button
-                                                    onClick={() => handleRemoveEmail(email)}
                                                     className="ml-1 hover:text-destructive"
                                                     disabled={isCreating}
+                                                    onClick={() =>
+                                                        handleRemoveEmail(email)
+                                                    }
                                                 >
                                                     <X className="h-3 w-3" />
                                                 </button>
@@ -187,71 +263,32 @@ export function InviteDialog({ isOpen, onClose, upload, fileName }: InviteDialog
                                 </div>
                             )}
                         </>
-                    ) : (
-                        /* Created Invite Link */
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                                <Mail className="h-4 w-4 text-green-500" />
-                                <span className="text-sm font-medium">Invite Created Successfully!</span>
-                                <Badge variant="outline" className="text-green-600">
-                                    {emailList.length} recipient{emailList.length !== 1 ? 's' : ''}
-                                </Badge>
-                            </div>
-                            
-                            <div className="p-3 bg-muted rounded-lg space-y-3">
-                                <div className="space-y-1">
-                                    <Label className="text-xs">Share this link:</Label>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            value={createdInvite}
-                                            readOnly
-                                            className="text-xs font-mono"
-                                            onClick={(e) => e.currentTarget.select()}
-                                        />
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={handleCopyLink}
-                                        >
-                                            {copied ? (
-                                                <Check className="h-3 w-3 text-green-500" />
-                                            ) : (
-                                                <Copy className="h-3 w-3" />
-                                            )}
-                                        </Button>
-                                    </div>
-                                </div>
-                                
-                                <div className="text-xs text-muted-foreground">
-                                    <p>📧 Invited: {emailList.join(", ")}</p>
-                                    <p>🔗 Anyone with this link can access the file</p>
-                                </div>
-                            </div>
-                        </div>
                     )}
                 </div>
 
                 <DialogFooter>
-                    {!createdInvite ? (
+                    {createdInvite ? (
+                        <Button className="w-full" onClick={handleClose}>
+                            Done
+                        </Button>
+                    ) : (
                         <>
-                            <Button variant="outline" onClick={handleClose} disabled={isCreating}>
+                            <Button
+                                disabled={isCreating}
+                                onClick={handleClose}
+                                variant="outline"
+                            >
                                 Cancel
                             </Button>
                             <Button
-                                onClick={handleCreateInvite}
                                 disabled={emailList.length === 0 || isCreating}
+                                onClick={handleCreateInvite}
                             >
-                                {isCreating ? (
-                                    "Creating invite..."
-                                ) : (
-                                    `Create Invite (${emailList.length})`
-                                )}
+                                {isCreating
+                                    ? "Creating invite..."
+                                    : `Create Invite (${emailList.length})`}
                             </Button>
                         </>
-                    ) : (
-                        <Button onClick={handleClose} className="w-full">
-                            Done
-                        </Button>
                     )}
                 </DialogFooter>
             </DialogContent>
