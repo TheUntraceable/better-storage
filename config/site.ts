@@ -1,6 +1,6 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-    name: "Create Untraceable Stack",
-    description: "Get up and running fast with Untraceable Stack.",
+    name: "Better Files",
+    description: "The better way to share and store files.",
 };

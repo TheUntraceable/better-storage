@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@heroui/button";
-import { GithubIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useLoadingCallback } from "@/lib/hooks/use-loading-callback";
+import { GithubIcon, Loader2 } from "lucide-react";
 
 export function GithubLoginButton() {
     const [handleSignIn, isLoading] = useLoadingCallback(async () => {
@@ -12,20 +12,24 @@ export function GithubLoginButton() {
                 provider: "github",
                 callbackURL: "/dashboard",
             });
-        } catch (error) {
-            console.error("GitHub sign-in failed:", error);
+        } catch {
+            // Silent error handling - user will see if sign-in fails
         }
     });
+
     return (
         <Button
-            color="default"
-            isLoading={isLoading}
-            onPress={handleSignIn}
-            radius="sm"
-            startContent={<GithubIcon />}
-            variant="shadow"
+            className="w-full bg-zinc-900 font-medium text-white shadow-lg transition-all hover:bg-zinc-800 hover:shadow-xl dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
+            disabled={isLoading}
+            onClick={handleSignIn}
+            size="lg"
         >
-            Login with Github
+            {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+                <GithubIcon className="mr-2 h-4 w-4" />
+            )}
+            {isLoading ? "Signing in..." : "Continue with GitHub"}
         </Button>
     );
 }

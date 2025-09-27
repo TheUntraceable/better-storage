@@ -41,7 +41,7 @@ const NotFound = () => {
                         })}
                         href="/"
                     >
-                        Go to Homepage
+                        Go Back Home
                     </Link>
                 </CardContent>
             </Card>
