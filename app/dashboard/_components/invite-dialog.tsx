@@ -175,9 +175,9 @@ export function InviteDialog({
             });
 
             const inviteLink =
-                // typeof window !== "undefined"
-                //     ? `${window.location.origin}/invite/${inviteId}`
-                `/invite/${inviteId}`;
+                typeof window !== "undefined"
+                    ? `${window.location.origin}/invite/${inviteId}`
+                    : `/invite/${inviteId}`;
             setCreatedInvite(inviteLink);
         } catch (createError) {
             showErrorToast("Failed to create invite", "Please try again.");

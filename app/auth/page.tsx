@@ -22,7 +22,7 @@ export default async function AuthPage() {
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 px-4 dark:from-zinc-800 dark:to-zinc-900">
             <div className="w-full max-w-md">
-                <Card className="border-0 bg-white/70 shadow-lg backdrop-blur-sm dark:bg-zinc-950/70">
+                <Card className="shadow-lg backdrop-blur-sm">
                     <CardHeader className="space-y-4 pb-8 text-center">
                         <CardTitle className="font-bold text-2xl text-zinc-900 dark:text-zinc-100">
                             Welcome Back
