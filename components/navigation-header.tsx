@@ -1,70 +1,161 @@
-"use client";
+import { getSession } from "@/lib/session";
+import { Button } from "@heroui/button";
+import { Link } from "@heroui/link";
+import {
+    Navbar,
+    NavbarBrand,
+    NavbarContent,
+    NavbarItem,
+    NavbarMenu,
+    NavbarMenuItem,
+    NavbarMenuToggle,
+} from "@heroui/navbar";
+import { FileText, Home, User } from "lucide-react";
+import NextLink from "next/link";
+import { SignOutButton } from "./sign-out-button";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { authClient } from "@/lib/auth-client";
-import { Home, LogOut, User } from "lucide-react";
-import Link from "next/link";
+export async function NavigationHeader() {
+    const session = await getSession();
 
-export function NavigationHeader() {
-    const { data: session } = authClient.useSession();
+    const menuItems = [
+        { name: "Home", href: "/" },
+        ...(session ? [{ name: "Dashboard", href: "/dashboard" }] : []),
+    ];
 
     return (
-        <Card className="rounded-none border-b">
-            <CardContent className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-6">
+        <Navbar
+            className="bg-background/70 backdrop-blur-md"
+            maxWidth="xl"
+            shouldHideOnScroll
+        >
+            {/* Brand */}
+            <NavbarBrand>
+                <NextLink className="flex items-center gap-2" href="/">
+                    <FileText className="h-6 w-6 text-primary" />
+                    <p className="font-bold text-inherit text-xl">
+                        Better Files
+                    </p>
+                </NextLink>
+            </NavbarBrand>
+
+            {/* Desktop Navigation */}
+            <NavbarContent className="hidden gap-4 sm:flex" justify="center">
+                <NavbarItem>
                     <Link
-                        className="flex items-center gap-2 font-bold text-xl"
+                        as={NextLink}
+                        className="flex items-center gap-2"
+                        color="foreground"
                         href="/"
                     >
-                        <span className="text-primary">Better Files</span>
+                        <Home className="h-4 w-4" />
+                        Home
                     </Link>
-
-                    <nav className="flex items-center gap-4">
+                </NavbarItem>
+                {session && (
+                    <NavbarItem>
                         <Link
-                            className="flex items-center gap-1 text-sm hover:text-primary"
-                            href="/"
+                            as={NextLink}
+                            className="flex items-center gap-2"
+                            color="foreground"
+                            href="/dashboard"
                         >
-                            <Home className="h-4 w-4" />
-                            Home
+                            <User className="h-4 w-4" />
+                            Dashboard
                         </Link>
-                        {session && (
-                            <Link
-                                className="flex items-center gap-1 text-sm hover:text-primary"
-                                href="/dashboard"
-                            >
-                                <User className="h-4 w-4" />
-                                Dashboard
-                            </Link>
-                        )}
-                    </nav>
-                </div>
+                    </NavbarItem>
+                )}
+            </NavbarContent>
 
-                <div className="flex items-center gap-4">
-                    {session ? (
+            {/* User Actions */}
+            <NavbarContent justify="end">
+                {session ? (
+                    <NavbarItem className="hidden lg:flex">
                         <div className="flex items-center gap-3">
-                            <span className="text-muted-foreground text-sm">
-                                {session.user.name || session.user.email}
-                            </span>
-                            <Button
-                                className="flex items-center gap-1"
-                                onClick={() => authClient.signOut()}
-                                size="sm"
-                                variant="outline"
-                            >
-                                <LogOut className="h-3 w-3" />
-                                Sign Out
-                            </Button>
+                            <div className="flex items-center gap-2">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground text-xs">
+                                    {(session.name || session.email || "??")
+                                        .split(" ")
+                                        .map((n) => n[0])
+                                        .join("")
+                                        .toUpperCase()
+                                        .slice(0, 2)}
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-medium text-sm">
+                                        {session.name || session.email}
+                                    </span>
+                                </div>
+                            </div>
+                            <SignOutButton />
                         </div>
-                    ) : (
-                        <Link href="/auth">
-                            <Button size="sm" variant="default">
-                                Sign In
-                            </Button>
+                    </NavbarItem>
+                ) : (
+                    <NavbarItem>
+                        <Button
+                            as={NextLink}
+                            color="primary"
+                            href="/auth"
+                            size="sm"
+                            variant="flat"
+                        >
+                            Sign In
+                        </Button>
+                    </NavbarItem>
+                )}
+                <NavbarMenuToggle
+                    aria-label="toggle navigation"
+                    className="sm:hidden"
+                />
+            </NavbarContent>
+
+            {/* Mobile Menu */}
+            <NavbarMenu>
+                {menuItems.map((item, index) => (
+                    <NavbarMenuItem key={`${item.name}-${index}`}>
+                        <Link
+                            as={NextLink}
+                            className="w-full"
+                            color="foreground"
+                            href={item.href}
+                            size="lg"
+                        >
+                            {item.name}
                         </Link>
-                    )}
-                </div>
-            </CardContent>
-        </Card>
+                    </NavbarMenuItem>
+                ))}
+                {session ? (
+                    <NavbarMenuItem>
+                        <div className="flex flex-col gap-3 pt-4">
+                            <div className="flex items-center gap-2">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground text-xs">
+                                    {(session.name || session.email || "??")
+                                        .split(" ")
+                                        .map((n) => n[0])
+                                        .join("")
+                                        .toUpperCase()
+                                        .slice(0, 2)}
+                                </div>
+                                <span className="font-medium text-sm">
+                                    {session.name || session.email}
+                                </span>
+                            </div>
+                            <SignOutButton />
+                        </div>
+                    </NavbarMenuItem>
+                ) : (
+                    <NavbarMenuItem>
+                        <Button
+                            as={NextLink}
+                            className="w-full"
+                            color="primary"
+                            href="/auth"
+                            variant="flat"
+                        >
+                            Sign In
+                        </Button>
+                    </NavbarMenuItem>
+                )}
+            </NavbarMenu>
+        </Navbar>
     );
 }
