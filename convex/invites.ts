@@ -60,6 +60,71 @@ export const get = query({
                 message: "Invite not found.",
             });
         }
+        if (!invite.emails.includes(user.email)) {
+            throw new APIError("FORBIDDEN", {
+                message: "You are not invited to this file.",
+            });
+        }
         return invite;
+    },
+});
+
+export const getMyInvites = query({
+    args: {},
+    handler: async (ctx) => {
+        const user = await authComponent.safeGetAuthUser(ctx);
+        if (!user) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "Not authenticated",
+            });
+        }
+        if (!user._id) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "User ID not found",
+            });
+        }
+
+        return await ctx.db
+            .query("invites")
+            .withIndex("by_ownerId", (q) => q.eq("ownerId", user._id))
+            .collect();
+    },
+});
+
+export const remove = mutation({
+    args: {
+        inviteId: v.id("invites"),
+    },
+    handler: async (ctx, { inviteId }) => {
+        const user = await authComponent.safeGetAuthUser(ctx);
+        if (!user) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "Not authenticated",
+            });
+        }
+        if (!user._id) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "User ID not found",
+            });
+        }
+
+        const invite = await ctx.db
+            .query("invites")
+            .withIndex("by_id", (q) => q.eq("_id", inviteId))
+            .first();
+
+        if (!invite) {
+            throw new APIError("NOT_FOUND", {
+                message: "Invite not found",
+            });
+        }
+
+        if (invite.ownerId !== user._id) {
+            throw new APIError("FORBIDDEN", {
+                message: "You can only delete your own invites",
+            });
+        }
+
+        await ctx.db.delete(inviteId);
     },
 });

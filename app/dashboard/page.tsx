@@ -10,9 +10,10 @@ import { requireSession } from "@/lib/session";
 import { Progress } from "@heroui/progress";
 import { Autumn as autumn } from "autumn-js";
 import { preloadQuery } from "convex/nextjs";
-import { ImageIcon, Upload } from "lucide-react";
+import { ImageIcon, Mail, Upload } from "lucide-react";
 import { FileUploader } from "./_components/file-uploader";
 import { FilesTable } from "./_components/files-table";
+import { InvitesTable } from "./_components/invites-table";
 
 export default async function DashboardPage() {
     const user = await requireSession();
@@ -25,6 +26,14 @@ export default async function DashboardPage() {
 
     const uploads = await preloadQuery(
         api.storage.get,
+        {},
+        {
+            token: user.token,
+        }
+    );
+
+    const invites = await preloadQuery(
+        api.invites.getMyInvites,
         {},
         {
             token: user.token,
@@ -80,6 +89,21 @@ export default async function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                     <FilesTable preloadedUploads={uploads} />
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Mail className="h-5 w-5" />
+                        Your Invites
+                    </CardTitle>
+                    <CardDescription>
+                        Manage the file sharing invites you've created. View who
+                        has access and revoke access when needed.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <InvitesTable preloadedInvites={invites} />
                 </CardContent>
             </Card>
         </div>
