@@ -15,9 +15,26 @@ export const autumn = new Autumn(components.autumn, {
             customerId: user.subject as string,
             customerData: {
                 email: user.email as string,
+                name: user.name as string,
             },
         };
     },
 });
 
-export const { track, check, ...rest } = autumn.api();
+export const {
+    track,
+    cancel,
+    query,
+    attach,
+    check,
+    checkout,
+    usage,
+    setupPayment,
+    createCustomer,
+    listProducts,
+    billingPortal,
+    createReferralCode,
+    redeemReferralCode,
+    createEntity,
+    getEntity,
+} = autumn.api();
