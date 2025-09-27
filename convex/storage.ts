@@ -91,9 +91,10 @@ export const trackUsage = internalAction({
 export const store = mutation({
     args: {
         storageId: v.id("_storage"),
+        name: v.string(),
     },
 
-    async handler(ctx, { storageId }) {
+    async handler(ctx, { storageId, name }) {
         const user = await authComponent.safeGetAuthUser(ctx);
         if (!user) {
             throw new APIError("UNAUTHORIZED", {
@@ -121,6 +122,7 @@ export const store = mutation({
             link,
             size: metadata.size || 0,
             contentType: metadata.contentType || "",
+            name,
         });
 
         await ctx.scheduler.runAfter(0, internal.storage.trackUsage, {
