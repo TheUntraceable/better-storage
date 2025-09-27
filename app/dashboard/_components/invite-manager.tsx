@@ -91,7 +91,7 @@ export function InviteManager({ storageId, fileLink }: InviteManagerProps) {
                     onClick={handleCreateInvite}
                 >
                     {isCreating ? (
-                        <>Creating invite...</>
+                        "Creating invite..."
                     ) : (
                         <>
                             <Plus className="mr-2 h-4 w-4" />

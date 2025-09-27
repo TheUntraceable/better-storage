@@ -474,7 +474,7 @@ export function FileUploader() {
         <div className="space-y-4">
             <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
                 <DialogTrigger asChild>
-                    <Button className="w-full" size="lg">
+                    <Button color="primary" fullWidth variant="shadow">
                         <Upload className="mr-2 h-4 w-4" />
                         Upload File
                     </Button>
@@ -564,7 +564,7 @@ export function FileUploader() {
                             <Button
                                 className="flex-1"
                                 color="primary"
-                                disabled={
+                                isDisabled={
                                     !(selectedFile && fileName.trim()) ||
                                     uploadState.isUploading ||
                                     !!fileNameError
@@ -583,7 +583,7 @@ export function FileUploader() {
                                 {uploadState.isUploading
                                     ? "Uploading..."
                                     : "Upload"}
-                            </Button>
+                        </Button>
                             <Button
                                 className="flex-1"
                                 disabled={uploadState.isUploading}

@@ -1,6 +1,5 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +19,9 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { Button } from "@heroui/button";
+import { Link } from "@heroui/link";
+import { button as buttonStyles } from "@heroui/theme";
 import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import {
     ArrowUpDown,
@@ -377,45 +379,53 @@ export function FilesTable({
                                     <TableHead>
                                         <Button
                                             className="h-auto p-0 font-medium"
-                                            onClick={() => handleSort("name")}
-                                            size="sm"
+                                            onPress={() => handleSort("name")}
+                                            radius="sm"
+                                            startContent={
+                                                <ArrowUpDown className="h-3 w-3" />
+                                            }
                                             variant="ghost"
                                         >
                                             Name
-                                            <ArrowUpDown className="ml-2 h-3 w-3" />
                                         </Button>
                                     </TableHead>
                                     <TableHead className="w-[100px]">
                                         <Button
                                             className="h-auto p-0 font-medium"
-                                            onClick={() => handleSort("type")}
-                                            size="sm"
+                                            onPress={() => handleSort("type")}
+                                            radius="sm"
+                                            startContent={
+                                                <ArrowUpDown className="h-3 w-3" />
+                                            }
                                             variant="ghost"
                                         >
                                             Type
-                                            <ArrowUpDown className="ml-2 h-3 w-3" />
                                         </Button>
                                     </TableHead>
                                     <TableHead className="w-[120px]">
                                         <Button
                                             className="h-auto p-0 font-medium"
-                                            onClick={() => handleSort("size")}
-                                            size="sm"
+                                            onPress={() => handleSort("size")}
+                                            radius="sm"
+                                            startContent={
+                                                <ArrowUpDown className="h-3 w-3" />
+                                            }
                                             variant="ghost"
                                         >
                                             Size
-                                            <ArrowUpDown className="ml-2 h-3 w-3" />
                                         </Button>
                                     </TableHead>
                                     <TableHead className="w-[120px]">
                                         <Button
                                             className="h-auto p-0 font-medium"
-                                            onClick={() => handleSort("date")}
-                                            size="sm"
+                                            onPress={() => handleSort("date")}
+                                            radius="sm"
+                                            startContent={
+                                                <ArrowUpDown className="ml-2 h-3 w-3" />
+                                            }
                                             variant="ghost"
                                         >
                                             Date
-                                            <ArrowUpDown className="ml-2 h-3 w-3" />
                                         </Button>
                                     </TableHead>
                                     <TableHead className="w-[150px]">
@@ -429,7 +439,10 @@ export function FilesTable({
                                         upload.storageId
                                     );
                                     const fileName = upload.name;
-                                    const fileType = getFileType(upload.link, upload.contentType);
+                                    const fileType = getFileType(
+                                        upload.link,
+                                        upload.contentType
+                                    );
 
                                     return (
                                         <TableRow
@@ -472,59 +485,87 @@ export function FilesTable({
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex gap-1">
-                                                    <Button
-                                                        asChild
-                                                        size="sm"
+                                                    <Link
+                                                        className={buttonStyles(
+                                                            {
+                                                                size: "sm",
+                                                                variant:
+                                                                    "faded",
+                                                                isIconOnly: true,
+                                                            }
+                                                        )}
+                                                        href={upload.link}
+                                                        isDisabled={isDeleting}
                                                         title="Preview file"
-                                                        variant="ghost"
                                                     >
-                                                        <a
-                                                            href={upload.link}
-                                                            rel="noopener noreferrer"
-                                                            target="_blank"
-                                                        >
-                                                            <Eye className="h-3 w-3" />
-                                                        </a>
-                                                    </Button>
+                                                        <Eye className="h-3 w-3" />
+                                                    </Link>
 
                                                     <Button
-                                                        asChild
+                                                        isIconOnly
+                                                        onPress={async () => {
+                                                            const blob =
+                                                                await fetch(
+                                                                    upload.link
+                                                                ).then((res) =>
+                                                                    res.blob()
+                                                                );
+
+                                                            const link =
+                                                                document.createElement(
+                                                                    "a"
+                                                                );
+                                                            link.href =
+                                                                URL.createObjectURL(
+                                                                    blob
+                                                                );
+                                                            link.download =
+                                                                upload.name;
+
+                                                            document.body.appendChild(
+                                                                link
+                                                            );
+
+                                                            link.click();
+
+                                                            document.body.removeChild(
+                                                                link
+                                                            );
+                                                        }}
                                                         size="sm"
                                                         title="Download file"
-                                                        variant="ghost"
+                                                        variant="faded"
                                                     >
-                                                        <a
-                                                            download
-                                                            href={upload.link}
-                                                        >
-                                                            <Download className="h-3 w-3" />
-                                                        </a>
+                                                        <Download className="h-3 w-3" />
                                                     </Button>
 
                                                     <Button
-                                                        onClick={() =>
+                                                        isIconOnly
+                                                        onPress={() =>
                                                             handleOpenInviteDialog(
                                                                 upload
                                                             )
                                                         }
                                                         size="sm"
                                                         title="Share file"
-                                                        variant="ghost"
+                                                        variant="faded"
                                                     >
                                                         <Share className="h-3 w-3" />
                                                     </Button>
 
                                                     <Button
                                                         className="text-destructive hover:text-destructive"
-                                                        disabled={isDeleting}
-                                                        onClick={() =>
+                                                        color="danger"
+                                                        isDisabled={isDeleting}
+                                                        isIconOnly
+                                                        onPress={() =>
                                                             handleDelete(
                                                                 upload.storageId
                                                             )
                                                         }
                                                         size="sm"
                                                         title="Delete file"
-                                                        variant="ghost"
+                                                        variant="faded"
                                                     >
                                                         <Trash2 className="h-3 w-3" />
                                                     </Button>
