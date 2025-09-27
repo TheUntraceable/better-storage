@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@heroui/button";
+import { RainbowButton } from "@/components/ui/rainbow-button";
+import { Link } from "@heroui/link";
 
 export default function Home() {
     return (
@@ -16,10 +17,12 @@ export default function Home() {
                     user-friendly platform. Invite team members, manage access,
                     and collaborate seamlessly.
                 </p>
-                <div className="mb-12 flex flex-wrap justify-center gap-4">
-                    <Button color="primary" size="lg" variant="shadow">
-                        Get Started
-                    </Button>
+                <div className="mb-12 flex items-center justify-center">
+                    <RainbowButton asChild>
+                        <Link href="/auth" size="lg">
+                            Get Started
+                        </Link>
+                    </RainbowButton>
                 </div>
 
                 <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
@@ -30,7 +33,7 @@ export default function Home() {
                         <CardContent>
                             <p>
                                 No more 2010-era interfaces. Clean, modern
-                                design that your users will actually enjoy.
+                                design that you will actually enjoy.
                             </p>
                         </CardContent>
                     </Card>
@@ -40,8 +43,8 @@ export default function Home() {
                         </CardHeader>
                         <CardContent>
                             <p>
-                                Set up in minutes, not hours. OIDC compliance
-                                without the complexity.
+                                Get your files up and shared in minutes. No
+                                complex setup or configuration required.
                             </p>
                         </CardContent>
                     </Card>
