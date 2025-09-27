@@ -25,9 +25,9 @@ export async function NavigationHeader() {
     return (
         <Navbar
             className="bg-background/70 backdrop-blur-md"
+            isBordered
             maxWidth="2xl"
             shouldHideOnScroll
-            isBordered
         >
             {/* Brand */}
             <NavbarBrand>
@@ -97,7 +97,6 @@ export async function NavigationHeader() {
                             color="primary"
                             href="/auth"
                             size="sm"
-                            variant="flat"
                         >
                             Sign In
                         </Button>

@@ -116,8 +116,8 @@ export default async function InvitePage({ params }: InvitePageProps) {
                     <CardContent className="space-y-4">
                         <div className="flex items-center justify-center rounded-lg bg-muted p-8">
                             <div className="space-y-2 text-center">
-                                <FileIcon className="mx-auto h-12 w-12 text-muted-foreground" />
-                                <p className="text-muted-foreground text-sm">
+                                <FileIcon className="mx-auto h-12 w-12" />
+                                <p className="text-sm">
                                     Click the buttons below to view or download
                                     the file
                                 </p>
@@ -143,7 +143,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
                         </div>
 
                         <div className="space-y-2 border-t pt-4">
-                            <div className="text-muted-foreground text-xs">
+                            <div className="text-xs">
                                 <p>
                                     <strong>Shared with:</strong>{" "}
                                     {invite.emails.join(", ")}
@@ -155,7 +155,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
 
                 <Card className="border-dashed">
                     <CardContent className="p-6 text-center">
-                        <p className="text-muted-foreground text-sm">
+                        <p className="text-sm">
                             Want to share files like this?
                             <Link className="ml-1 h-auto p-0" href="/dashboard">
                                 Go to the dashboard

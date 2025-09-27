@@ -26,7 +26,7 @@ export default function Home() {
                 </div>
 
                 <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
-                    <Card>
+                    <Card className="shadow-lg backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle>Beautiful UI</CardTitle>
                         </CardHeader>
@@ -37,7 +37,7 @@ export default function Home() {
                             </p>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className="shadow-lg backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle>Just Works</CardTitle>
                         </CardHeader>

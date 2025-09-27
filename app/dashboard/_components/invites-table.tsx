@@ -182,9 +182,9 @@ export function InvitesTable({
         return (
             <Card className="border-dashed">
                 <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                    <Mail className="mb-4 h-12 w-12 text-muted-foreground" />
+                    <Mail className="mb-4 h-12 w-12" />
                     <h3 className="mb-2 font-medium">No invites yet</h3>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-sm">
                         Share some files to create invites and see them here.
                     </p>
                 </CardContent>
@@ -212,7 +212,7 @@ export function InvitesTable({
                                 onValueChange={setSearchTerm}
                                 placeholder="Search invites..."
                                 startContent={
-                                    <Search className="h-4 w-4 transform text-muted-foreground" />
+                                    <Search className="h-4 w-4 transform" />
                                 }
                                 value={searchTerm}
                                 variant="faded"
@@ -223,11 +223,11 @@ export function InvitesTable({
 
                 <CardContent>
                     <div className="flex flex-col items-center justify-center p-12 text-center">
-                        <Search className="mb-4 h-12 w-12 text-muted-foreground" />
+                        <Search className="mb-4 h-12 w-12" />
                         <h3 className="mb-2 font-medium">
                             No matching invites
                         </h3>
-                        <p className="max-w-md text-muted-foreground text-sm">
+                        <p className="max-w-md text-sm">
                             No invites found matching "{searchTerm}". Try
                             adjusting your search terms.
                         </p>
@@ -260,7 +260,7 @@ export function InvitesTable({
                             onValueChange={setSearchTerm}
                             placeholder="Search invites..."
                             startContent={
-                                <Search className="h-4 w-4 transform text-muted-foreground" />
+                                <Search className="h-4 w-4 transform" />
                             }
                             value={searchTerm}
                             variant="faded"
@@ -345,16 +345,16 @@ export function InvitesTable({
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-2">
-                                                <Users className="h-3 w-3 text-muted-foreground" />
+                                                <Users className="h-3 w-3" />
                                                 <span className="text-sm">
                                                     {invite.emails.length}
                                                 </span>
-                                                <div className="max-w-[150px] truncate text-muted-foreground text-xs">
+                                                <div className="max-w-[150px] truncate text-xs">
                                                     {invite.emails.join(", ")}
                                                 </div>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="text-muted-foreground text-sm">
+                                        <TableCell className="text-sm">
                                             {new Date(
                                                 invite._creationTime
                                             ).toLocaleDateString()}

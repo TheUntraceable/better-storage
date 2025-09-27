@@ -320,9 +320,9 @@ export function FilesTable({
         return (
             <Card className="border-dashed">
                 <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                    <FileIcon className="mb-4 h-12 w-12 text-muted-foreground" />
+                    <FileIcon className="mb-4 h-12 w-12" />
                     <h3 className="mb-2 font-medium">No files yet</h3>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-sm">
                         Upload some files using the uploader above to see them
                         here.
                     </p>
@@ -351,7 +351,7 @@ export function FilesTable({
                                 onValueChange={setSearchTerm}
                                 placeholder="Search files..."
                                 startContent={
-                                    <Search className="h-4 w-4 transform text-muted-foreground" />
+                                    <Search className="h-4 w-4 transform" />
                                 }
                                 value={searchTerm}
                                 variant="faded"
@@ -385,9 +385,9 @@ export function FilesTable({
 
                 <CardContent>
                     <div className="flex flex-col items-center justify-center p-12 text-center">
-                        <Search className="mb-4 h-12 w-12 text-muted-foreground" />
+                        <Search className="mb-4 h-12 w-12" />
                         <h3 className="mb-2 font-medium">No matching files</h3>
-                        <p className="max-w-md text-muted-foreground text-sm">
+                        <p className="max-w-md text-sm">
                             {(() => {
                                 if (searchTerm) {
                                     return `No files found matching "${searchTerm}"`;
@@ -433,7 +433,7 @@ export function FilesTable({
                                 onValueChange={setSearchTerm}
                                 placeholder="Search files..."
                                 startContent={
-                                    <Search className="h-4 w-4 transform text-muted-foreground" />
+                                    <Search className="h-4 w-4 transform" />
                                 }
                                 value={searchTerm}
                                 variant="faded"
@@ -572,10 +572,10 @@ export function FilesTable({
                                                     {fileType}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="text-muted-foreground text-sm">
+                                            <TableCell className="text-sm">
                                                 {formatFileSize(upload.size)}
                                             </TableCell>
-                                            <TableCell className="text-muted-foreground text-sm">
+                                            <TableCell className="text-sm">
                                                 {new Date(
                                                     upload._creationTime
                                                 ).toLocaleDateString()}

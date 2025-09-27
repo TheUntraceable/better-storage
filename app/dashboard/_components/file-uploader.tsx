@@ -169,9 +169,7 @@ function UploadContent({
                     <p className="font-medium text-green-500 text-sm">
                         Upload Successful!
                     </p>
-                    <p className="text-muted-foreground text-xs">
-                        File saved to storage
-                    </p>
+                    <p className="text-xs">File saved to storage</p>
                 </div>
             </div>
         );
@@ -185,9 +183,7 @@ function UploadContent({
                     <p className="font-medium text-destructive text-sm">
                         Error selecting file
                     </p>
-                    <p className="text-muted-foreground text-xs">
-                        {uploadState.error}
-                    </p>
+                    <p className="text-xs">{uploadState.error}</p>
                 </div>
                 <Button onPress={onRetry} size="sm" variant="bordered">
                     Try Again
@@ -197,7 +193,7 @@ function UploadContent({
     }
 
     const Icon = isDragActive ? Upload : FileIcon;
-    const iconClass = isDragActive ? "text-primary" : "text-muted-foreground";
+    const iconClass = isDragActive ? "text-primary" : "";
 
     return (
         <div className="flex flex-col items-center space-y-2">
@@ -208,9 +204,7 @@ function UploadContent({
                         ? "Drop file here"
                         : "Drop file or click to browse"}
                 </p>
-                <p className="text-muted-foreground text-xs">
-                    Up to {FILE_LIMITS.MAX_SIZE_MB}MB
-                </p>
+                <p className="text-xs">Up to {FILE_LIMITS.MAX_SIZE_MB}MB</p>
             </div>
         </div>
     );
@@ -234,7 +228,7 @@ function FilePreviewComponent({ file, preview }: FilePreviewProps) {
                         </div>
                     ) : (
                         <div className="flex h-16 w-16 items-center justify-center rounded-lg border bg-muted">
-                            <FileIcon className="h-6 w-6 text-muted-foreground" />
+                            <FileIcon className="h-6 w-6" />
                         </div>
                     )}
                 </div>
@@ -247,9 +241,7 @@ function FilePreviewComponent({ file, preview }: FilePreviewProps) {
                     >
                         {file.name}
                     </p>
-                    <p className="text-muted-foreground text-xs">
-                        {formatFileSize(file.size)}
-                    </p>
+                    <p className="text-xs">{formatFileSize(file.size)}</p>
                 </div>
             </div>
         </div>
@@ -605,7 +597,7 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
             </Dialog>
 
             {/* Upload info */}
-            <div className="space-y-1 text-muted-foreground text-xs">
+            <div className="space-y-1 text-xs">
                 <p>
                     <strong>Max size:</strong> {FILE_LIMITS.MAX_SIZE_MB}MB
                 </p>
