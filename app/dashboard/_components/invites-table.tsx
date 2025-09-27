@@ -13,6 +13,7 @@ import {
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { showErrorToast, showSuccessToast } from "@/lib/toast";
+import { copyToClipboard } from "@/lib/utils";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
@@ -62,15 +63,6 @@ export function InvitesTable({
             return `${window.location.origin}/invite/${inviteId}`;
         }
         return `/invite/${inviteId}`;
-    }, []);
-
-    const copyToClipboard = useCallback(async (text: string) => {
-        try {
-            await navigator.clipboard.writeText(text);
-            // You could add a toast notification here if needed
-        } catch {
-            // Silently fail if clipboard access is not available
-        }
     }, []);
 
     const getFileNameFromLink = useCallback((link: string): string => {
@@ -393,7 +385,7 @@ export function InvitesTable({
                                                     isIconOnly
                                                     onPress={() => {
                                                         copyToClipboard(
-                                                            inviteLink
+                                                            invite.link
                                                         );
                                                         showSuccessToast(
                                                             "Link Copied!",
