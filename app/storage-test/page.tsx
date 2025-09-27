@@ -16,8 +16,6 @@ import { ImageGallery } from "../dashboard/_components/image-gallery";
 export default function StorageTestPage() {
     const { data: session, isPending } = authClient.useSession();
 
-    console.log("Session state:", { session, isPending });
-
     if (isPending) {
         return (
             <div className="container mx-auto px-4 py-8">

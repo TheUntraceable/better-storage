@@ -1,8 +1,5 @@
 "use client";
 
-import { useMutation } from "convex/react";
-import { Check, Copy, Mail, Plus, Users } from "lucide-react";
-import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { Check, Copy, Mail, Plus, Users } from "lucide-react";
+import { useState } from "react";
 
 interface InviteManagerProps {
     storageId: Id<"_storage">;
@@ -30,7 +30,9 @@ export function InviteManager({ storageId, fileLink }: InviteManagerProps) {
     const createInvite = useMutation(api.invites.create);
 
     const handleCreateInvite = async () => {
-        if (!emails.trim()) return;
+        if (!emails.trim()) {
+            return;
+        }
 
         try {
             setIsCreating(true);
@@ -57,7 +59,9 @@ export function InviteManager({ storageId, fileLink }: InviteManagerProps) {
     };
 
     const handleCopyLink = async () => {
-        if (!createdInvite) return;
+        if (!createdInvite) {
+            return;
+        }
 
         try {
             await navigator.clipboard.writeText(createdInvite);
