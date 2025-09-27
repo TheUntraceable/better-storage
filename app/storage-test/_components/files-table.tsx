@@ -1,18 +1,4 @@
 "use client";
-import { useMutation, useQuery } from "convex/react";
-import {
-    ArrowUpDown,
-    Download,
-    Eye,
-    FileIcon,
-    FileTextIcon,
-    Filter,
-    ImageIcon,
-    Search,
-    Share,
-    Trash2,
-} from "lucide-react";
-import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,9 +20,54 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
+import {
+    ArrowUpDown,
+    Download,
+    Eye,
+    FileIcon,
+    FileTextIcon,
+    Filter,
+    ImageIcon,
+    Search,
+    Share,
+    Trash2,
+} from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import { InviteDialog } from "./invite-dialog";
 
-interface Upload {
+// Constants
+const FILE_SIZE_CONSTANTS = {
+    BYTES_PER_KB: 1024,
+    DECIMAL_PLACES: 2,
+    SIZES: ["B", "KB", "MB", "GB", "TB"] as const,
+} as const;
+
+const FILE_TYPE_PATTERNS = {
+    IMAGE: {
+        extensions: /\.(jpg|jpeg|png|gif|webp|svg)$/i,
+        contentTypes: ["image"],
+    },
+    PDF: {
+        extensions: /\.pdf$/i,
+        contentTypes: ["pdf"],
+    },
+    DOCUMENT: {
+        extensions: /\.(doc|docx|txt|md)$/i,
+        contentTypes: ["text", "document"],
+    },
+} as const;
+
+const UI_CONSTANTS = {
+    STORAGE_ID_DISPLAY_LENGTH: 8,
+    MIN_SEARCH_WIDTH: 200,
+    FILTER_WIDTH: 150,
+    LOADING_SKELETON_ROWS: 5,
+    MAX_FILENAME_LENGTH: 200,
+} as const;
+
+// Types
+type Upload = {
     _id: Id<"uploads">;
     _creationTime: number;
     uploader: string;
@@ -44,20 +75,25 @@ interface Upload {
     link: string;
     size: number;
     contentType: string;
-}
+};
 
 type SortField = "name" | "type" | "date" | "size";
 type FileType = "all" | "image" | "pdf" | "document" | "other";
+type SortOrder = "asc" | "desc";
 
-export function FilesTable() {
-    const uploads = useQuery(api.storage.get);
+export function FilesTable({
+    preloadedUploads,
+}: {
+    preloadedUploads: Preloaded<typeof api.storage.get>;
+}) {
+    const uploads = usePreloadedQuery(preloadedUploads);
     const deleteFile = useMutation(api.storage.remove);
 
     // State for filtering and sorting
     const [searchTerm, setSearchTerm] = useState("");
     const [fileTypeFilter, setFileTypeFilter] = useState<FileType>("all");
     const [sortField, setSortField] = useState<SortField>("date");
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+    const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
     const [deletingIds, setDeletingIds] = useState<Set<Id<"_storage">>>(
         new Set()
     );
@@ -66,67 +102,115 @@ export function FilesTable() {
         useState<Upload | null>(null);
 
     // Helper functions
-    const getFileType = (url: string): FileType => {
-        if (
-            url.includes("image") ||
-            /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url)
-        ) {
-            return "image";
-        }
-        if (url.includes("pdf") || /\.pdf$/i.test(url)) {
-            return "pdf";
-        }
-        if (/\.(doc|docx|txt|md)$/i.test(url)) {
-            return "document";
-        }
-        return "other";
-    };
+    const getFileType = useCallback(
+        (url: string, contentType?: string): FileType => {
+            // Check content type first if available
+            if (contentType?.includes("image")) {
+                return "image";
+            }
+            if (contentType?.includes("pdf")) {
+                return "pdf";
+            }
+            if (
+                contentType?.includes("text") ||
+                contentType?.includes("document")
+            ) {
+                return "document";
+            }
 
-    const getFileIcon = (url: string) => {
-        const type = getFileType(url);
-        switch (type) {
-            case "image":
+            // Fallback to URL pattern matching
+            if (
+                FILE_TYPE_PATTERNS.IMAGE.extensions.test(url) ||
+                url.includes("image")
+            ) {
+                return "image";
+            }
+            if (
+                FILE_TYPE_PATTERNS.PDF.extensions.test(url) ||
+                url.includes("pdf")
+            ) {
+                return "pdf";
+            }
+            if (FILE_TYPE_PATTERNS.DOCUMENT.extensions.test(url)) {
+                return "document";
+            }
+
+            return "other";
+        },
+        []
+    );
+
+    const getFileIcon = useCallback(
+        (url: string, contentType?: string) => {
+            const type = getFileType(url, contentType);
+
+            if (type === "image") {
                 return <ImageIcon className="h-4 w-4 text-blue-500" />;
-            case "pdf":
+            }
+            if (type === "pdf") {
                 return <FileTextIcon className="h-4 w-4 text-red-500" />;
-            case "document":
+            }
+            if (type === "document") {
                 return <FileTextIcon className="h-4 w-4 text-green-500" />;
-            default:
-                return <FileIcon className="h-4 w-4 text-gray-500" />;
+            }
+            return <FileIcon className="h-4 w-4 text-gray-500" />;
+        },
+        [getFileType]
+    );
+
+    const getFileName = useCallback(
+        (url: string, storageId: string): string => {
+            try {
+                const urlParts = url.split("/");
+                const lastPart = urlParts.at(-1);
+
+                // Return filename if it has an extension
+                if (lastPart?.includes(".") && lastPart.length > 1) {
+                    return decodeURIComponent(lastPart);
+                }
+            } catch {
+                // Ignore decoding errors
+            }
+
+            // Fallback to storage ID
+            return `file-${storageId.slice(-UI_CONSTANTS.STORAGE_ID_DISPLAY_LENGTH)}`;
+        },
+        []
+    );
+
+    const formatFileSize = (bytes: number): string => {
+        if (bytes === 0) {
+            return `0 ${FILE_SIZE_CONSTANTS.SIZES[0]}`;
         }
-    };
 
-    const getFileName = (url: string, storageId: string) => {
-        // Try to extract filename from URL, fallback to storage ID
-        const urlParts = url.split("/");
-        const lastPart = urlParts[urlParts.length - 1];
-        return lastPart.includes(".")
-            ? lastPart
-            : `file-${storageId.slice(-8)}`;
-    };
-
-    const formatFileSize = (upload: Upload) => {
-        const bytes = upload.size;
-        if (bytes === 0) return "0 B";
-        const k = 1024;
-        const sizes = ["B", "KB", "MB", "GB", "TB"];
+        const k = FILE_SIZE_CONSTANTS.BYTES_PER_KB;
         const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Number.parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
+        const size = bytes / k ** i;
+        const formattedSize = Number.parseFloat(
+            size.toFixed(FILE_SIZE_CONSTANTS.DECIMAL_PLACES)
+        );
+
+        return `${formattedSize} ${FILE_SIZE_CONSTANTS.SIZES[i] || FILE_SIZE_CONSTANTS.SIZES.at(-1)}`;
     };
 
     // Filtered and sorted data
     const filteredAndSortedUploads = useMemo(() => {
-        if (!uploads) return [];
+        if (!uploads) {
+            return [];
+        }
 
+        // Filter uploads
         const filtered = uploads.filter((upload) => {
             const fileName = getFileName(upload.link, upload.storageId);
-            const matchesSearch =
-                fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                upload.storageId
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase());
+            const searchLower = searchTerm.toLowerCase();
 
-            const fileType = getFileType(upload.link);
+            const matchesSearch =
+                searchTerm === "" ||
+                fileName.toLowerCase().includes(searchLower) ||
+                upload.storageId.toLowerCase().includes(searchLower) ||
+                upload.contentType?.toLowerCase().includes(searchLower);
+
+            const fileType = getFileType(upload.link, upload.contentType);
             const matchesType =
                 fileTypeFilter === "all" || fileType === fileTypeFilter;
 
@@ -134,34 +218,46 @@ export function FilesTable() {
         });
 
         // Sort the filtered results
-        filtered.sort((a, b) => {
+        return filtered.sort((a, b) => {
             let comparison = 0;
 
             switch (sortField) {
-                case "name":
-                    comparison = getFileName(a.link, a.storageId).localeCompare(
-                        getFileName(b.link, b.storageId)
-                    );
+                case "name": {
+                    const nameA = getFileName(a.link, a.storageId);
+                    const nameB = getFileName(b.link, b.storageId);
+                    comparison = nameA.localeCompare(nameB, undefined, {
+                        numeric: true,
+                        sensitivity: "base",
+                    });
                     break;
-                case "type":
-                    comparison = getFileType(a.link).localeCompare(
-                        getFileType(b.link)
-                    );
+                }
+                case "type": {
+                    const typeA = getFileType(a.link, a.contentType);
+                    const typeB = getFileType(b.link, b.contentType);
+                    comparison = typeA.localeCompare(typeB);
                     break;
+                }
                 case "date":
                     comparison = a._creationTime - b._creationTime;
                     break;
                 case "size":
-                    // Placeholder comparison
-                    comparison = 0;
+                    comparison = a.size - b.size;
                     break;
+                default:
+                    comparison = 0;
             }
 
             return sortOrder === "asc" ? comparison : -comparison;
         });
-
-        return filtered;
-    }, [uploads, searchTerm, fileTypeFilter, sortField, sortOrder]);
+    }, [
+        uploads,
+        searchTerm,
+        fileTypeFilter,
+        sortField,
+        sortOrder,
+        getFileName,
+        getFileType,
+    ]);
 
     const handleSort = (field: SortField) => {
         if (sortField === field) {
@@ -176,8 +272,10 @@ export function FilesTable() {
         try {
             setDeletingIds((prev) => new Set(prev).add(storageId));
             await deleteFile({ storageId });
-        } catch (error) {
-            console.error("Delete failed:", error);
+        } catch {
+            // Error handling could be improved with toast notifications
+            // For now, just ensure the loading state is cleared
+            // TODO: Show user-friendly error message
         } finally {
             setDeletingIds((prev) => {
                 const newSet = new Set(prev);
@@ -204,12 +302,18 @@ export function FilesTable() {
                     <div className="animate-pulse space-y-4">
                         <div className="h-10 rounded bg-muted" />
                         <div className="space-y-2">
-                            {[...Array(5)].map((_, i) => (
-                                <div
-                                    className="h-12 rounded bg-muted"
-                                    key={i}
-                                />
-                            ))}
+                            {Array.from(
+                                { length: UI_CONSTANTS.LOADING_SKELETON_ROWS },
+                                (_, i) => {
+                                    const key = `skeleton-row-${i}`;
+                                    return (
+                                        <div
+                                            className="h-12 rounded bg-muted"
+                                            key={key}
+                                        />
+                                    );
+                                }
+                            )}
                         </div>
                     </div>
                 </CardContent>
@@ -246,7 +350,9 @@ export function FilesTable() {
 
                     <div className="flex flex-wrap gap-4">
                         {/* Search Input */}
-                        <div className="relative min-w-[200px] flex-1">
+                        <div
+                            className={`relative min-w-[${UI_CONSTANTS.MIN_SEARCH_WIDTH}px] flex-1`}
+                        >
                             <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
                             <Input
                                 className="pl-10"
@@ -263,7 +369,9 @@ export function FilesTable() {
                             }
                             value={fileTypeFilter}
                         >
-                            <SelectTrigger className="w-[150px]">
+                            <SelectTrigger
+                                className={`w-[${UI_CONSTANTS.FILTER_WIDTH}px]`}
+                            >
                                 <Filter className="mr-2 h-4 w-4" />
                                 <SelectValue />
                             </SelectTrigger>
@@ -357,19 +465,22 @@ export function FilesTable() {
                                             key={upload._id}
                                         >
                                             <TableCell>
-                                                {getFileIcon(upload.link)}
+                                                {getFileIcon(
+                                                    upload.link,
+                                                    upload.contentType
+                                                )}
                                             </TableCell>
                                             <TableCell className="font-medium">
                                                 <div className="flex flex-col">
                                                     <span
-                                                        className="max-w-[200px] truncate"
+                                                        className={`max-w-[${UI_CONSTANTS.MAX_FILENAME_LENGTH}px] truncate`}
                                                         title={fileName}
                                                     >
                                                         {fileName}
                                                     </span>
                                                     <span className="text-muted-foreground text-xs">
                                                         {upload.storageId.slice(
-                                                            -8
+                                                            -UI_CONSTANTS.STORAGE_ID_DISPLAY_LENGTH
                                                         )}
                                                     </span>
                                                 </div>
@@ -383,7 +494,7 @@ export function FilesTable() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
-                                                {formatFileSize(upload)}
+                                                {formatFileSize(upload.size)}
                                             </TableCell>
                                             <TableCell className="text-muted-foreground text-sm">
                                                 {new Date(

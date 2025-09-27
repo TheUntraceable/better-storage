@@ -1,11 +1,18 @@
-import { fetchQuery } from "convex/nextjs";
-import { redirect } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { getToken, type Session } from "@/convex/auth";
+import { fetchQuery } from "convex/nextjs";
+import { redirect } from "next/navigation";
 
-export const requireSession = async (): Promise<Session["user"]> => {
+export const requireSession = async (): Promise<
+    Session["user"] & {
+        token: string;
+    }
+> => {
     try {
         const token = await getToken();
+        if (!token) {
+            redirect("/auth");
+        }
         const user = await fetchQuery(
             api.auth.getCurrentUser,
             {},
@@ -29,7 +36,8 @@ export const requireSession = async (): Promise<Session["user"]> => {
             role: user.role,
             banReason: user.banReason,
             banExpires: user.banExpires,
-        } as Session["user"];
+            token,
+        } as Session["user"] & { token: string };
     } catch (error) {
         console.error("Error fetching user, redirecting to /auth", error);
         redirect("/auth");

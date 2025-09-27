@@ -1,10 +1,10 @@
 "use client";
 
-import { Database, Home, LogOut, User } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
+import { Home, LogOut, User } from "lucide-react";
+import Link from "next/link";
 
 export function NavigationHeader() {
     const { data: session } = authClient.useSession();
@@ -17,7 +17,7 @@ export function NavigationHeader() {
                         className="flex items-center gap-2 font-bold text-xl"
                         href="/"
                     >
-                        <span className="text-primary">Better Okta</span>
+                        <span className="text-primary">Better Files</span>
                     </Link>
 
                     <nav className="flex items-center gap-4">
@@ -29,22 +29,13 @@ export function NavigationHeader() {
                             Home
                         </Link>
                         {session && (
-                            <>
-                                <Link
-                                    className="flex items-center gap-1 text-sm hover:text-primary"
-                                    href="/dashboard"
-                                >
-                                    <User className="h-4 w-4" />
-                                    Dashboard
-                                </Link>
-                                <Link
-                                    className="flex items-center gap-1 text-sm hover:text-primary"
-                                    href="/storage-test"
-                                >
-                                    <Database className="h-4 w-4" />
-                                    Storage Test
-                                </Link>
-                            </>
+                            <Link
+                                className="flex items-center gap-1 text-sm hover:text-primary"
+                                href="/dashboard"
+                            >
+                                <User className="h-4 w-4" />
+                                Dashboard
+                            </Link>
                         )}
                     </nav>
                 </div>
