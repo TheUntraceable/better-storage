@@ -384,7 +384,7 @@ export function FileUploader() {
 
                 showSuccessToast("Upload Successful", "File uploaded!");
 
-                setTimeout(resetDialog, TIMING.DIALOG_CLOSE_DELAY);
+                resetDialog();
             } catch (error) {
                 const message =
                     error instanceof Error ? error.message : "Upload failed";

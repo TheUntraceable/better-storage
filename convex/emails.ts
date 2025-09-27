@@ -12,18 +12,19 @@ export const sendInviteEmail = internalMutation({
         to: v.array(v.string()),
         from: v.string(),
         inviteId: v.id("invites"),
+        fileName: v.string()
     },
-    handler: async (ctx, { to, from, inviteId }) => {
+    handler: async (ctx, { to, from, inviteId, fileName }) => {
         for (const email of to) {
             if (!email) {
                 throw new Error("Email is required");
             }
             await resend.sendEmail(ctx, {
-                from,
+                from: "no-reply@storage.untraceable.dev",
                 to: email,
                 subject: "You've been invited to view a file",
-                html: `<p>You've been invited to view a file. Click the link below to access it:</p>
-                <p><a href="https://better-okta.vercel.app/invites/${inviteId}">View File</a></p>
+                html: `<p>You've been invited to view a ${fileName} from ${from}. Click the link below to access it:</p>
+                <p><a href="https://better-storage.untraceable.dev/invites/${inviteId}">View File</a></p>
                 <p>If you did not expect this email, you can ignore it.</p>
                 `,
             });

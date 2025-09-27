@@ -44,6 +44,7 @@ export function InviteManager({ storageId, fileLink }: InviteManagerProps) {
                 storageId,
                 emails: emailList,
                 link: fileLink,
+                fileName: "helo",
             });
 
             // Create a shareable link (you'd replace this with your actual domain)

@@ -9,8 +9,9 @@ export const create = mutation({
         storageId: v.id("_storage"),
         emails: v.array(v.string()),
         link: v.string(),
+        fileName: v.string(),
     },
-    handler: async (ctx, { storageId, emails, link }) => {
+    handler: async (ctx, { storageId, emails, link, fileName }) => {
         const user = await authComponent.safeGetAuthUser(ctx);
         if (!user) {
             throw new APIError("UNAUTHORIZED", {
@@ -35,13 +36,16 @@ export const create = mutation({
         }
         const inviteId = await ctx.db.insert("invites", {
             ownerId: user._id,
-            emails: [...new Set(emails), user.email],
+            emails: [...new Set(emails)],
             link,
+            fileName,
         });
+
         await ctx.runMutation(internal.emails.sendInviteEmail, {
             to: emails,
             from: user.email,
             inviteId,
+            fileName,
         });
     },
 });
@@ -61,12 +65,17 @@ export const get = query({
             .query("invites")
             .withIndex("by_id", (q) => q.eq("_id", inviteId))
             .first();
+
         if (!invite) {
             throw new APIError("NOT_FOUND", {
                 message: "Invite not found.",
             });
         }
-        if (!invite.emails.includes(user.email)) {
+
+        if (
+            !invite.emails.includes(user.email) ||
+            invite.ownerId !== user._id
+        ) {
             throw new APIError("FORBIDDEN", {
                 message: "You are not invited to this file.",
             });

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { showErrorToast, showSuccessToast } from "@/lib/toast";
+import { showErrorToast } from "@/lib/toast";
 import { copyToClipboard } from "@/lib/utils";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -274,7 +274,6 @@ export function InvitesTable({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[50px]">File</TableHead>
                                 <TableHead>
                                     <Button
                                         className="font-medium"
@@ -325,9 +324,7 @@ export function InvitesTable({
                         <TableBody>
                             {filteredAndSortedInvites.map((invite) => {
                                 const isDeleting = deletingIds.has(invite._id);
-                                const fileName = getFileNameFromLink(
-                                    invite.link
-                                );
+                                const inviteLink = getInviteLink(invite._id);
 
                                 return (
                                     <TableRow
@@ -336,16 +333,13 @@ export function InvitesTable({
                                         }
                                         key={invite._id}
                                     >
-                                        <TableCell>
-                                            <ExternalLink className="h-4 w-4 text-blue-500" />
-                                        </TableCell>
                                         <TableCell className="font-medium">
                                             <div className="flex flex-col">
                                                 <span
                                                     className="max-w-[200px] truncate"
-                                                    title={fileName}
+                                                    title={invite.fileName}
                                                 >
-                                                    {fileName}
+                                                    {invite.fileName}
                                                 </span>
                                             </div>
                                         </TableCell>
@@ -384,11 +378,8 @@ export function InvitesTable({
                                                     isIconOnly
                                                     onPress={() => {
                                                         copyToClipboard(
-                                                            invite.link
-                                                        );
-                                                        showSuccessToast(
-                                                            "Link Copied!",
-                                                            "Be careful. Anyone with this link can access the file."
+                                                            inviteLink,
+                                                            "Invite copied!"
                                                         );
                                                     }}
                                                     size="sm"

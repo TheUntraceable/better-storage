@@ -1,35 +1,28 @@
-import { Button } from "@heroui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@heroui/button";
 
 export default function Home() {
     return (
         <div className="flex min-h-screen flex-col items-center justify-center p-4">
             <div className="max-w-4xl text-center">
                 <h1 className="mb-6 font-bold text-5xl tracking-tight sm:text-6xl lg:text-7xl">
-                    <span className="text-primary">Better Okta</span>
+                    <span className="text-primary">Better Files</span>
                 </h1>
                 <p className="mtext-xl mb-2 sm:text-2xl">
-                    The modern OIDC provider
+                    The best file sharing and storage solution for your team.
                 </p>
                 <p className="mx-auto mb-8 max-w-2xl text-lg">
-                    Finally, an identity provider that doesn't make you want to
-                    cry. Beautiful UI and authentication that just works.
+                    Share your files securely and effortlessly with our
+                    user-friendly platform. Invite team members, manage access,
+                    and collaborate seamlessly.
                 </p>
                 <div className="mb-12 flex flex-wrap justify-center gap-4">
-                    <Button color="primary" size="lg" variant="shadow">
-                        Get Started
-                    </Button>
-                    <Button size="lg" variant="bordered">
-                        View Demo
-                    </Button>
                     <Button
-                        as="a"
-                        color="secondary"
-                        href="/storage-test"
+                        color="primary"
                         size="lg"
-                        variant="flat"
+                        variant="shadow"
                     >
-                        🗄️ Test Storage MVP
+                        Get Started
                     </Button>
                 </div>
 

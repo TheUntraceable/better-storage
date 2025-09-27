@@ -1,7 +1,5 @@
 "use client";
 
-import { useQuery } from "convex/react";
-import { Download, Eye, FileIcon, Mail, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { Download, Eye, FileIcon, Mail, Users } from "lucide-react";
 
 interface InvitePageProps {
     params: {
