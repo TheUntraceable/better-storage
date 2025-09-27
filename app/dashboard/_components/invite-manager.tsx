@@ -9,12 +9,12 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { Input } from "@heroui/input";
 import { useMutation } from "convex/react";
-import { Check, Copy, Mail, Plus, Users } from "lucide-react";
+import { Mail, Plus, Users } from "lucide-react";
 import { useState } from "react";
 
 interface InviteManagerProps {
@@ -26,7 +26,6 @@ export function InviteManager({ storageId, fileLink }: InviteManagerProps) {
     const [emails, setEmails] = useState<string>("");
     const [isCreating, setIsCreating] = useState(false);
     const [createdInvite, setCreatedInvite] = useState<string | null>(null);
-    const [copied, setCopied] = useState(false);
     const createInvite = useMutation(api.invites.create);
 
     const handleCreateInvite = async () => {
@@ -55,20 +54,6 @@ export function InviteManager({ storageId, fileLink }: InviteManagerProps) {
             console.error("Failed to create invite:", error);
         } finally {
             setIsCreating(false);
-        }
-    };
-
-    const handleCopyLink = async () => {
-        if (!createdInvite) {
-            return;
-        }
-
-        try {
-            await navigator.clipboard.writeText(createdInvite);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        } catch (error) {
-            console.error("Failed to copy:", error);
         }
     };
 
@@ -136,17 +121,6 @@ export function InviteManager({ storageId, fileLink }: InviteManagerProps) {
                                     readOnly
                                     value={createdInvite}
                                 />
-                                <Button
-                                    onClick={handleCopyLink}
-                                    size="sm"
-                                    variant="outline"
-                                >
-                                    {copied ? (
-                                        <Check className="h-3 w-3" />
-                                    ) : (
-                                        <Copy className="h-3 w-3" />
-                                    )}
-                                </Button>
                             </div>
                         </div>
                     </div>
