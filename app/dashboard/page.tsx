@@ -21,10 +21,8 @@ export default async function DashboardPage() {
     const user = await requireSession();
 
     const { data: customer } = await autumn.customers.get(user.id);
-
-    const plan = customer?.products[0];
     const mbRemaining = customer!.features.mb_storage.balance as number;
-    const totalMb = plan?.items[0].included_usage as number;
+    const totalMb = customer!.features.mb_storage.included_usage as number;
 
     const uploads = await preloadQuery(
         api.storage.get,
