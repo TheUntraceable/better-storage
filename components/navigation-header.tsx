@@ -24,7 +24,7 @@ export async function NavigationHeader() {
 
     return (
         <Navbar
-            className="border-border/50 border-b bg-background/80 shadow-sm backdrop-blur-xl"
+            className="border-border/50 border-b bg-zinc-900 shadow-sm backdrop-blur-xl"
             height="4rem"
             maxWidth="2xl"
             shouldHideOnScroll
