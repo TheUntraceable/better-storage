@@ -9,14 +9,16 @@ import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { GithubLoginButton } from "./_components/github-login-button";
 
-export default async function AuthPage() {
-    try {
-        const user = await getSession();
-        if (user) {
-            redirect("/dashboard");
-        }
-    } catch {
-        // User is not authenticated, continue to show login button
+export default async function AuthPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ redirectTo?: string }>;
+}) {
+    const { redirectTo } = await searchParams;
+
+    const user = await getSession();
+    if (user !== null) {
+        redirect(redirectTo || "/dashboard");
     }
 
     return (
@@ -33,7 +35,7 @@ export default async function AuthPage() {
                     </CardHeader>
                     <CardContent className="space-y-6 pb-8">
                         <div className="flex flex-col items-center justify-center space-y-4">
-                            <GithubLoginButton />
+                            <GithubLoginButton redirectTo={redirectTo} />
                             <p className="max-w-xs text-center text-xs text-zinc-500 dark:text-zinc-400">
                                 Don&apos;t have an account? One will be created
                                 automatically when you sign in.

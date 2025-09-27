@@ -40,7 +40,11 @@ export const getSession = async () => {
     }
 };
 
-export const requireSession = async (): Promise<
+export const requireSession = async ({
+    redirectTo = "/dashboard",
+}: {
+    redirectTo?: string;
+} = {}): Promise<
     Session["user"] & {
         token: string;
     }
@@ -48,7 +52,7 @@ export const requireSession = async (): Promise<
     try {
         const token = await getToken();
         if (!token) {
-            redirect("/auth");
+            redirect(`/auth?redirectTo=${encodeURIComponent(redirectTo)}`);
         }
         const user = await fetchQuery(
             api.auth.getCurrentUser,
@@ -58,7 +62,7 @@ export const requireSession = async (): Promise<
             }
         );
         if (!user) {
-            redirect("/auth");
+            redirect(`/auth?redirectTo=${encodeURIComponent(redirectTo)}`);
         }
         return {
             id: user._id,
@@ -77,6 +81,6 @@ export const requireSession = async (): Promise<
         } as Session["user"] & { token: string };
     } catch (error) {
         console.error("Error fetching user, redirecting to /auth", error);
-        redirect("/auth");
+        redirect(`/auth?redirectTo=${encodeURIComponent(redirectTo)}`);
     }
 };

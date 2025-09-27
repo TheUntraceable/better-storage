@@ -17,9 +17,9 @@ import type { FunctionReturnType } from "convex/server";
 import { Eye, FileIcon, Mail, Users } from "lucide-react";
 
 interface InvitePageProps {
-    params: {
+    params: Promise<{
         inviteId: string;
-    };
+    }>;
 }
 
 const NotFound = () => {
@@ -50,9 +50,11 @@ const NotFound = () => {
 };
 
 export default async function InvitePage({ params }: InvitePageProps) {
-    const user = await requireSession();
-    let invite: null | FunctionReturnType<typeof api.invites.get> = null;
     const { inviteId } = await params;
+    const user = await requireSession({
+        redirectTo: `/invite/${inviteId}`,    
+    });
+    let invite: null | FunctionReturnType<typeof api.invites.get> = null;
     try {
         invite = await fetchQuery(
             api.invites.get,
