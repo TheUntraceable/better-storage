@@ -3,7 +3,7 @@ import { Button } from "@heroui/button";
 
 export default function Home() {
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 px-4 dark:from-zinc-800 dark:to-zinc-900">
             <div className="max-w-4xl text-center">
                 <h1 className="mb-6 font-bold text-5xl tracking-tight sm:text-6xl lg:text-7xl">
                     <span className="text-primary">Better Files</span>
@@ -17,11 +17,7 @@ export default function Home() {
                     and collaborate seamlessly.
                 </p>
                 <div className="mb-12 flex flex-wrap justify-center gap-4">
-                    <Button
-                        color="primary"
-                        size="lg"
-                        variant="shadow"
-                    >
+                    <Button color="primary" size="lg" variant="shadow">
                         Get Started
                     </Button>
                 </div>
