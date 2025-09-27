@@ -25,8 +25,9 @@ export async function NavigationHeader() {
     return (
         <Navbar
             className="bg-background/70 backdrop-blur-md"
-            maxWidth="xl"
+            maxWidth="2xl"
             shouldHideOnScroll
+            isBordered
         >
             {/* Brand */}
             <NavbarBrand>

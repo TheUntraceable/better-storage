@@ -338,6 +338,7 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
                     error: `Insufficient storage space. You have ${remainingMb}MB remaining.`,
                     success: false,
                 });
+                showErrorToast("Upload Failed", "Insufficient storage space.");
                 return;
             }
 
