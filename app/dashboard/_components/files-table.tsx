@@ -1,7 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -20,6 +19,7 @@ import {
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
 import { button as buttonStyles } from "@heroui/theme";
 import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
@@ -318,7 +318,6 @@ export function FilesTable({
     return (
         <>
             <Card>
-                {/* Search and Filter Header */}
                 <CardHeader className="space-y-4">
                     <CardTitle className="flex items-center justify-between">
                         <span>Files ({filteredAndSortedUploads.length})</span>
@@ -328,20 +327,20 @@ export function FilesTable({
                     </CardTitle>
 
                     <div className="flex flex-wrap gap-4">
-                        {/* Search Input */}
                         <div
                             className={`relative min-w-[${UI_CONSTANTS.MIN_SEARCH_WIDTH}px] flex-1`}
                         >
-                            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
                             <Input
-                                className="pl-10"
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onValueChange={setSearchTerm}
                                 placeholder="Search files..."
+                                startContent={
+                                    <Search className="h-4 w-4 transform text-muted-foreground" />
+                                }
                                 value={searchTerm}
+                                variant="faded"
                             />
                         </div>
 
-                        {/* File Type Filter */}
                         <Select
                             onValueChange={(value: FileType) =>
                                 setFileTypeFilter(value)
@@ -367,7 +366,6 @@ export function FilesTable({
                     </div>
                 </CardHeader>
 
-                {/* Table */}
                 <CardContent>
                     <div className="rounded-md border">
                         <Table>
@@ -580,7 +578,6 @@ export function FilesTable({
                 </CardContent>
             </Card>
 
-            {/* Invite Dialog */}
             {selectedFileForInvite && (
                 <InviteDialog
                     fileName={selectedFileForInvite.name}
