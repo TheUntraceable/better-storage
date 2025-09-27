@@ -74,7 +74,7 @@ export const get = query({
         }
         console.log(user, invite);
         if (
-            !invite.emails.includes(user.email) ||
+            !invite.emails.includes(user.email) &&
             invite.ownerId !== user._id
         ) {
             throw new APIError("FORBIDDEN", {

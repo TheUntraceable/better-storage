@@ -170,14 +170,14 @@ export const remove = mutation({
                     .eq("uploader", user._id as Id<"user">)
                     .eq("storageId", storageId);
             })
-            .take(1);
+            .first();
 
-        if (!existing || existing.length === 0) {
+        if (!existing) {
             throw new APIError("NOT_FOUND", {
                 message: "Upload not found",
             });
         }
         await ctx.storage.delete(storageId);
-        await ctx.db.delete(existing[0]._id);
+        await ctx.db.delete(existing._id);
     },
 });
