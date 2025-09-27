@@ -1,7 +1,5 @@
-"use client";
-
+import { DownloadButton } from "@/components/download-button";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -11,8 +9,12 @@ import {
 } from "@/components/ui/card";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { Download, Eye, FileIcon, Mail, Users } from "lucide-react";
+import { requireSession } from "@/lib/session";
+import { Link } from "@heroui/link";
+import { button as buttonStyles } from "@heroui/theme";
+import { fetchQuery } from "convex/nextjs";
+import type { FunctionReturnType } from "convex/server";
+import { Eye, FileIcon, Mail, Users } from "lucide-react";
 
 interface InvitePageProps {
     params: {
@@ -20,49 +22,70 @@ interface InvitePageProps {
     };
 }
 
-export default function InvitePage({ params }: InvitePageProps) {
-    const invite = useQuery(api.invites.get, {
-        inviteId: params.inviteId as Id<"invites">,
-    });
+const NotFound = () => {
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <Card className="mx-auto max-w-md border-destructive">
+                <CardHeader>
+                    <CardTitle className="text-destructive">
+                        Invite Not Found
+                    </CardTitle>
+                    <CardDescription>
+                        This invite link is invalid or has expired.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Link
+                        className={buttonStyles({
+                            variant: "faded",
+                        })}
+                        href="/"
+                    >
+                        Go to Homepage
+                    </Link>
+                </CardContent>
+            </Card>
+        </div>
+    );
+};
 
-    if (invite === undefined) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <Card className="mx-auto max-w-md">
-                    <CardContent className="flex items-center justify-center p-8">
-                        <div className="h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
-                    </CardContent>
-                </Card>
-            </div>
+export default async function InvitePage({ params }: InvitePageProps) {
+    const user = await requireSession();
+    let invite: null | FunctionReturnType<typeof api.invites.get> = null;
+    const { inviteId } = await params;
+    try {
+        invite = await fetchQuery(
+            api.invites.get,
+            {
+                inviteId: inviteId as Id<"invites">,
+            },
+            {
+                token: user.token,
+            }
         );
+
+        if (invite === undefined) {
+            return (
+                <div className="container mx-auto px-4 py-8">
+                    <Card className="mx-auto max-w-md">
+                        <CardContent className="flex items-center justify-center p-8">
+                            <div className="h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
+                        </CardContent>
+                    </Card>
+                </div>
+            );
+        }
+    } catch (error) {
+        return <NotFound />;
     }
 
     if (invite === null) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <Card className="mx-auto max-w-md border-destructive">
-                    <CardHeader>
-                        <CardTitle className="text-destructive">
-                            Invite Not Found
-                        </CardTitle>
-                        <CardDescription>
-                            This invite link is invalid or has expired.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button asChild className="w-full" variant="outline">
-                            <a href="/">Go to Homepage</a>
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-        );
+        return <NotFound />;
     }
 
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="mx-auto max-w-2xl space-y-6">
-                {/* Header */}
                 <Card>
                     <CardHeader className="text-center">
                         <CardTitle className="flex items-center justify-center gap-2">
@@ -76,7 +99,6 @@ export default function InvitePage({ params }: InvitePageProps) {
                     </CardHeader>
                 </Card>
 
-                {/* File Access Card */}
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center justify-between">
@@ -92,7 +114,6 @@ export default function InvitePage({ params }: InvitePageProps) {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        {/* File Preview/Info */}
                         <div className="flex items-center justify-center rounded-lg bg-muted p-8">
                             <div className="space-y-2 text-center">
                                 <FileIcon className="mx-auto h-12 w-12 text-muted-foreground" />
@@ -103,59 +124,42 @@ export default function InvitePage({ params }: InvitePageProps) {
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="flex gap-3">
-                            <Button asChild className="flex-1" size="lg">
-                                <a
-                                    href={invite.link}
-                                    rel="noopener noreferrer"
-                                    target="_blank"
-                                >
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    Preview File
-                                </a>
-                            </Button>
-
-                            <Button
-                                asChild
-                                className="flex-1"
-                                size="lg"
-                                variant="outline"
+                            <Link
+                                className={buttonStyles({
+                                    variant: "faded",
+                                })}
+                                href={invite.link}
                             >
-                                <a download href={invite.link}>
-                                    <Download className="mr-2 h-4 w-4" />
-                                    Download File
-                                </a>
-                            </Button>
+                                <Eye className="h-3 w-3" />
+                                Preview file
+                            </Link>
+                            <DownloadButton
+                                invite={{
+                                    link: invite.link,
+                                    fileName: invite.fileName,
+                                }}
+                            />
                         </div>
 
-                        {/* Invite Info */}
                         <div className="space-y-2 border-t pt-4">
                             <div className="text-muted-foreground text-xs">
                                 <p>
                                     <strong>Shared with:</strong>{" "}
                                     {invite.emails.join(", ")}
                                 </p>
-                                <p>
-                                    <strong>File ID:</strong> {invite._id}
-                                </p>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
 
-                {/* Footer */}
                 <Card className="border-dashed">
                     <CardContent className="p-6 text-center">
                         <p className="text-muted-foreground text-sm">
                             Want to share files like this?
-                            <Button
-                                asChild
-                                className="ml-1 h-auto p-0"
-                                variant="link"
-                            >
-                                <a href="/">Create your account</a>
-                            </Button>
+                            <Link className="ml-1 h-auto p-0" href="/dashboard">
+                                Go to the dashboard
+                            </Link>
                         </p>
                     </CardContent>
                 </Card>

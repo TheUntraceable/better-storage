@@ -1,4 +1,5 @@
 "use client";
+import { DownloadButton } from "@/components/download-button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -26,7 +27,6 @@ import { button as buttonStyles } from "@heroui/theme";
 import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import {
     ArrowUpDown,
-    Download,
     Eye,
     FileIcon,
     FileTextIcon,
@@ -598,44 +598,13 @@ export function FilesTable({
                                                         <Eye className="h-3 w-3" />
                                                     </Link>
 
-                                                    <Button
-                                                        isIconOnly
-                                                        onPress={async () => {
-                                                            const blob =
-                                                                await fetch(
-                                                                    upload.link
-                                                                ).then((res) =>
-                                                                    res.blob()
-                                                                );
-
-                                                            const link =
-                                                                document.createElement(
-                                                                    "a"
-                                                                );
-                                                            link.href =
-                                                                URL.createObjectURL(
-                                                                    blob
-                                                                );
-                                                            link.download =
-                                                                upload.name;
-
-                                                            document.body.appendChild(
-                                                                link
-                                                            );
-
-                                                            link.click();
-
-                                                            document.body.removeChild(
-                                                                link
-                                                            );
+                                                    <DownloadButton
+                                                        invite={{
+                                                            link: upload.link,
+                                                            fileName:
+                                                                upload.name,
                                                         }}
-                                                        size="sm"
-                                                        title="Download file"
-                                                        variant="faded"
-                                                    >
-                                                        <Download className="h-3 w-3" />
-                                                    </Button>
-
+                                                    />
                                                     <Button
                                                         isIconOnly
                                                         onPress={() =>

@@ -583,7 +583,7 @@ export function FileUploader() {
                                 {uploadState.isUploading
                                     ? "Uploading..."
                                     : "Upload"}
-                        </Button>
+                            </Button>
                             <Button
                                 className="flex-1"
                                 disabled={uploadState.isUploading}

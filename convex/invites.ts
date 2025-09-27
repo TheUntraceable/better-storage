@@ -47,6 +47,7 @@ export const create = mutation({
             inviteId,
             fileName,
         });
+        return inviteId;
     },
 });
 
@@ -71,7 +72,7 @@ export const get = query({
                 message: "Invite not found.",
             });
         }
-
+        console.log(user, invite);
         if (
             !invite.emails.includes(user.email) ||
             invite.ownerId !== user._id
@@ -141,5 +142,58 @@ export const remove = mutation({
         }
 
         await ctx.db.delete(inviteId);
+    },
+});
+
+export const update = mutation({
+    args: {
+        inviteId: v.id("invites"),
+        emails: v.array(v.string()),
+    },
+    handler: async (ctx, { inviteId, emails }) => {
+        const user = await authComponent.safeGetAuthUser(ctx);
+        if (!user) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "Not authenticated",
+            });
+        }
+        if (!user._id) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "User ID not found",
+            });
+        }
+
+        const invite = await ctx.db
+            .query("invites")
+            .withIndex("by_id", (q) => q.eq("_id", inviteId))
+            .first();
+
+        if (!invite) {
+            throw new APIError("NOT_FOUND", {
+                message: "Invite not found",
+            });
+        }
+
+        if (invite.ownerId !== user._id) {
+            throw new APIError("FORBIDDEN", {
+                message: "You can only update your own invites",
+            });
+        }
+        // Find the emails that were not present before
+        const newEmails = emails.filter(
+            (email) => !invite.emails.includes(email)
+        );
+        if (newEmails.length > 0) {
+            await ctx.runMutation(internal.emails.sendInviteEmail, {
+                to: newEmails,
+                from: user.email,
+                inviteId,
+                fileName: invite.fileName,
+            });
+        }
+
+        await ctx.db.patch(inviteId, {
+            emails: [...new Set(emails)],
+        });
     },
 });
