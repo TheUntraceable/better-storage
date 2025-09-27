@@ -257,7 +257,6 @@ function FilePreviewComponent({ file, preview }: FilePreviewProps) {
 }
 
 export function FileUploader({ remainingMb }: { remainingMb: number }) {
-    // State
     const [uploadState, setUploadState] = useState<UploadState>({
         isUploading: false,
         progress: 0,
@@ -270,11 +269,9 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
     const [filePreview, setFilePreview] = useState<FilePreview>(null);
     const [fileNameError, setFileNameError] = useState<string | null>(null);
 
-    // Mutations
     const generateUploadLink = useMutation(api.storage.generateLink);
     const storeFile = useMutation(api.storage.store);
 
-    // Reset functions
     const resetUploadState = useCallback(() => {
         setUploadState({
             isUploading: false,
@@ -296,7 +293,6 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
     // File handling
     const generateFilePreview = useCallback(
         (file: File): Promise<FilePreview> => {
-            // Only generate previews for images (media files)
             if (file.type.startsWith("image/")) {
                 return new Promise((resolve) => {
                     const reader = new FileReader();
@@ -329,6 +325,7 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
                     error: fileError || nameError,
                     success: false,
                 });
+                showErrorToast("Upload Failed", fileError || nameError!);
                 return;
             }
             if (file.size > remainingMb * BYTES_PER_KB * BYTES_PER_KB) {
@@ -350,14 +347,13 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
                     success: false,
                 });
 
-                // Generate upload URL
                 const uploadUrl = await generateUploadLink();
 
-                // Upload file
                 setUploadState((prev) => ({
                     ...prev,
                     progress: UPLOAD_PROGRESS.UPLOAD_FILE,
                 }));
+
                 const response = await fetch(uploadUrl, {
                     method: "POST",
                     headers: { "Content-Type": file.type },
@@ -398,6 +394,7 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
             } catch (error) {
                 const message =
                     error instanceof Error ? error.message : "Upload failed";
+
                 setUploadState({
                     isUploading: false,
                     progress: 0,
