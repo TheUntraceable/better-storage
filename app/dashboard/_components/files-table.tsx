@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { showErrorToast } from "@/lib/toast";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
@@ -37,7 +38,6 @@ import {
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { InviteDialog } from "./invite-dialog";
-import { showErrorToast } from "@/lib/toast";
 
 // Constants
 const FILE_SIZE_CONSTANTS = {
@@ -84,6 +84,23 @@ type Upload = {
 type SortField = "name" | "type" | "date" | "size";
 type FileType = "all" | "image" | "pdf" | "document" | "other";
 type SortOrder = "asc" | "desc";
+
+// Helper function to get display name for file types
+const getFileTypeDisplayName = (fileType: FileType): string => {
+    if (fileType === "image") {
+        return "images";
+    }
+    if (fileType === "pdf") {
+        return "PDFs";
+    }
+    if (fileType === "document") {
+        return "documents";
+    }
+    if (fileType === "other") {
+        return "other files";
+    }
+    return "files";
+};
 
 export function FilesTable({
     preloadedUploads,
@@ -253,7 +270,7 @@ export function FilesTable({
             setDeletingIds((prev) => new Set(prev).add(storageId));
             await deleteFile({ storageId });
         } catch {
-            showErrorToast("Failed to delete file. Please try again.");
+            showErrorToast("Failed to delete file.", "Please try again.");
         } finally {
             setDeletingIds((prev) => {
                 const newSet = new Set(prev);
@@ -309,6 +326,89 @@ export function FilesTable({
                         Upload some files using the uploader above to see them
                         here.
                     </p>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    // Show filtered empty state when no files match the current filters
+    if (filteredAndSortedUploads.length === 0) {
+        return (
+            <Card>
+                <CardHeader className="space-y-4">
+                    <CardTitle className="flex items-center justify-between">
+                        <span>Files (0)</span>
+                        <Badge variant="secondary">
+                            {uploads.length} total
+                        </Badge>
+                    </CardTitle>
+
+                    <div className="flex flex-wrap gap-4">
+                        <div
+                            className={`relative min-w-[${UI_CONSTANTS.MIN_SEARCH_WIDTH}px] flex-1`}
+                        >
+                            <Input
+                                onValueChange={setSearchTerm}
+                                placeholder="Search files..."
+                                startContent={
+                                    <Search className="h-4 w-4 transform text-muted-foreground" />
+                                }
+                                value={searchTerm}
+                                variant="faded"
+                            />
+                        </div>
+
+                        <Select
+                            onValueChange={(value: FileType) =>
+                                setFileTypeFilter(value)
+                            }
+                            value={fileTypeFilter}
+                        >
+                            <SelectTrigger
+                                className={`w-[${UI_CONSTANTS.FILTER_WIDTH}px]`}
+                            >
+                                <Filter className="mr-2 h-4 w-4" />
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All types</SelectItem>
+                                <SelectItem value="image">Images</SelectItem>
+                                <SelectItem value="pdf">PDFs</SelectItem>
+                                <SelectItem value="document">
+                                    Documents
+                                </SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </CardHeader>
+
+                <CardContent>
+                    <div className="flex flex-col items-center justify-center p-12 text-center">
+                        <Search className="mb-4 h-12 w-12 text-muted-foreground" />
+                        <h3 className="mb-2 font-medium">No matching files</h3>
+                        <p className="max-w-md text-muted-foreground text-sm">
+                            {(() => {
+                                if (searchTerm) {
+                                    return `No files found matching "${searchTerm}"`;
+                                }
+                                if (fileTypeFilter !== "all") {
+                                    return `No ${getFileTypeDisplayName(fileTypeFilter)} found`;
+                                }
+                                return "No files match your current filters";
+                            })()} Try adjusting your search terms or filters.
+                        </p>
+                        <Button
+                            className="mt-4"
+                            onPress={() => {
+                                setSearchTerm("");
+                                setFileTypeFilter("all");
+                            }}
+                            variant="ghost"
+                        >
+                            Clear filters
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
         );
