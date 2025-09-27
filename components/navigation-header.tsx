@@ -12,8 +12,8 @@ import {
 import { FileText, Home, User } from "lucide-react";
 import NextLink from "next/link";
 import { getSession } from "@/lib/session";
-import { SignOutButton } from "./sign-out-button";
 import { ProfileCard } from "./profile-card";
+import { SignOutButton } from "./sign-out-button";
 
 export async function NavigationHeader() {
     const session = await getSession();

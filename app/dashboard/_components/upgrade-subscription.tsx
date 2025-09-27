@@ -1,7 +1,7 @@
 "use client";
 
-import { RainbowButton } from "@/components/ui/rainbow-button";
 import { CheckoutDialog, useCustomer } from "autumn-js/react";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 
 export const UpgradeSubscription = () => {
     const { checkout, refetch, customer, isLoading } = useCustomer();

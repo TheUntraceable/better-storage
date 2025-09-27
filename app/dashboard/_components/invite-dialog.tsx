@@ -106,8 +106,8 @@ function InviteSuccessState({
                             <Chip
                                 color="success"
                                 key={email}
-                                size="sm"
                                 radius="sm"
+                                size="sm"
                                 variant="dot"
                             >
                                 {email}
@@ -305,12 +305,12 @@ export function InviteDialog({
                                     <div className="flex max-h-32 flex-wrap gap-2 overflow-y-auto">
                                         {emailList.map((email) => (
                                             <Chip
-                                                radius="sm"
                                                 color="primary"
                                                 key={email}
                                                 onClose={() =>
                                                     handleRemoveEmail(email)
                                                 }
+                                                radius="sm"
                                                 size="sm"
                                                 variant="dot"
                                             >
