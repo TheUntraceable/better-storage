@@ -59,9 +59,9 @@ export function InvitesTable({
 
     // Helper functions
     const getInviteLink = useCallback((inviteId: Id<"invites">) => {
-        if (typeof window !== "undefined") {
-            return `${window.location.origin}/invite/${inviteId}`;
-        }
+        // if (typeof window !== "undefined") {
+        //     return `${window.location.origin}/invite/${inviteId}`;
+        // }
         return `/invite/${inviteId}`;
     }, []);
 
