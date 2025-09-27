@@ -1,5 +1,6 @@
 import { APIError } from "better-auth";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
 
@@ -32,10 +33,15 @@ export const create = mutation({
                 message: "You do not have access to this storage item",
             });
         }
-        await ctx.db.insert("invites", {
+        const inviteId = await ctx.db.insert("invites", {
             ownerId: user._id,
             emails: [...new Set(emails), user.email],
             link,
+        });
+        await ctx.runMutation(internal.emails.sendInviteEmail, {
+            to: emails,
+            from: user.email,
+            inviteId,
         });
     },
 });

@@ -18,11 +18,12 @@ export type ProvidersProps = {
 };
 
 declare module "@react-types/shared" {
-    type RouterConfig = {
+    // biome-ignore lint/nursery/useConsistentTypeDefinitions: Needed.
+    interface RouterConfig {
         routerOptions: NonNullable<
             Parameters<ReturnType<typeof useRouter>["push"]>[1]
         >;
-    };
+    }
 }
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!, {
