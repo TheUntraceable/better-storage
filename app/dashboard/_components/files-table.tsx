@@ -75,6 +75,7 @@ type Upload = {
     link: string;
     size: number;
     contentType: string;
+    name: string;
 };
 
 type SortField = "name" | "type" | "date" | "size";
@@ -158,26 +159,6 @@ export function FilesTable({
         [getFileType]
     );
 
-    const getFileName = useCallback(
-        (url: string, storageId: string): string => {
-            try {
-                const urlParts = url.split("/");
-                const lastPart = urlParts.at(-1);
-
-                // Return filename if it has an extension
-                if (lastPart?.includes(".") && lastPart.length > 1) {
-                    return decodeURIComponent(lastPart);
-                }
-            } catch {
-                // Ignore decoding errors
-            }
-
-            // Fallback to storage ID
-            return `file-${storageId.slice(-UI_CONSTANTS.STORAGE_ID_DISPLAY_LENGTH)}`;
-        },
-        []
-    );
-
     const formatFileSize = (bytes: number): string => {
         if (bytes === 0) {
             return `0 ${FILE_SIZE_CONSTANTS.SIZES[0]}`;
@@ -201,12 +182,11 @@ export function FilesTable({
 
         // Filter uploads
         const filtered = uploads.filter((upload) => {
-            const fileName = getFileName(upload.link, upload.storageId);
             const searchLower = searchTerm.toLowerCase();
 
             const matchesSearch =
                 searchTerm === "" ||
-                fileName.toLowerCase().includes(searchLower) ||
+                upload.name.toLowerCase().includes(searchLower) ||
                 upload.storageId.toLowerCase().includes(searchLower) ||
                 upload.contentType?.toLowerCase().includes(searchLower);
 
@@ -223,9 +203,7 @@ export function FilesTable({
 
             switch (sortField) {
                 case "name": {
-                    const nameA = getFileName(a.link, a.storageId);
-                    const nameB = getFileName(b.link, b.storageId);
-                    comparison = nameA.localeCompare(nameB, undefined, {
+                    comparison = a.name.localeCompare(b.name, undefined, {
                         numeric: true,
                         sensitivity: "base",
                     });
@@ -255,7 +233,6 @@ export function FilesTable({
         fileTypeFilter,
         sortField,
         sortOrder,
-        getFileName,
         getFileType,
     ]);
 
@@ -419,7 +396,7 @@ export function FilesTable({
                                             <ArrowUpDown className="ml-2 h-3 w-3" />
                                         </Button>
                                     </TableHead>
-                                    <TableHead className="w-[80px]">
+                                    <TableHead className="w-[120px]">
                                         <Button
                                             className="h-auto p-0 font-medium"
                                             onClick={() => handleSort("size")}
@@ -451,10 +428,7 @@ export function FilesTable({
                                     const isDeleting = deletingIds.has(
                                         upload.storageId
                                     );
-                                    const fileName = getFileName(
-                                        upload.link,
-                                        upload.storageId
-                                    );
+                                    const fileName = upload.name;
                                     const fileType = getFileType(upload.link);
 
                                     return (
@@ -477,11 +451,6 @@ export function FilesTable({
                                                         title={fileName}
                                                     >
                                                         {fileName}
-                                                    </span>
-                                                    <span className="text-muted-foreground text-xs">
-                                                        {upload.storageId.slice(
-                                                            -UI_CONSTANTS.STORAGE_ID_DISPLAY_LENGTH
-                                                        )}
                                                     </span>
                                                 </div>
                                             </TableCell>
@@ -573,10 +542,7 @@ export function FilesTable({
             {/* Invite Dialog */}
             {selectedFileForInvite && (
                 <InviteDialog
-                    fileName={getFileName(
-                        selectedFileForInvite.link,
-                        selectedFileForInvite.storageId
-                    )}
+                    fileName={selectedFileForInvite.name}
                     isOpen={inviteDialogOpen}
                     onClose={handleCloseInviteDialog}
                     upload={selectedFileForInvite}

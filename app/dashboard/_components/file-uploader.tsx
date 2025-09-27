@@ -179,7 +179,7 @@ function UploadContent({
 
     if (uploadState.error) {
         return (
-            <div className="space-y-2">
+            <div className="flex flex-col items-center space-y-2">
                 <AlertCircle className="h-8 w-8 text-destructive" />
                 <div>
                     <p className="font-medium text-destructive text-sm">
@@ -250,23 +250,11 @@ function FilePreviewComponent({ file, preview }: FilePreviewProps) {
                     <p className="text-muted-foreground text-xs">
                         {formatFileSize(file.size)}
                     </p>
-
-                    {preview?.type === "text" && preview.content && (
-                        <div className="mt-2 max-h-20 overflow-hidden rounded bg-muted p-2">
-                            <pre className="whitespace-pre-wrap font-mono text-muted-foreground text-xs">
-                                {preview.content}
-                            </pre>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
     );
 }
-
-// ============================================================================
-// Main Component
-// ============================================================================
 
 export function FileUploader() {
     // State
@@ -308,6 +296,7 @@ export function FileUploader() {
     // File handling
     const generateFilePreview = useCallback(
         (file: File): Promise<FilePreview> => {
+            // Only generate previews for images (media files)
             if (file.type.startsWith("image/")) {
                 return new Promise((resolve) => {
                     const reader = new FileReader();
@@ -321,27 +310,7 @@ export function FileUploader() {
                 });
             }
 
-            if (
-                file.type.startsWith("text/") ||
-                file.type === "application/pdf"
-            ) {
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const content = e.target?.result as string;
-                        resolve({
-                            type: "text",
-                            content:
-                                content.length > FILE_LIMITS.TEXT_PREVIEW_LENGTH
-                                    ? `${content.slice(0, FILE_LIMITS.TEXT_PREVIEW_LENGTH)}...`
-                                    : content,
-                        });
-                    };
-                    reader.onerror = () => resolve({ type: "other" });
-                    reader.readAsText(file);
-                });
-            }
-
+            // For all other file types (text, PDF, etc.), just return 'other'
             return Promise.resolve({ type: "other" });
         },
         []
