@@ -13,6 +13,7 @@ import { FileText, Home, User } from "lucide-react";
 import NextLink from "next/link";
 import { getSession } from "@/lib/session";
 import { SignOutButton } from "./sign-out-button";
+import { ProfileCard } from "./profile-card";
 
 export async function NavigationHeader() {
     const session = await getSession();
@@ -82,21 +83,7 @@ export async function NavigationHeader() {
                 {session ? (
                     <NavbarItem className="hidden lg:flex">
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-accent/30 px-3 py-2">
-                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-semibold text-primary-foreground text-sm shadow-md">
-                                    {(session.name || session.email || "??")
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")
-                                        .toUpperCase()
-                                        .slice(0, 2)}
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="font-semibold text-foreground text-sm">
-                                        {session.name || session.email}
-                                    </span>
-                                </div>
-                            </div>
+                            <ProfileCard session={session} />
                             <SignOutButton />
                         </div>
                     </NavbarItem>
@@ -137,21 +124,7 @@ export async function NavigationHeader() {
                 {session ? (
                     <NavbarMenuItem>
                         <div className="flex flex-col gap-4 border-border/50 border-t pt-6">
-                            <div className="flex items-center gap-3 rounded-xl bg-accent/30 px-4 py-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-semibold text-primary-foreground text-sm shadow-md">
-                                    {(session.name || session.email || "??")
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")
-                                        .toUpperCase()
-                                        .slice(0, 2)}
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="font-semibold text-foreground text-sm">
-                                        {session.name || session.email}
-                                    </span>
-                                </div>
-                            </div>
+                            <ProfileCard session={session} />
                             <SignOutButton />
                         </div>
                     </NavbarMenuItem>
