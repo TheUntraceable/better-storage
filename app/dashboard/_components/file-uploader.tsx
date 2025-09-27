@@ -13,6 +13,7 @@ import { showErrorToast, showSuccessToast } from "@/lib/toast";
 import { Button } from "@heroui/button";
 import { Image } from "@heroui/image";
 import { Input } from "@heroui/input";
+import { Progress } from "@heroui/progress";
 import { useMutation } from "convex/react";
 import {
     AlertCircle,
@@ -199,7 +200,7 @@ function UploadContent({
     const iconClass = isDragActive ? "text-primary" : "text-muted-foreground";
 
     return (
-        <div className="space-y-2">
+        <div className="flex flex-col items-center space-y-2">
             <Icon className={`h-8 w-8 ${iconClass}`} />
             <div>
                 <p className="font-medium text-sm">
@@ -395,17 +396,16 @@ export function FileUploader() {
 
                 const { storageId } = await response.json();
 
-                // Save metadata
                 setUploadState((prev) => ({
                     ...prev,
                     progress: UPLOAD_PROGRESS.SAVE_METADATA,
                 }));
+
                 await storeFile({
                     storageId,
                     name: customFileName.trim(),
                 });
 
-                // Success
                 setUploadState({
                     isUploading: false,
                     progress: UPLOAD_PROGRESS.COMPLETE,
@@ -578,8 +578,43 @@ export function FileUploader() {
                             </div>
                         )}
 
+                        {uploadState.isUploading && (
+                            <Progress
+                                formatOptions={{
+                                    style: "percent",
+                                }}
+                                label={`${uploadState.progress}%`}
+                                maxValue={100}
+                                minValue={0}
+                                value={uploadState.progress}
+                            />
+                        )}
+
                         {/* Action buttons */}
                         <div className="flex gap-2">
+                            <Button
+                                className="flex-1"
+                                color="primary"
+                                disabled={
+                                    !(selectedFile && fileName.trim()) ||
+                                    uploadState.isUploading ||
+                                    !!fileNameError
+                                }
+                                isLoading={uploadState.isUploading}
+                                onPress={handleDialogUpload}
+                                startContent={
+                                    uploadState.isUploading ? (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <Upload className="mr-2 h-4 w-4" />
+                                    )
+                                }
+                                variant="shadow"
+                            >
+                                {uploadState.isUploading
+                                    ? "Uploading..."
+                                    : "Upload"}
+                            </Button>
                             <Button
                                 className="flex-1"
                                 disabled={uploadState.isUploading}
@@ -588,46 +623,7 @@ export function FileUploader() {
                             >
                                 Cancel
                             </Button>
-                            <Button
-                                className="flex-1"
-                                disabled={
-                                    !(selectedFile && fileName.trim()) ||
-                                    uploadState.isUploading ||
-                                    !!fileNameError
-                                }
-                                onPress={handleDialogUpload}
-                            >
-                                {uploadState.isUploading ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Uploading...
-                                    </>
-                                ) : (
-                                    "Upload"
-                                )}
-                            </Button>
                         </div>
-
-                        {/* Progress bar */}
-                        {uploadState.isUploading && (
-                            <div className="space-y-2">
-                                <div className="h-2 w-full rounded-full bg-secondary">
-                                    <div
-                                        aria-valuemax={100}
-                                        aria-valuemin={0}
-                                        aria-valuenow={uploadState.progress}
-                                        className="h-2 rounded-full bg-primary transition-all duration-300"
-                                        role="progressbar"
-                                        style={{
-                                            width: `${uploadState.progress}%`,
-                                        }}
-                                    />
-                                </div>
-                                <p className="text-center text-muted-foreground text-sm">
-                                    {uploadState.progress}%
-                                </p>
-                            </div>
-                        )}
                     </div>
                 </DialogContent>
             </Dialog>
