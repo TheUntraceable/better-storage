@@ -24,27 +24,37 @@ export async function NavigationHeader() {
 
     return (
         <Navbar
-            className="bg-background/70 backdrop-blur-md"
-            isBordered
+            className="border-border/50 border-b bg-background/80 shadow-sm backdrop-blur-xl"
+            height="4rem"
             maxWidth="2xl"
             shouldHideOnScroll
         >
             {/* Brand */}
             <NavbarBrand>
-                <NextLink className="flex items-center gap-2" href="/">
-                    <FileText className="h-6 w-6 text-primary" />
-                    <p className="font-bold text-inherit text-xl">
-                        Better Files
-                    </p>
+                <NextLink
+                    className="flex items-center gap-3 transition-all duration-200 hover:scale-105"
+                    href="/"
+                >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
+                        <FileText className="h-5 w-5 text-primary-foreground" />
+                    </div>
+                    <div className="flex flex-col">
+                        <p className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text font-bold text-transparent text-xl">
+                            Better Files
+                        </p>
+                        <p className="font-medium text-zinc-400 text-xs">
+                            Secure & Simple
+                        </p>
+                    </div>
                 </NextLink>
             </NavbarBrand>
 
             {/* Desktop Navigation */}
-            <NavbarContent className="hidden gap-4 sm:flex" justify="center">
+            <NavbarContent className="hidden gap-8 sm:flex" justify="center">
                 <NavbarItem>
                     <Link
                         as={NextLink}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-all duration-200 hover:bg-accent/50 hover:text-accent-foreground"
                         color="foreground"
                         href="/"
                     >
@@ -56,7 +66,7 @@ export async function NavigationHeader() {
                     <NavbarItem>
                         <Link
                             as={NextLink}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-all duration-200 hover:bg-accent/50 hover:text-accent-foreground"
                             color="foreground"
                             href="/dashboard"
                         >
@@ -71,9 +81,9 @@ export async function NavigationHeader() {
             <NavbarContent justify="end">
                 {session ? (
                     <NavbarItem className="hidden lg:flex">
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground text-xs">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-accent/30 px-3 py-2">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-semibold text-primary-foreground text-sm shadow-md">
                                     {(session.name || session.email || "??")
                                         .split(" ")
                                         .map((n) => n[0])
@@ -82,7 +92,7 @@ export async function NavigationHeader() {
                                         .slice(0, 2)}
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-sm">
+                                    <span className="font-semibold text-foreground text-sm">
                                         {session.name || session.email}
                                     </span>
                                 </div>
@@ -94,8 +104,9 @@ export async function NavigationHeader() {
                     <NavbarItem>
                         <Button
                             as={NextLink}
-                            color="primary"
+                            className="bg-gradient-to-r from-primary to-primary/90 font-semibold text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:from-primary/90 hover:to-primary hover:shadow-xl"
                             href="/auth"
+                            radius="lg"
                             size="sm"
                         >
                             Sign In
@@ -109,12 +120,12 @@ export async function NavigationHeader() {
             </NavbarContent>
 
             {/* Mobile Menu */}
-            <NavbarMenu>
+            <NavbarMenu className="bg-background/95 pt-6 backdrop-blur-xl">
                 {menuItems.map((item, index) => (
                     <NavbarMenuItem key={`${item.name}-${index}`}>
                         <Link
                             as={NextLink}
-                            className="w-full"
+                            className="w-full rounded-lg px-4 py-3 font-medium transition-colors hover:bg-accent/50"
                             color="foreground"
                             href={item.href}
                             size="lg"
@@ -125,9 +136,9 @@ export async function NavigationHeader() {
                 ))}
                 {session ? (
                     <NavbarMenuItem>
-                        <div className="flex flex-col gap-3 pt-4">
-                            <div className="flex items-center gap-2">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground text-xs">
+                        <div className="flex flex-col gap-4 border-border/50 border-t pt-6">
+                            <div className="flex items-center gap-3 rounded-xl bg-accent/30 px-4 py-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-semibold text-primary-foreground text-sm shadow-md">
                                     {(session.name || session.email || "??")
                                         .split(" ")
                                         .map((n) => n[0])
@@ -135,9 +146,11 @@ export async function NavigationHeader() {
                                         .toUpperCase()
                                         .slice(0, 2)}
                                 </div>
-                                <span className="font-medium text-sm">
-                                    {session.name || session.email}
-                                </span>
+                                <div className="flex flex-col">
+                                    <span className="font-semibold text-foreground text-sm">
+                                        {session.name || session.email}
+                                    </span>
+                                </div>
                             </div>
                             <SignOutButton />
                         </div>
@@ -146,10 +159,9 @@ export async function NavigationHeader() {
                     <NavbarMenuItem>
                         <Button
                             as={NextLink}
-                            className="w-full"
-                            color="primary"
+                            className="mt-4 w-full bg-gradient-to-r from-primary to-primary/90 font-semibold text-primary-foreground shadow-lg"
                             href="/auth"
-                            variant="flat"
+                            radius="lg"
                         >
                             Sign In
                         </Button>

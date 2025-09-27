@@ -42,7 +42,6 @@ export default async function DashboardPage() {
 
     return (
         <div className="flex flex-col gap-3 p-3">
-            <p>Welcome to your dashboard!</p>
             <Card>
                 <CardHeader>
                     <CardTitle>Usage</CardTitle>
