@@ -1,6 +1,5 @@
 "use client";
 
-import { CheckCircle, ImageIcon, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
     Card,
@@ -10,8 +9,9 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
-import { FileUploader } from "./_components/file-uploader";
-import { ImageGallery } from "./_components/image-gallery";
+import { CheckCircle, ImageIcon, Upload } from "lucide-react";
+import { FileUploader } from "../dashboard/_components/file-uploader";
+import { ImageGallery } from "../dashboard/_components/image-gallery";
 
 export default function StorageTestPage() {
     const { data: session, isPending } = authClient.useSession();
