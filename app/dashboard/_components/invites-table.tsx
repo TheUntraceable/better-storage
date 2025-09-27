@@ -367,7 +367,9 @@ export function InvitesTable({
                                                         variant: "faded",
                                                         isIconOnly: true,
                                                     })}
-                                                    href={`https://better-storage.untraceable.dev/invite/${invite._id}`}
+                                                    href={getInviteLink(
+                                                        invite._id
+                                                    )}
                                                     isDisabled={isDeleting}
                                                     title="View file"
                                                 >
