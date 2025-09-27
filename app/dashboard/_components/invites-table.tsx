@@ -328,7 +328,6 @@ export function InvitesTable({
                                 const fileName = getFileNameFromLink(
                                     invite.link
                                 );
-                                const inviteLink = getInviteLink(invite._id);
 
                                 return (
                                     <TableRow
