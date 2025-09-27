@@ -72,7 +72,7 @@ export const get = query({
                 message: "Invite not found.",
             });
         }
-        console.log(user, invite);
+
         if (
             !invite.emails.includes(user.email) &&
             invite.ownerId !== user._id
