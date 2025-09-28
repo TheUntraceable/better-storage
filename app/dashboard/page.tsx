@@ -21,7 +21,7 @@ export default async function DashboardPage() {
     const user = await requireSession();
 
     let { data: customer } = await autumn.customers.get(user.id);
-    if(!customer) {
+    if (!customer) {
         const result = await autumn.customers.create({
             email: user.email,
             id: user.id,

@@ -179,5 +179,14 @@ export const remove = mutation({
         }
         await ctx.storage.delete(storageId);
         await ctx.db.delete(existing._id);
+
+        const invites = await ctx.db
+            .query("invites")
+            .withIndex("by_link", (q) => q.eq("link", existing.link))
+            .collect();
+
+        for (const invite of invites) {
+            await ctx.db.delete(invite._id);
+        }
     },
 });

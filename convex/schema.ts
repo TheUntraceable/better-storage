@@ -17,5 +17,7 @@ export default defineSchema({
         emails: v.array(v.string()),
         link: v.string(),
         fileName: v.string(),
-    }).index("by_ownerId", ["ownerId"]),
+    })
+        .index("by_ownerId", ["ownerId"])
+        .index("by_link", ["link"]),
 });
