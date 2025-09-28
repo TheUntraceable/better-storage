@@ -279,6 +279,24 @@ export function InviteDialog({
         }
     };
 
+    const isAddButtonDisabled = () => {
+        const trimmedEmail = emails.trim();
+        
+        if (!trimmedEmail) {
+            return true;
+        }
+        
+        if (!emailRegex.test(trimmedEmail)) {
+            return true;
+        }
+        
+        if (emailList.includes(trimmedEmail)) {
+            return true;
+        }
+        
+        return isCreating;
+    };
+
     return (
         <Dialog onOpenChange={handleClose} open={isOpen}>
             <DialogContent className="sm:max-w-md">
@@ -382,18 +400,12 @@ export function InviteDialog({
                                                 ? "default"
                                                 : "primary"
                                         }
-                                        isDisabled={
-                                            !emails.trim() ||
-                                            isCreating ||
-                                            !emailRegex.test(emails.trim())
-                                        }
+                                        isDisabled={isAddButtonDisabled()}
                                         isIconOnly
                                         onPress={handleAddEmail}
                                         size="sm"
                                         variant={
-                                            !emails.trim() ||
-                                            isCreating ||
-                                            !emailRegex.test(emails.trim())
+                                            isAddButtonDisabled()
                                                 ? "bordered"
                                                 : "shadow"
                                         }
