@@ -1,20 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
-import { Link } from "@heroui/link";
-import { button as buttonStyles } from "@heroui/theme";
-import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
-import {
-    ArrowUpDown,
-    Copy,
-    ExternalLink,
-    Mail,
-    Search,
-    Trash2,
-    Users,
-} from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -29,6 +14,22 @@ import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { showErrorToast } from "@/lib/toast";
 import { copyToClipboard } from "@/lib/utils";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Link } from "@heroui/link";
+import { button as buttonStyles } from "@heroui/theme";
+import { Tooltip } from "@heroui/tooltip";
+import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
+import {
+    ArrowUpDown,
+    Copy,
+    ExternalLink,
+    Mail,
+    Search,
+    Trash2,
+    Users,
+} from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 
 // Constants
 const UI_CONSTANTS = {
@@ -361,50 +362,55 @@ export function InvitesTable({
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex gap-1">
-                                                <Link
-                                                    className={buttonStyles({
-                                                        size: "sm",
-                                                        variant: "faded",
-                                                        isIconOnly: true,
-                                                    })}
-                                                    href={getInviteLink(
-                                                        invite._id
-                                                    )}
-                                                    isDisabled={isDeleting}
-                                                    title="View file"
-                                                >
-                                                    <ExternalLink className="h-3 w-3" />
-                                                </Link>
-
-                                                <Button
-                                                    isIconOnly
-                                                    onPress={() => {
-                                                        copyToClipboard(
-                                                            inviteLink,
-                                                            "Invite copied!"
-                                                        );
-                                                    }}
-                                                    size="sm"
-                                                    title="Copy invite link"
-                                                    variant="faded"
-                                                >
-                                                    <Copy className="h-3 w-3" />
-                                                </Button>
-
-                                                <Button
-                                                    className="text-destructive hover:text-destructive"
-                                                    color="danger"
-                                                    isDisabled={isDeleting}
-                                                    isIconOnly
-                                                    onPress={() =>
-                                                        handleDelete(invite._id)
-                                                    }
-                                                    size="sm"
-                                                    title="Delete invite"
-                                                    variant="faded"
-                                                >
-                                                    <Trash2 className="h-3 w-3 text-danger" />
-                                                </Button>
+                                                <Tooltip content="View invite link">
+                                                    <Link
+                                                        className={buttonStyles({
+                                                            size: "sm",
+                                                            variant: "faded",
+                                                            isIconOnly: true,
+                                                        })}
+                                                        href={getInviteLink(
+                                                            invite._id
+                                                        )}
+                                                        isDisabled={isDeleting}
+                                                        isExternal
+                                                        title="View file"
+                                                    >
+                                                        <ExternalLink className="h-3 w-3" />
+                                                    </Link>
+                                                </Tooltip>
+                                                <Tooltip content="Copy invite link">
+                                                    <Button
+                                                        isIconOnly
+                                                        onPress={() => {
+                                                            copyToClipboard(
+                                                                inviteLink,
+                                                                "Invite copied!"
+                                                            );
+                                                        }}
+                                                        size="sm"
+                                                        title="Copy invite link"
+                                                        variant="faded"
+                                                    >
+                                                        <Copy className="h-3 w-3" />
+                                                    </Button>
+                                                </Tooltip>
+                                                <Tooltip content="Delete">
+                                                    <Button
+                                                        className="text-destructive hover:text-destructive"
+                                                        color="danger"
+                                                        isDisabled={isDeleting}
+                                                        isIconOnly
+                                                        onPress={() =>
+                                                            handleDelete(invite._id)
+                                                        }
+                                                        size="sm"
+                                                        title="Delete invite"
+                                                        variant="faded"
+                                                    >
+                                                        <Trash2 className="h-3 w-3 text-danger" />
+                                                    </Button>
+                                                </Tooltip>
                                             </div>
                                         </TableCell>
                                     </TableRow>
