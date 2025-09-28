@@ -18,6 +18,7 @@ import type * as emails from "../emails.js";
 import type * as http from "../http.js";
 import type * as invites from "../invites.js";
 import type * as storage from "../storage.js";
+import type * as storage_action from "../storage_action.js";
 
 import type {
   ApiFromModules,
@@ -44,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   invites: typeof invites;
   storage: typeof storage;
+  storage_action: typeof storage_action;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

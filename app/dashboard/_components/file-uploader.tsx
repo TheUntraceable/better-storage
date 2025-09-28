@@ -1,19 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/button";
-import { Image } from "@heroui/image";
-import { Input } from "@heroui/input";
-import { Progress } from "@heroui/progress";
-import { useMutation } from "convex/react";
-import {
-    AlertCircle,
-    CheckCircle,
-    FileIcon,
-    Loader2,
-    Upload,
-} from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
 import { Card, CardContent } from "@/components/ui/card";
 import {
     Dialog,
@@ -24,12 +10,29 @@ import {
 } from "@/components/ui/dialog";
 import { api } from "@/convex/_generated/api";
 import { showErrorToast, showSuccessToast } from "@/lib/toast";
+import { Button } from "@heroui/button";
+import { Image } from "@heroui/image";
+import { Input } from "@heroui/input";
+import { Progress } from "@heroui/progress";
+import { useMutation } from "convex/react";
+import {
+    AlertCircle,
+    CheckCircle,
+    FileIcon,
+    Globe,
+    Loader2,
+    Upload,
+} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { type FileRejection, useDropzone } from "react-dropzone";
+import { UploadWithFirecrawlDialog } from "./upload-with-firecrawl";
 
 const BYTES_PER_KB = 1024; // 1 KB = 1024 bytes
+const MEGABYTES_TO_BYTES_MULTIPLIER = 100;
 
 const FILE_LIMITS = {
     MAX_SIZE_MB: 100,
-    MAX_SIZE_BYTES: 100 * BYTES_PER_KB * BYTES_PER_KB, // 100MB in bytes
+    MAX_SIZE_BYTES: MEGABYTES_TO_BYTES_MULTIPLIER * BYTES_PER_KB * BYTES_PER_KB, // 100MB in bytes
     MAX_FILES: 1,
     MAX_FILENAME_LENGTH: 255,
     TEXT_PREVIEW_LENGTH: 200,
@@ -123,7 +126,11 @@ const validateFileName = (name: string): string | null => {
 const validateFile = (file: File): string | null => {
     // Check dangerous extensions
     const extension = `.${file.name.toLowerCase().split(".").pop()}`;
-    if (DANGEROUS_EXTENSIONS.includes(extension as any)) {
+    if (
+        DANGEROUS_EXTENSIONS.includes(
+            extension as (typeof DANGEROUS_EXTENSIONS)[number]
+        )
+    ) {
         return "This file type is not allowed for security reasons";
     }
 
@@ -256,6 +263,7 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
         success: false,
     });
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [firecrawlDialogOpen, setFirecrawlDialogOpen] = useState(false);
     const [fileName, setFileName] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [filePreview, setFilePreview] = useState<FilePreview>(null);
@@ -423,7 +431,7 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
         [fileName, generateFilePreview]
     );
 
-    const onDropRejected = useCallback((rejectedFiles: any[]) => {
+    const onDropRejected = useCallback((rejectedFiles: FileRejection[]) => {
         const rejection = rejectedFiles[0];
         if (!rejection?.errors[0]) {
             return;
@@ -471,14 +479,33 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
 
     return (
         <div className="space-y-4">
-            <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
-                <DialogTrigger asChild>
-                    <Button color="primary" fullWidth variant="shadow">
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload File
-                    </Button>
-                </DialogTrigger>
+            {/* Upload Options */}
+            <div className="flex gap-2">
+                <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button
+                            className="flex-1"
+                            color="primary"
+                            variant="shadow"
+                        >
+                            <Upload className="mr-2 h-4 w-4" />
+                            Upload File
+                        </Button>
+                    </DialogTrigger>
+                </Dialog>
 
+                <Button
+                    className="flex-1"
+                    color="secondary"
+                    onPress={() => setFirecrawlDialogOpen(true)}
+                    variant="shadow"
+                >
+                    <Globe className="mr-2 h-4 w-4" />
+                    Scrape Web
+                </Button>
+            </div>
+
+            <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Upload File</DialogTitle>
@@ -596,13 +623,37 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
                 </DialogContent>
             </Dialog>
 
+            {/* Firecrawl Dialog */}
+            <UploadWithFirecrawlDialog
+                isOpen={firecrawlDialogOpen}
+                onClose={() => setFirecrawlDialogOpen(false)}
+                onSaveSuccess={() => {
+                    showSuccessToast(
+                        "File saved successfully!",
+                        "Scraped content has been saved to your files."
+                    );
+                    setFirecrawlDialogOpen(false);
+                }}
+                onSuccess={(_document) => {
+                    showSuccessToast(
+                        "Content scraped successfully!",
+                        "You can now save it as a file or retry."
+                    );
+                }}
+            />
+
             {/* Upload info */}
             <div className="space-y-1 text-xs">
                 <p>
-                    <strong>Max size:</strong> {FILE_LIMITS.MAX_SIZE_MB}MB
+                    <strong>File Upload - Max size:</strong>{" "}
+                    {FILE_LIMITS.MAX_SIZE_MB}MB
                 </p>
                 <p>
                     <strong>Supported:</strong> Images, PDFs, and text files
+                </p>
+                <p>
+                    <strong>Web Scraping:</strong> Extract content from any
+                    webpage
                 </p>
             </div>
         </div>
