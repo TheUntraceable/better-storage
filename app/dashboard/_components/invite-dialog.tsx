@@ -26,12 +26,12 @@ import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { showErrorToast } from "@/lib/toast";
 import { copyToClipboard } from "@/lib/utils";
+import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Input } from "@heroui/input";
 import { useMutation } from "convex/react";
 import {
-    AlertCircle,
     FileIcon,
     FileTextIcon,
     ImageIcon,
@@ -297,10 +297,12 @@ export function InviteDialog({
                 <div className="space-y-4">
                     {/* Error Display */}
                     {error && (
-                        <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-danger text-sm">
-                            <AlertCircle className="h-4 w-4" />
-                            {error}
-                        </div>
+                        <Alert
+                            color="danger"
+                            description={error}
+                            title="Error"
+                            variant="flat"
+                        />
                     )}
 
                     {createdInvite ? (
