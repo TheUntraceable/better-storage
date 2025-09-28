@@ -25,6 +25,8 @@
     "@heroui/theme": "2.4.19",
     "@heroui/toast": "^2.0.13",
     "@heroui/tooltip": "^2.2.23",
+    "@inkeep/agents-cli": "^0.8.3",
+    "@mendable/firecrawl-js": "^4.3.6",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-select": "^2.2.6",

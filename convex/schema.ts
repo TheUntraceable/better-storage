@@ -20,4 +20,13 @@ export default defineSchema({
     })
         .index("by_ownerId", ["ownerId"])
         .index("by_link", ["link"]),
+    hubs: defineTable({
+        ownerId: v.string(),
+        name: v.string(),
+        description: v.string(),
+    }),
+    hubFiles: defineTable({
+        hubId: v.id("hubs"),
+        uploadId: v.id("uploads"),
+    })
 });
