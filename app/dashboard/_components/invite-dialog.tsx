@@ -1,11 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/button";
-import { Chip } from "@heroui/chip";
-import { Input } from "@heroui/input";
-import { useMutation } from "convex/react";
-import { AlertCircle, Plus, Share, Users } from "lucide-react";
-import { useState } from "react";
 import {
     Card,
     CardDescription,
@@ -21,20 +15,48 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { showErrorToast } from "@/lib/toast";
 import { copyToClipboard } from "@/lib/utils";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
+import { Input } from "@heroui/input";
+import { useMutation } from "convex/react";
+import {
+    AlertCircle,
+    FileIcon,
+    FileTextIcon,
+    ImageIcon,
+    Plus,
+    Share,
+    Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+
+type Upload = {
+    _id: Id<"uploads">;
+    _creationTime: number;
+    uploader: string;
+    storageId: Id<"_storage">;
+    link: string;
+    size: number;
+    contentType: string;
+    name: string;
+};
 
 type InviteDialogProps = {
     isOpen: boolean;
     onClose: () => void;
-    upload: {
-        _id: Id<"uploads">;
-        storageId: Id<"_storage">;
-        link: string;
-    };
-    fileName: string;
+    uploads: Upload[];
+    selectedUpload?: Upload | null;
 };
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,13 +66,13 @@ const COPY_FEEDBACK_DURATION = 2000;
 function InviteSuccessState({
     createdInvite,
     emailList,
-    fileName,
+    selectedUpload,
     copied,
     onCopyLink,
 }: {
     createdInvite: string;
     emailList: string[];
-    fileName: string;
+    selectedUpload: Upload;
     copied: boolean;
     onCopyLink: () => void;
 }) {
@@ -64,6 +86,7 @@ function InviteSuccessState({
                     <CardDescription className="text-xs text-zinc-400">
                         {emailList.length} recipient
                         {emailList.length !== 1 ? "s" : ""} will receive access
+                        to {selectedUpload.name}
                     </CardDescription>
                 </CardHeader>
             </Card>
@@ -123,8 +146,8 @@ function InviteSuccessState({
 export function InviteDialog({
     isOpen,
     onClose,
-    upload,
-    fileName,
+    uploads = [],
+    selectedUpload,
 }: InviteDialogProps) {
     const [emails, setEmails] = useState<string>("");
     const [emailList, setEmailList] = useState<string[]>([]);
@@ -132,7 +155,33 @@ export function InviteDialog({
     const [createdInvite, setCreatedInvite] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [currentUpload, setCurrentUpload] = useState<Upload | null>(
+        selectedUpload || null
+    );
     const createInvite = useMutation(api.invites.create);
+
+    // Reset currentUpload when selectedUpload changes or when dialog opens
+    useEffect(() => {
+        if (isOpen) {
+            setCurrentUpload(selectedUpload || null);
+        }
+    }, [selectedUpload, isOpen]);
+
+    // Helper function to get file icon
+    const getFileIcon = (upload: Upload) => {
+        const contentType = upload.contentType?.toLowerCase() || "";
+
+        if (contentType.startsWith("image/")) {
+            return <ImageIcon className="h-4 w-4" />;
+        }
+        if (
+            contentType === "application/pdf" ||
+            upload.name.toLowerCase().endsWith(".pdf")
+        ) {
+            return <FileTextIcon className="h-4 w-4" />;
+        }
+        return <FileIcon className="h-4 w-4" />;
+    };
 
     const handleAddEmail = () => {
         const email = emails.trim();
@@ -164,15 +213,20 @@ export function InviteDialog({
             return;
         }
 
+        if (!currentUpload) {
+            setError("Please select a file to share");
+            return;
+        }
+
         try {
             setIsCreating(true);
             setError(null);
 
             const inviteId = await createInvite({
-                storageId: upload.storageId,
+                storageId: currentUpload.storageId,
                 emails: emailList,
-                link: upload.link,
-                fileName,
+                link: currentUpload.link,
+                fileName: currentUpload.name,
             });
 
             const inviteLink =
@@ -234,8 +288,9 @@ export function InviteDialog({
                         Share File
                     </DialogTitle>
                     <DialogDescription>
-                        Invite others to access "{fileName}" by email. They'll
-                        receive a secure link to view the file.
+                        {currentUpload
+                            ? `Invite others to access "${currentUpload.name}" by email. They'll receive a secure link to view the file.`
+                            : "Select a file and invite others to access it by email. They'll receive a secure link to view the file."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -253,11 +308,55 @@ export function InviteDialog({
                             copied={copied}
                             createdInvite={createdInvite}
                             emailList={emailList}
-                            fileName={fileName}
                             onCopyLink={handleCopyLink}
+                            selectedUpload={currentUpload!}
                         />
                     ) : (
                         <>
+                            {/* File Selection */}
+                            {uploads.length > 0 && (
+                                <div className="space-y-2">
+                                    <Label className="font-medium text-sm">
+                                        Select File to Share
+                                    </Label>
+                                    <Select
+                                        disabled={isCreating}
+                                        onValueChange={(value) => {
+                                            const selected = uploads.find(
+                                                (u) => u._id === value
+                                            );
+                                            setCurrentUpload(selected || null);
+                                        }}
+                                        value={currentUpload?._id || ""}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue
+                                                placeholder={
+                                                    selectedUpload
+                                                        ? selectedUpload.name
+                                                        : "Choose a file..."
+                                                }
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {uploads.map((upload) => (
+                                                <SelectItem
+                                                    key={upload._id}
+                                                    value={upload._id}
+                                                >
+                                                    <div className="flex items-center gap-2">
+                                                        {getFileIcon(upload)}
+                                                        <span className="truncate">
+                                                            {upload.name}
+                                                        </span>
+                                                    </div>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
+
                             <div className="space-y-2">
                                 <div className="flex flex-row items-end gap-2">
                                     <Input
@@ -275,18 +374,24 @@ export function InviteDialog({
                                     />
                                     <Button
                                         color={
-                                            !emails.trim() || isCreating
+                                            !emails.trim() ||
+                                            isCreating ||
+                                            !emailRegex.test(emails.trim())
                                                 ? "default"
                                                 : "primary"
                                         }
                                         isDisabled={
-                                            !emails.trim() || isCreating
+                                            !emails.trim() ||
+                                            isCreating ||
+                                            !emailRegex.test(emails.trim())
                                         }
                                         isIconOnly
                                         onPress={handleAddEmail}
                                         size="sm"
                                         variant={
-                                            !emails.trim() || isCreating
+                                            !emails.trim() ||
+                                            isCreating ||
+                                            !emailRegex.test(emails.trim())
                                                 ? "bordered"
                                                 : "shadow"
                                         }
@@ -341,7 +446,9 @@ export function InviteDialog({
                             <Button
                                 color="primary"
                                 isDisabled={
-                                    emailList.length === 0 || isCreating
+                                    emailList.length === 0 ||
+                                    isCreating ||
+                                    !currentUpload
                                 }
                                 isLoading={isCreating}
                                 onPress={handleCreateInvite}

@@ -1,7 +1,3 @@
-import { Progress } from "@heroui/progress";
-import { Autumn as autumn } from "autumn-js";
-import { preloadQuery } from "convex/nextjs";
-import { ImageIcon, Mail, Upload } from "lucide-react";
 import {
     Card,
     CardContent,
@@ -12,6 +8,10 @@ import {
 } from "@/components/ui/card";
 import { api } from "@/convex/_generated/api";
 import { requireSession } from "@/lib/session";
+import { Progress } from "@heroui/progress";
+import { Autumn as autumn } from "autumn-js";
+import { preloadQuery } from "convex/nextjs";
+import { ImageIcon, Mail, Upload } from "lucide-react";
 import { FileUploader } from "./_components/file-uploader";
 import { FilesTable } from "./_components/files-table";
 import { InvitesTable } from "./_components/invites-table";
@@ -114,7 +114,10 @@ export default async function DashboardPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <InvitesTable preloadedInvites={invites} />
+                    <InvitesTable
+                        preloadedInvites={invites}
+                        preloadedUploads={uploads}
+                    />
                 </CardContent>
             </Card>
         </div>

@@ -1,21 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
-import { Link } from "@heroui/link";
-import { button as buttonStyles } from "@heroui/theme";
-import { Tooltip } from "@heroui/tooltip";
-import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
-import {
-    ArrowUpDown,
-    Copy,
-    ExternalLink,
-    Mail,
-    Search,
-    Trash2,
-    Users,
-} from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -30,6 +14,24 @@ import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { showErrorToast } from "@/lib/toast";
 import { copyToClipboard } from "@/lib/utils";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Link } from "@heroui/link";
+import { button as buttonStyles } from "@heroui/theme";
+import { Tooltip } from "@heroui/tooltip";
+import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
+import {
+    ArrowUpDown,
+    Copy,
+    ExternalLink,
+    Mail,
+    Plus,
+    Search,
+    Trash2,
+    Users,
+} from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { InviteDialog } from "./invite-dialog";
 
 // Constants
 const UI_CONSTANTS = {
@@ -44,10 +46,13 @@ type SortOrder = "asc" | "desc";
 
 export function InvitesTable({
     preloadedInvites,
+    preloadedUploads,
 }: {
     preloadedInvites: Preloaded<typeof api.invites.getMyInvites>;
+    preloadedUploads: Preloaded<typeof api.storage.get>;
 }) {
     const invites = usePreloadedQuery(preloadedInvites);
+    const uploads = usePreloadedQuery(preloadedUploads);
     const deleteInvite = useMutation(api.invites.remove);
 
     // State for filtering and sorting
@@ -57,6 +62,7 @@ export function InvitesTable({
     const [deletingIds, setDeletingIds] = useState<Set<Id<"invites">>>(
         new Set()
     );
+    const [createInviteDialogOpen, setCreateInviteDialogOpen] = useState(false);
 
     // Helper functions
     const getInviteLink = useCallback((inviteId: Id<"invites">) => {
@@ -185,9 +191,19 @@ export function InvitesTable({
                 <CardContent className="flex flex-col items-center justify-center p-8 text-center">
                     <Mail className="mb-4 h-12 w-12" />
                     <h3 className="mb-2 font-medium">No invites yet</h3>
-                    <p className="text-sm">
+                    <p className="mb-4 text-sm">
                         Share some files to create invites and see them here.
                     </p>
+                    {uploads && uploads.length > 0 && (
+                        <Button
+                            color="primary"
+                            onPress={() => setCreateInviteDialogOpen(true)}
+                            startContent={<Plus className="h-4 w-4" />}
+                            variant="shadow"
+                        >
+                            Create Your First Invite
+                        </Button>
+                    )}
                 </CardContent>
             </Card>
         );
@@ -232,13 +248,26 @@ export function InvitesTable({
                             No invites found matching "{searchTerm}". Try
                             adjusting your search terms.
                         </p>
-                        <Button
-                            className="mt-4"
-                            onPress={() => setSearchTerm("")}
-                            variant="ghost"
-                        >
-                            Clear search
-                        </Button>
+                        <div className="mt-4 flex gap-2">
+                            <Button
+                                onPress={() => setSearchTerm("")}
+                                variant="ghost"
+                            >
+                                Clear search
+                            </Button>
+                            {uploads && uploads.length > 0 && (
+                                <Button
+                                    color="primary"
+                                    onPress={() =>
+                                        setCreateInviteDialogOpen(true)
+                                    }
+                                    startContent={<Plus className="h-4 w-4" />}
+                                    variant="shadow"
+                                >
+                                    Create Invite
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </CardContent>
             </Card>
@@ -246,185 +275,217 @@ export function InvitesTable({
     }
 
     return (
-        <Card>
-            <CardHeader className="space-y-4">
-                <CardTitle className="flex items-center justify-between">
-                    <span>Invites ({filteredAndSortedInvites.length})</span>
-                    <Badge variant="secondary">{invites.length} total</Badge>
-                </CardTitle>
+        <>
+            <Card>
+                <CardHeader className="space-y-4">
+                    <CardTitle className="flex items-center justify-between">
+                        <span>Invites ({filteredAndSortedInvites.length})</span>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                color="primary"
+                                onPress={() => setCreateInviteDialogOpen(true)}
+                                size="sm"
+                                startContent={<Plus className="h-4 w-4" />}
+                                variant="shadow"
+                            >
+                                Create Invite
+                            </Button>
+                            <Badge variant="secondary">
+                                {invites.length} total
+                            </Badge>
+                        </div>
+                    </CardTitle>
 
-                <div className="flex flex-wrap gap-4">
-                    <div
-                        className={`relative min-w-[${UI_CONSTANTS.MIN_SEARCH_WIDTH}px] flex-1`}
-                    >
-                        <Input
-                            onValueChange={setSearchTerm}
-                            placeholder="Search invites..."
-                            startContent={
-                                <Search className="h-4 w-4 transform" />
-                            }
-                            value={searchTerm}
-                            variant="faded"
-                        />
+                    <div className="flex flex-wrap gap-4">
+                        <div
+                            className={`relative min-w-[${UI_CONSTANTS.MIN_SEARCH_WIDTH}px] flex-1`}
+                        >
+                            <Input
+                                onValueChange={setSearchTerm}
+                                placeholder="Search invites..."
+                                startContent={
+                                    <Search className="h-4 w-4 transform" />
+                                }
+                                value={searchTerm}
+                                variant="faded"
+                            />
+                        </div>
                     </div>
-                </div>
-            </CardHeader>
+                </CardHeader>
 
-            <CardContent>
-                <div className="rounded-md border">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>
-                                    <Button
-                                        className="font-medium"
-                                        onPress={() => handleSort("link")}
-                                        radius="sm"
-                                        size="sm"
-                                        startContent={
-                                            <ArrowUpDown className="h-4 w-4" />
-                                        }
-                                        variant="ghost"
-                                    >
-                                        File Name
-                                    </Button>
-                                </TableHead>
-                                <TableHead>
-                                    <Button
-                                        className="font-medium"
-                                        onPress={() => handleSort("emails")}
-                                        radius="sm"
-                                        size="sm"
-                                        startContent={
-                                            <ArrowUpDown className="h-4 w-4" />
-                                        }
-                                        variant="ghost"
-                                    >
-                                        Invited Users
-                                    </Button>
-                                </TableHead>
-                                <TableHead className="w-[120px]">
-                                    <Button
-                                        className="font-medium"
-                                        onPress={() => handleSort("date")}
-                                        radius="sm"
-                                        size="sm"
-                                        startContent={
-                                            <ArrowUpDown className="h-4 w-4" />
-                                        }
-                                        variant="ghost"
-                                    >
-                                        Created
-                                    </Button>
-                                </TableHead>
-                                <TableHead className="w-[200px]">
-                                    Actions
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredAndSortedInvites.map((invite) => {
-                                const isDeleting = deletingIds.has(invite._id);
-                                const inviteLink = getInviteLink(invite._id);
+                <CardContent>
+                    <div className="rounded-md border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>
+                                        <Button
+                                            className="font-medium"
+                                            onPress={() => handleSort("link")}
+                                            radius="sm"
+                                            size="sm"
+                                            startContent={
+                                                <ArrowUpDown className="h-4 w-4" />
+                                            }
+                                            variant="ghost"
+                                        >
+                                            File Name
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead>
+                                        <Button
+                                            className="font-medium"
+                                            onPress={() => handleSort("emails")}
+                                            radius="sm"
+                                            size="sm"
+                                            startContent={
+                                                <ArrowUpDown className="h-4 w-4" />
+                                            }
+                                            variant="ghost"
+                                        >
+                                            Invited Users
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead className="w-[120px]">
+                                        <Button
+                                            className="font-medium"
+                                            onPress={() => handleSort("date")}
+                                            radius="sm"
+                                            size="sm"
+                                            startContent={
+                                                <ArrowUpDown className="h-4 w-4" />
+                                            }
+                                            variant="ghost"
+                                        >
+                                            Created
+                                        </Button>
+                                    </TableHead>
+                                    <TableHead className="w-[200px]">
+                                        Actions
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredAndSortedInvites.map((invite) => {
+                                    const isDeleting = deletingIds.has(
+                                        invite._id
+                                    );
+                                    const inviteLink = getInviteLink(
+                                        invite._id
+                                    );
 
-                                return (
-                                    <TableRow
-                                        className={
-                                            isDeleting ? "opacity-50" : ""
-                                        }
-                                        key={invite._id}
-                                    >
-                                        <TableCell className="font-medium">
-                                            <div className="flex flex-col">
-                                                <span
-                                                    className="max-w-[200px] truncate"
-                                                    title={invite.fileName}
-                                                >
-                                                    {invite.fileName}
-                                                </span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <Users className="h-3 w-3" />
-                                                <span className="text-sm">
-                                                    {invite.emails.length}
-                                                </span>
-                                                <div className="max-w-[150px] truncate text-xs">
-                                                    {invite.emails.join(", ")}
+                                    return (
+                                        <TableRow
+                                            className={
+                                                isDeleting ? "opacity-50" : ""
+                                            }
+                                            key={invite._id}
+                                        >
+                                            <TableCell className="font-medium">
+                                                <div className="flex flex-col">
+                                                    <span
+                                                        className="max-w-[200px] truncate"
+                                                        title={invite.fileName}
+                                                    >
+                                                        {invite.fileName}
+                                                    </span>
                                                 </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="text-sm">
-                                            {new Date(
-                                                invite._creationTime
-                                            ).toLocaleDateString()}
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex gap-1">
-                                                <Tooltip content="View invite link">
-                                                    <Link
-                                                        className={buttonStyles(
-                                                            {
-                                                                size: "sm",
-                                                                variant:
-                                                                    "faded",
-                                                                isIconOnly: true,
-                                                            }
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <Users className="h-3 w-3" />
+                                                    <span className="text-sm">
+                                                        {invite.emails.length}
+                                                    </span>
+                                                    <div className="max-w-[150px] truncate text-xs">
+                                                        {invite.emails.join(
+                                                            ", "
                                                         )}
-                                                        href={getInviteLink(
-                                                            invite._id
-                                                        )}
-                                                        isDisabled={isDeleting}
-                                                        isExternal
-                                                        title="View file"
-                                                    >
-                                                        <ExternalLink className="h-3 w-3" />
-                                                    </Link>
-                                                </Tooltip>
-                                                <Tooltip content="Copy invite link">
-                                                    <Button
-                                                        isIconOnly
-                                                        onPress={() => {
-                                                            copyToClipboard(
-                                                                inviteLink,
-                                                                "Invite copied!"
-                                                            );
-                                                        }}
-                                                        size="sm"
-                                                        title="Copy invite link"
-                                                        variant="faded"
-                                                    >
-                                                        <Copy className="h-3 w-3" />
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip content="Delete">
-                                                    <Button
-                                                        className="text-destructive hover:text-destructive"
-                                                        color="danger"
-                                                        isDisabled={isDeleting}
-                                                        isIconOnly
-                                                        onPress={() =>
-                                                            handleDelete(
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-sm">
+                                                {new Date(
+                                                    invite._creationTime
+                                                ).toLocaleDateString()}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex gap-1">
+                                                    <Tooltip content="View invite link">
+                                                        <Link
+                                                            className={buttonStyles(
+                                                                {
+                                                                    size: "sm",
+                                                                    variant:
+                                                                        "faded",
+                                                                    isIconOnly: true,
+                                                                }
+                                                            )}
+                                                            href={getInviteLink(
                                                                 invite._id
-                                                            )
-                                                        }
-                                                        size="sm"
-                                                        title="Delete invite"
-                                                        variant="faded"
-                                                    >
-                                                        <Trash2 className="h-3 w-3 text-danger" />
-                                                    </Button>
-                                                </Tooltip>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </div>
-            </CardContent>
-        </Card>
+                                                            )}
+                                                            isDisabled={
+                                                                isDeleting
+                                                            }
+                                                            isExternal
+                                                            title="View file"
+                                                        >
+                                                            <ExternalLink className="h-3 w-3" />
+                                                        </Link>
+                                                    </Tooltip>
+                                                    <Tooltip content="Copy invite link">
+                                                        <Button
+                                                            isIconOnly
+                                                            onPress={() => {
+                                                                copyToClipboard(
+                                                                    inviteLink,
+                                                                    "Invite copied!"
+                                                                );
+                                                            }}
+                                                            size="sm"
+                                                            title="Copy invite link"
+                                                            variant="faded"
+                                                        >
+                                                            <Copy className="h-3 w-3" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                    <Tooltip content="Delete">
+                                                        <Button
+                                                            className="text-destructive hover:text-destructive"
+                                                            color="danger"
+                                                            isDisabled={
+                                                                isDeleting
+                                                            }
+                                                            isIconOnly
+                                                            onPress={() =>
+                                                                handleDelete(
+                                                                    invite._id
+                                                                )
+                                                            }
+                                                            size="sm"
+                                                            title="Delete invite"
+                                                            variant="faded"
+                                                        >
+                                                            <Trash2 className="h-3 w-3 text-danger" />
+                                                        </Button>
+                                                    </Tooltip>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Create Invite Dialog */}
+            <InviteDialog
+                isOpen={createInviteDialogOpen}
+                onClose={() => setCreateInviteDialogOpen(false)}
+                uploads={uploads || []}
+            />
+        </>
     );
 }
