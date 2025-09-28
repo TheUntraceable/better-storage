@@ -496,12 +496,12 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
 
                 <Button
                     className="flex-1"
-                    color="secondary"
+                    color="default"
                     onPress={() => setFirecrawlDialogOpen(true)}
                     variant="shadow"
                 >
                     <Globe className="mr-2 h-4 w-4" />
-                    Scrape Web
+                    Scrape with Firecrawl
                 </Button>
             </div>
 
