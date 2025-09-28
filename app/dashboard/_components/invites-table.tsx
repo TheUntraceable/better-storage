@@ -23,6 +23,7 @@ import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import {
     ArrowUpDown,
     Copy,
+    Edit,
     ExternalLink,
     Mail,
     Plus,
@@ -31,6 +32,7 @@ import {
     Users,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
+import { EditInviteDialog } from "./edit-invite-dialog";
 import { InviteDialog } from "./invite-dialog";
 
 // Constants
@@ -63,6 +65,9 @@ export function InvitesTable({
         new Set()
     );
     const [createInviteDialogOpen, setCreateInviteDialogOpen] = useState(false);
+    const [editingInvite, setEditingInvite] = useState<
+        (typeof invites)[0] | null
+    >(null);
 
     // Helper functions
     const getInviteLink = useCallback((inviteId: Id<"invites">) => {
@@ -360,7 +365,7 @@ export function InvitesTable({
                                             Created
                                         </Button>
                                     </TableHead>
-                                    <TableHead className="w-[200px]">
+                                    <TableHead className="w-[240px]">
                                         Actions
                                     </TableHead>
                                 </TableRow>
@@ -449,6 +454,24 @@ export function InvitesTable({
                                                             <Copy className="h-3 w-3" />
                                                         </Button>
                                                     </Tooltip>
+                                                    <Tooltip content="Edit invite">
+                                                        <Button
+                                                            isDisabled={
+                                                                isDeleting
+                                                            }
+                                                            isIconOnly
+                                                            onPress={() =>
+                                                                setEditingInvite(
+                                                                    invite
+                                                                )
+                                                            }
+                                                            size="sm"
+                                                            title="Edit invite"
+                                                            variant="faded"
+                                                        >
+                                                            <Edit className="h-3 w-3" />
+                                                        </Button>
+                                                    </Tooltip>
                                                     <Tooltip content="Delete">
                                                         <Button
                                                             className="text-destructive hover:text-destructive"
@@ -485,6 +508,13 @@ export function InvitesTable({
                 isOpen={createInviteDialogOpen}
                 onClose={() => setCreateInviteDialogOpen(false)}
                 uploads={uploads || []}
+            />
+
+            {/* Edit Invite Dialog */}
+            <EditInviteDialog
+                invite={editingInvite}
+                isOpen={!!editingInvite}
+                onClose={() => setEditingInvite(null)}
             />
         </>
     );
