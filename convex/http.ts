@@ -10,37 +10,6 @@ import { createAuth } from "./auth";
 
 const app: HonoWithConvex<ActionCtx> = new Hono();
 
-// authComponent.registerRoutes(app, createAuth);
-
-// http.route({
-//     pathPrefix: "/uploads/",
-//     method: "GET",
-//     handler: httpAction(async (ctx, request) => {
-//         const auth = createAuth(ctx);
-//         const session = await auth.api.getSession({
-//             headers: request.headers,
-//         });
-//         if (!session) {
-//             return new Response("Not authenticated", { status: 401 });
-//         }
-//         const url = new URL(request.url);
-//         const storageId = url.pathname.replace("/uploads/", "");
-
-//         if (!storageId) {
-//             return new Response("Missing storageId", { status: 400 });
-//         }
-
-//         const blob = await ctx.storage.get(storageId);
-
-//         if (!blob) {
-//             return new Response("File not found", { status: 404 });
-//         }
-//         return new Response(blob);
-//     }),
-// });
-
-// Add your routes to `app`. See below
-
 const http = new HttpRouterWithHono(app);
 app.get("/.well-known/openid-configuration", (c) => {
     return c.redirect("/api/auth/convex/.well-known/openid-configuration");
@@ -70,25 +39,25 @@ app.get("/hubs/:hubId", async (c) => {
 
     const fileContents = await Promise.all(
         files.map(async (file) => {
-            const fileContent = await c.env.runQuery(
-                internal.hubs.getFileContent,
+            const { storageId, fileName } = await c.env.runQuery(
+                internal.hubs.getUploadData,
                 {
                     uploadId: file.uploadId,
                 }
             );
-            if (!fileContent) {
+            if (!storageId) {
                 return null;
             }
-            const storageObject = await c.env.storage.get(
-                fileContent.storageId
-            );
+            const storageObject = await c.env.storage.get(storageId);
             if (!storageObject) {
                 return null;
             }
             const arrayBuffer = await storageObject.arrayBuffer();
-            const base64 = Buffer.from(arrayBuffer).toString("base64");
+            const base64 = btoa(
+                String.fromCharCode(...new Uint8Array(arrayBuffer))
+            );
             return {
-                fileName: file._id,
+                fileName,
                 content: base64,
             };
         })

@@ -186,19 +186,6 @@ export const removeFileFromHub = mutation({
     },
 });
 
-export const getFileContent = internalQuery({
-    args: {
-        uploadId: v.id("uploads"),
-    },
-    handler: async (ctx, { uploadId }) => {
-        const file = await ctx.db.get(uploadId);
-        if (!file) {
-            throw new APIError("NOT_FOUND", { message: "File not found" });
-        }
-        return file;
-    },
-});
-
 export const attachFileToHub = mutation({
     args: {
         hubId: v.id("hubs"),
@@ -222,5 +209,18 @@ export const attachFileToHub = mutation({
             hubId,
             uploadId,
         });
+    },
+});
+
+export const getUploadData = internalQuery({
+    args: {
+        uploadId: v.id("uploads"),
+    },
+    handler: async (ctx, { uploadId }) => {
+        const upload = await ctx.db.get(uploadId);
+        if (!upload) {
+            throw new APIError("NOT_FOUND", { message: "upload not found" });
+        }
+        return { storageId: upload.storageId, fileName: upload.name };
     },
 });
