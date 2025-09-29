@@ -53,19 +53,48 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 
 app.get("/hubs/:hubId", async (c) => {
     const authorization = c.req.raw.headers.get("Authorization");
+
     if (!authorization) {
         return c.json({ message: "Not authorized" }, 401);
     }
+
     const [_, token] = authorization.split(" ");
+
     if (token !== process.env.INKEEP_SECRET) {
-        console.log(token, process.env.INKEEP_SECRET);
         return c.json({ message: "Not authorized" }, 401);
     }
+
     const files = await c.env.runQuery(internal.hubs.getHubFiles, {
         hubId: c.req.param("hubId") as Id<"hubs">,
     });
 
-    return c.json(files);
+    const fileContents = await Promise.all(
+        files.map(async (file) => {
+            const fileContent = await c.env.runQuery(
+                internal.hubs.getFileContent,
+                {
+                    uploadId: file.uploadId,
+                }
+            );
+            if (!fileContent) {
+                return null;
+            }
+            const storageObject = await c.env.storage.get(
+                fileContent.storageId
+            );
+            if (!storageObject) {
+                return null;
+            }
+            const arrayBuffer = await storageObject.arrayBuffer();
+            const base64 = Buffer.from(arrayBuffer).toString("base64");
+            return {
+                fileName: file._id,
+                content: base64,
+            };
+        })
+    );
+
+    return c.json(fileContents);
 });
 
 export default http;

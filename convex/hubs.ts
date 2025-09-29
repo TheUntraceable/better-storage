@@ -142,3 +142,17 @@ export const removeFileFromHub = mutation({
         await ctx.db.delete(hubFileId);
     },
 });
+
+
+export const getFileContent = internalQuery({
+    args: {
+        uploadId: v.id("uploads"),
+    },
+    handler: async (ctx, { uploadId }) => {
+        const file = await ctx.db.get(uploadId);
+        if (!file) {
+            throw new APIError("NOT_FOUND", { message: "File not found" });
+        }
+        return file;
+    }
+})

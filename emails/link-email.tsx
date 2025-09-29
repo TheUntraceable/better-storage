@@ -92,7 +92,7 @@ export default function LinkEmail({
                     {/* Footer */}
                     <Section className="mt-[32px] border-[#eaeaea] border-t border-solid pt-[20px]">
                         <Text className="text-center text-[12px] text-gray-400 leading-[24px]">
-                            Sent from Better Okta File Manager
+                            Sent from Better Storage
                         </Text>
                     </Section>
                 </Container>
