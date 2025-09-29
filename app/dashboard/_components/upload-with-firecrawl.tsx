@@ -30,6 +30,7 @@ type ScrapedDocument = {
         title?: string;
         description?: string;
     };
+    summary?: string;
 };
 
 type UploadWithFirecrawlDialogProps = {
@@ -225,7 +226,7 @@ export function UploadWithFirecrawlDialog({
         }
 
         content += "---\\n\\n";
-        content += scrapedDoc.markdown || "";
+        content += scrapedDoc.summary || "";
 
         return new File([content], fileName, { type: "text/markdown" });
     };
