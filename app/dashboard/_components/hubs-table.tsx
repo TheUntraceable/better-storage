@@ -47,17 +47,6 @@ type Hub = {
     description: string;
 };
 
-type Upload = {
-    _id: Id<"uploads">;
-    _creationTime: number;
-    uploader: string;
-    storageId: Id<"_storage">;
-    link: string;
-    size: number;
-    contentType: string;
-    name: string;
-};
-
 type SortField = "name" | "description" | "date";
 type SortOrder = "asc" | "desc";
 
