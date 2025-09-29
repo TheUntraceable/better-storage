@@ -39,19 +39,13 @@ export const scrape = action({
             });
         }
 
+
         const firecrawl = new Firecrawl({
             apiKey: process.env.FIRECRAWL_API_KEY!,
         });
 
-        const document = await firecrawl.scrape(url, {
-            formats: [
-                {
-                    type: "json",
-                    prompt: "Extract the main content from the page to store as a Document.",
-                },
-            ],
-        });
-        console.log(document)
+        const document = await firecrawl.scrape(url, { formats: ["markdown"] });
+
         if (!document) {
             throw new APIError("NOT_FOUND", {
                 message: "Failed to scrape URL",
@@ -60,7 +54,7 @@ export const scrape = action({
         await autumn.track({
             customer_id: user._id,
             feature_id: "scrapes",
-            value: (document.metadata?.creditsUsed as number) || 1,
+            value: document.metadata?.creditsUsed as number || 1,
         });
         return document;
     },
