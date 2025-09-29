@@ -192,25 +192,33 @@ export function InvitesTable({
 
     if (invites.length === 0) {
         return (
-            <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                    <Mail className="mb-4 h-12 w-12" />
-                    <h3 className="mb-2 font-medium">No invites yet</h3>
-                    <p className="mb-4 text-sm">
-                        Share some files to create invites and see them here.
-                    </p>
-                    {uploads && uploads.length > 0 && (
-                        <Button
-                            color="primary"
-                            onPress={() => setCreateInviteDialogOpen(true)}
-                            startContent={<Plus className="h-4 w-4" />}
-                            variant="shadow"
-                        >
-                            Create Your First Invite
-                        </Button>
-                    )}
-                </CardContent>
-            </Card>
+            <>
+                <Card className="border-dashed">
+                    <CardContent className="flex flex-col items-center justify-center p-8 text-center">
+                        <Mail className="mb-4 h-12 w-12" />
+                        <h3 className="mb-2 font-medium">No invites yet</h3>
+                        <p className="mb-4 text-sm">
+                            Share some files to create invites and see them
+                            here.
+                        </p>
+                        {uploads && uploads.length > 0 && (
+                            <Button
+                                color="primary"
+                                onPress={() => setCreateInviteDialogOpen(true)}
+                                startContent={<Plus className="h-4 w-4" />}
+                                variant="shadow"
+                            >
+                                Create Your First Invite
+                            </Button>
+                        )}
+                    </CardContent>
+                </Card>
+                <InviteDialog
+                    isOpen={createInviteDialogOpen}
+                    onClose={() => setCreateInviteDialogOpen(false)}
+                    uploads={uploads || []}
+                />
+            </>
         );
     }
 
