@@ -17,6 +17,7 @@ import type * as betterAuth_adapter from "../betterAuth/adapter.js";
 import type * as betterAuth_auth from "../betterAuth/auth.js";
 import type * as emails from "../emails.js";
 import type * as http from "../http.js";
+import type * as hubs from "../hubs.js";
 import type * as invites from "../invites.js";
 import type * as storage from "../storage.js";
 
@@ -44,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   "betterAuth/auth": typeof betterAuth_auth;
   emails: typeof emails;
   http: typeof http;
+  hubs: typeof hubs;
   invites: typeof invites;
   storage: typeof storage;
 }>;

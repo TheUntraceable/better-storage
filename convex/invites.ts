@@ -1,6 +1,6 @@
 import { APIError } from "better-auth";
 import { v } from "convex/values";
-import { api, internal } from "./_generated/api";
+import { api } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
 
@@ -43,7 +43,7 @@ export const create = mutation({
 
         await ctx.scheduler.runAfter(0, api.emails.sendInviteEmail, {
             to: emails,
-            from: user.email,
+            from: `${user.name} (${user.email})`,
             inviteId,
             fileName,
         });
@@ -182,7 +182,12 @@ export const update = mutation({
         // Find the emails that were not present before
         const newEmails = emails.filter(
             (email) => !invite.emails.includes(email)
-        );
+        )
+;
+        await ctx.db.patch(inviteId, {
+            emails: [...new Set(emails)],
+        });
+
         if (newEmails.length > 0) {
             await ctx.scheduler.runAfter(0, api.emails.sendInviteEmail, {
                 to: newEmails,
@@ -192,8 +197,5 @@ export const update = mutation({
             });
         }
 
-        await ctx.db.patch(inviteId, {
-            emails: [...new Set(emails)],
-        });
     },
 });

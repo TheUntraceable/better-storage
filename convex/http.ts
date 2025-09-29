@@ -3,6 +3,8 @@ import {
     HttpRouterWithHono,
 } from "convex-helpers/server/hono";
 import { Hono } from "hono";
+import { internal } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
 import type { ActionCtx } from "./_generated/server";
 import { createAuth } from "./auth";
 
@@ -49,13 +51,21 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
     return auth.handler(c.req.raw);
 });
 
-app.get("/hubs/:hubId", c => {
+app.get("/hubs/:hubId", async (c) => {
     const authorization = c.req.raw.headers.get("Authorization");
-    if(!authorization) {
-        return c.json({message: "Not authorized"}, 401);
+    if (!authorization) {
+        return c.json({ message: "Not authorized" }, 401);
     }
-    const [_, token] = authorization.split(" ")
-    return c.json({token})
-})
+    const [_, token] = authorization.split(" ");
+    if (token !== process.env.INKEEP_SECRET) {
+        console.log(token, process.env.INKEEP_SECRET);
+        return c.json({ message: "Not authorized" }, 401);
+    }
+    const files = await c.env.runQuery(internal.hubs.getHubFiles, {
+        hubId: c.req.param("hubId") as Id<"hubs">,
+    });
+
+    return c.json(files);
+});
 
 export default http;

@@ -24,9 +24,9 @@ export default defineSchema({
         ownerId: v.string(),
         name: v.string(),
         description: v.string(),
-    }),
+    }).index("by_ownerId", ["ownerId"]),
     hubFiles: defineTable({
         hubId: v.id("hubs"),
         uploadId: v.id("uploads"),
-    })
+    }).index("by_hub_id", ["hubId"])
 });
