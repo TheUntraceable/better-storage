@@ -39,7 +39,6 @@ export const scrape = action({
             });
         }
 
-
         const firecrawl = new Firecrawl({
             apiKey: process.env.FIRECRAWL_API_KEY!,
         });
@@ -54,7 +53,7 @@ export const scrape = action({
         await autumn.track({
             customer_id: user._id,
             feature_id: "scrapes",
-            value: document.metadata?.creditsUsed as number || 1,
+            value: (document.metadata?.creditsUsed as number) || 1,
         });
         return document;
     },

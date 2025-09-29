@@ -182,8 +182,7 @@ export const update = mutation({
         // Find the emails that were not present before
         const newEmails = emails.filter(
             (email) => !invite.emails.includes(email)
-        )
-;
+        );
         await ctx.db.patch(inviteId, {
             emails: [...new Set(emails)],
         });
@@ -196,6 +195,5 @@ export const update = mutation({
                 fileName: invite.fileName,
             });
         }
-
     },
 });

@@ -28,5 +28,5 @@ export default defineSchema({
     hubFiles: defineTable({
         hubId: v.id("hubs"),
         uploadId: v.id("uploads"),
-    }).index("by_hub_id", ["hubId"])
+    }).index("by_hub_id", ["hubId"]),
 });
