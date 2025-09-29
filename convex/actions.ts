@@ -19,6 +19,10 @@ export const scrape = action({
             });
         }
 
+        if (!url.trim()) {
+            throw new APIError("BAD_REQUEST", { message: "Missing url" });
+        }
+
         const autumn = new Autumn({
             secretKey: process.env.AUTUMN_SECRET_KEY!,
         });
@@ -35,15 +39,19 @@ export const scrape = action({
             });
         }
 
-        if (!url) {
-            throw new APIError("BAD_REQUEST", { message: "Missing url" });
-        }
-
         const firecrawl = new Firecrawl({
             apiKey: process.env.FIRECRAWL_API_KEY!,
         });
 
-        const document = await firecrawl.scrape(url, { formats: ["markdown"] });
+        const document = await firecrawl.scrape(url, {
+            formats: [
+                {
+                    type: "json",
+                    prompt: "Extract the main content from the page to store as a Document.",
+                },
+            ],
+        });
+        console.log(document)
         if (!document) {
             throw new APIError("NOT_FOUND", {
                 message: "Failed to scrape URL",
@@ -52,7 +60,7 @@ export const scrape = action({
         await autumn.track({
             customer_id: user._id,
             feature_id: "scrapes",
-            value: document.metadata?.creditsUsed as number || 1,
+            value: (document.metadata?.creditsUsed as number) || 1,
         });
         return document;
     },

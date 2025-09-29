@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as actions from "../actions.js";
 import type * as auth from "../auth.js";
 import type * as autumn from "../autumn.js";
 import type * as betterAuth__generated_api from "../betterAuth/_generated/api.js";
@@ -18,7 +19,6 @@ import type * as emails from "../emails.js";
 import type * as http from "../http.js";
 import type * as invites from "../invites.js";
 import type * as storage from "../storage.js";
-import type * as storage_action from "../storage_action.js";
 
 import type {
   ApiFromModules,
@@ -35,6 +35,7 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  actions: typeof actions;
   auth: typeof auth;
   autumn: typeof autumn;
   "betterAuth/_generated/api": typeof betterAuth__generated_api;
@@ -45,7 +46,6 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   invites: typeof invites;
   storage: typeof storage;
-  storage_action: typeof storage_action;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
