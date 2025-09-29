@@ -7,15 +7,16 @@ import {
     Html,
     Link,
     Preview,
+    render,
     Section,
     Text,
 } from "@react-email/components";
 
-interface LinkEmailProps {
+type LinkEmailProps = {
     fileName: string;
     inviteId: string;
     from: string;
-}
+};
 
 export default function LinkEmail({
     fileName,
@@ -101,3 +102,13 @@ export default function LinkEmail({
 }
 
 export { LinkEmail };
+
+export const LinkEmailHTML = async (
+    fileName: string,
+    inviteId: string,
+    from: string
+) => {
+    return await render(
+        <LinkEmail fileName={fileName} from={from} inviteId={inviteId} />
+    );
+};

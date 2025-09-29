@@ -49,4 +49,13 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
     return auth.handler(c.req.raw);
 });
 
+app.get("/hubs/:hubId", c => {
+    const authorization = c.req.raw.headers.get("Authorization");
+    if(!authorization) {
+        return c.json({message: "Not authorized"}, 401);
+    }
+    const [_, token] = authorization.split(" ")
+    return c.json({token})
+})
+
 export default http;
