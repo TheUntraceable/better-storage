@@ -11,9 +11,10 @@ import { requireSession } from "@/lib/session";
 import { Progress } from "@heroui/progress";
 import { Autumn as autumn } from "autumn-js";
 import { preloadQuery } from "convex/nextjs";
-import { ImageIcon, Mail, Upload } from "lucide-react";
+import { FolderOpen, ImageIcon, Mail, Upload } from "lucide-react";
 import { FileUploader } from "./_components/file-uploader";
 import { FilesTable } from "./_components/files-table";
+import { HubsTable } from "./_components/hubs-table";
 import { InvitesTable } from "./_components/invites-table";
 import { UpgradeSubscription } from "./_components/upgrade-subscription";
 
@@ -42,6 +43,14 @@ export default async function DashboardPage() {
 
     const invites = await preloadQuery(
         api.invites.getMyInvites,
+        {},
+        {
+            token: user.token,
+        }
+    );
+
+    const hubs = await preloadQuery(
+        api.hubs.getMyHubs,
         {},
         {
             token: user.token,
@@ -100,6 +109,24 @@ export default async function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                     <FilesTable preloadedUploads={uploads} />
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <FolderOpen className="h-5 w-5" />
+                        Your Hubs
+                    </CardTitle>
+                    <CardDescription>
+                        Organize your files into collections called hubs. Create
+                        themed groupings and manage file access by hub.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <HubsTable
+                        preloadedHubs={hubs}
+                        preloadedUploads={uploads}
+                    />
                 </CardContent>
             </Card>
             <Card>

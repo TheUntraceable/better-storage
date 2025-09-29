@@ -49,7 +49,7 @@
     "react-dropzone": "^14.3.8",
     "react-email": "^4.2.12",
     "react-scan": "^0.4.3",
-    "resend": "^6.1.0",
+    "resend": "^6.1.1",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "ultracite": "^5.0.46",

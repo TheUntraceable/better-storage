@@ -17,6 +17,22 @@ export const getHubFiles = internalQuery({
     },
 });
 
+export const getMyHubs = query({
+    args: {},
+    handler: async (ctx) => {
+        const user = await authComponent.safeGetAuthUser(ctx);
+        if (!user) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "Not authenticated",
+            });
+        }
+        return await ctx.db
+            .query("hubs")
+            .withIndex("by_ownerId", (q) => q.eq("ownerId", user._id))
+            .collect();
+    },
+});
+
 export const listHubFiles = query({
     args: { hubId: v.id("hubs") },
     handler: async (ctx, { hubId }) => {
@@ -59,6 +75,33 @@ export const create = mutation({
             name,
             description,
             ownerId: user._id,
+        });
+    },
+});
+
+export const update = mutation({
+    args: {
+        hubId: v.id("hubs"),
+        name: v.string(),
+        description: v.string(),
+    },
+    handler: async (ctx, { hubId, name, description }) => {
+        const user = await authComponent.safeGetAuthUser(ctx);
+        if (!user) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "Not authenticated",
+            });
+        }
+        const hub = await ctx.db.get(hubId);
+        if (!hub) {
+            throw new APIError("NOT_FOUND", { message: "Hub not found" });
+        }
+        if (hub.ownerId !== user._id) {
+            throw new APIError("FORBIDDEN", { message: "Not authorized" });
+        }
+        await ctx.db.patch(hubId, {
+            name,
+            description,
         });
     },
 });
@@ -143,7 +186,6 @@ export const removeFileFromHub = mutation({
     },
 });
 
-
 export const getFileContent = internalQuery({
     args: {
         uploadId: v.id("uploads"),
@@ -154,5 +196,31 @@ export const getFileContent = internalQuery({
             throw new APIError("NOT_FOUND", { message: "File not found" });
         }
         return file;
-    }
-})
+    },
+});
+
+export const attachFileToHub = mutation({
+    args: {
+        hubId: v.id("hubs"),
+        uploadId: v.id("uploads"),
+    },
+    handler: async (ctx, { hubId, uploadId }) => {
+        const user = await authComponent.safeGetAuthUser(ctx);
+        if (!user) {
+            throw new APIError("UNAUTHORIZED", {
+                message: "Not authenticated",
+            });
+        }
+        const hub = await ctx.db.get(hubId);
+        if (!hub) {
+            throw new APIError("NOT_FOUND", { message: "Hub not found" });
+        }
+        if (hub.ownerId !== user._id) {
+            throw new APIError("FORBIDDEN", { message: "Not authorized" });
+        }
+        await ctx.db.insert("hubFiles", {
+            hubId,
+            uploadId,
+        });
+    },
+});
