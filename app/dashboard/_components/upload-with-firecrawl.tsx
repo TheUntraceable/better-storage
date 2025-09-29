@@ -162,7 +162,7 @@ export function UploadWithFirecrawlDialog({
     const [scrapedDocument, setScrapedDocument] =
         useState<ScrapedDocument | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const scrape = useAction(api.storage_action.scrape);
+    const scrape = useAction(api.actions.scrape);
     const generateUploadLink = useMutation(api.storage.generateLink);
     const storeFile = useMutation(api.storage.store);
 
