@@ -402,12 +402,11 @@ export function UploadWithFirecrawlDialog({
                         />
                     ) : (
                         <div className="space-y-2">
-                            <Label htmlFor="url-input">Website URL</Label>
                             <div className="flex gap-2">
                                 <Input
                                     className="flex-1"
-                                    id="url-input"
                                     isDisabled={isScraping}
+                                    label="Website URL"
                                     onKeyDown={handleKeyPress}
                                     onValueChange={setUrl}
                                     placeholder="https://example.com/page"
@@ -418,23 +417,6 @@ export function UploadWithFirecrawlDialog({
                                     value={url}
                                     variant="faded"
                                 />
-                                <Button
-                                    color={
-                                        isScrapingDisabled()
-                                            ? "default"
-                                            : "primary"
-                                    }
-                                    isDisabled={isScrapingDisabled()}
-                                    isLoading={isScraping}
-                                    onPress={handleScrapeUrl}
-                                    variant={
-                                        isScrapingDisabled()
-                                            ? "bordered"
-                                            : "shadow"
-                                    }
-                                >
-                                    {isScraping ? "Scraping..." : "Scrape"}
-                                </Button>
                             </div>
 
                             {/* URL validation hint */}

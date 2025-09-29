@@ -44,7 +44,7 @@ export const scrape = action({
             apiKey: process.env.FIRECRAWL_API_KEY!,
         });
 
-        const document = await firecrawl.scrape(url, { formats: ["markdown", "summary"] });
+        const document = await firecrawl.scrape(url, { formats: ["markdown"] });
 
         if (!document) {
             throw new APIError("NOT_FOUND", {
