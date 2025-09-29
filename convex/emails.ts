@@ -13,7 +13,7 @@ export const sendInviteEmail = internalAction({
         inviteId: v.id("invites"),
         fileName: v.string(),
     },
-    handler: async (ctx, { to, from, inviteId, fileName }) => {
+    handler: async (_ctx, { to, from, inviteId, fileName }) => {
         for (const email of to) {
             if (!email) {
                 throw new Error("Email is required");
