@@ -2,12 +2,7 @@ import { APIError } from "better-auth";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import {
-    internalMutation,
-    internalQuery,
-    mutation,
-    query,
-} from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
 
 export const getHubFiles = internalQuery({
@@ -81,14 +76,7 @@ export const create = mutation({
             description,
             ownerId: user._id,
         });
-
-        await ctx.scheduler.runAfter(
-            0,
-            internal.actions.createScorecardProject,
-            {
-                hubId,
-            }
-        );
+        return hubId;
     },
 });
 
@@ -143,13 +131,6 @@ export const deleteHub = mutation({
         });
         for (const file of hubFiles) {
             await ctx.db.delete(file._id);
-        }
-        const scorecardProject = await ctx.db
-            .query("scorecardProjects")
-            .withIndex("by_hub", (q) => q.eq("hubId", hubId))
-            .first();
-        if (scorecardProject) {
-            await ctx.db.delete(scorecardProject._id);
         }
     },
 });
@@ -219,37 +200,6 @@ export const getUploadData = internalQuery({
     },
 });
 
-export const storeScorecardProject = internalMutation({
-    args: {
-        hubId: v.id("hubs"),
-        projectId: v.string(),
-        testsetId: v.string(),
-    },
-    handler: async (ctx, { projectId, hubId, testsetId }) => {
-        await ctx.db.insert("scorecardProjects", {
-            projectId,
-            hubId,
-            testsetId,
-        });
-    },
-});
-
-export const getScorecardProject = internalQuery({
-    args: {
-        hubId: v.id("hubs"),
-    },
-    handler: async (ctx, { hubId }) => {
-        const project = await ctx.db
-            .query("scorecardProjects")
-            .withIndex("by_hub", (q) => q.eq("hubId", hubId))
-            .first();
-        if (!project) {
-            throw new APIError("NOT_FOUND", { message: "Project not found" });
-        }
-        return project;
-    },
-});
-
 export const getHubById = internalQuery({
     args: { hubId: v.id("hubs") },
     handler: async (ctx, { hubId }) => {
@@ -260,30 +210,3 @@ export const getHubById = internalQuery({
         return hub;
     },
 });
-
-// export const getHubScorecardData = internalQuery({
-//     args: { hubId: v.id("hubs") },
-//     handler: async (ctx, { hubId }) => {
-//         const hub = await ctx.runQuery(internal.hubs.getHubById, { hubId });
-//         if (!hub) {
-//             throw new APIError("NOT_FOUND", { message: "Hub not found" });
-//         }
-//         const project = await ctx.runQuery(internal.hubs.getScorecardProject, {
-//             hubId,
-//         });
-//         if (!project) {
-//             throw new APIError("NOT_FOUND", {
-//                 message: "Scorecard project not found",
-//             });
-//         }
-//         const testset = await ctx.runQuery(internal.hubs.getScorecardTestset, {
-//             hubId,
-//         });
-//         if (!testset) {
-//             throw new APIError("NOT_FOUND", {
-//                 message: "Scorecard testset not found",
-//             });
-//         }
-//         return { hub, project, testset };
-//     },
-// });

@@ -4,6 +4,7 @@ import { internal } from "./_generated/api";
 import {
     internalAction,
     internalMutation,
+    internalQuery,
     mutation,
     query,
 } from "./_generated/server";
@@ -45,6 +46,15 @@ export const cleanupUpload = internalMutation({
             // Storage deletion failed - this is expected in some cases
             // Continue execution as this is a cleanup operation
         }
+    },
+});
+
+export const getUpload = internalQuery({
+    args: {
+        uploadId: v.id("uploads"),
+    },
+    handler: async (ctx, { uploadId }) => {
+        return await ctx.db.get(uploadId);
     },
 });
 

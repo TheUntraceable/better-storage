@@ -395,14 +395,20 @@ export function HubsTable({
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-1">
-                                                <Tooltip content="Talk with">
+                                                <Tooltip
+                                                    content="Talk with"
+                                                    showArrow
+                                                >
                                                     <VapiCallButton
                                                         apiKey="796acfab-e24f-47cb-802f-aaac07888052"
                                                         hubId={hub._id}
                                                         hubName={hub.name}
                                                     />
                                                 </Tooltip>
-                                                <Tooltip content="Edit hub">
+                                                <Tooltip
+                                                    content="Edit hub"
+                                                    showArrow
+                                                >
                                                     <Button
                                                         className="h-8 w-8 p-0"
                                                         isIconOnly
@@ -418,7 +424,10 @@ export function HubsTable({
                                                         </span>
                                                     </Button>
                                                 </Tooltip>
-                                                <Tooltip content="Manage files">
+                                                <Tooltip
+                                                    content="Manage files"
+                                                    showArrow
+                                                >
                                                     <Button
                                                         className="h-8 w-8 p-0"
                                                         isIconOnly
@@ -436,7 +445,10 @@ export function HubsTable({
                                                         </span>
                                                     </Button>
                                                 </Tooltip>
-                                                <Tooltip content="Delete hub">
+                                                <Tooltip
+                                                    content="Delete hub"
+                                                    showArrow
+                                                >
                                                     <Button
                                                         className="h-8 w-8 p-0 text-danger hover:text-danger"
                                                         isDisabled={deletingIds.has(
