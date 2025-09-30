@@ -4,6 +4,7 @@ import { internal } from "./_generated/api";
 import {
     internalAction,
     internalMutation,
+    internalQuery,
     mutation,
     query,
 } from "./_generated/server";
@@ -188,5 +189,16 @@ export const remove = mutation({
         for (const invite of invites) {
             await ctx.db.delete(invite._id);
         }
+    },
+});
+
+export const getUpload = internalQuery({
+    args: { uploadId: v.id("uploads") },
+    handler: async (ctx, { uploadId }) => {
+        const upload = await ctx.db.get(uploadId);
+        if (!upload) {
+            throw new APIError("NOT_FOUND", { message: "upload not found" });
+        }
+        return { storageId: upload.storageId, fileName: upload.name };
     },
 });

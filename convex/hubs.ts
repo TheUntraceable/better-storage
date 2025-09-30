@@ -2,7 +2,12 @@ import { APIError } from "better-auth";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { internalQuery, mutation, query } from "./_generated/server";
+import {
+    internalMutation,
+    internalQuery,
+    mutation,
+    query,
+} from "./_generated/server";
 import { authComponent } from "./auth";
 
 export const getHubFiles = internalQuery({
@@ -209,6 +214,7 @@ export const attachFileToHub = mutation({
             hubId,
             uploadId,
         });
+        
     },
 });
 
@@ -224,3 +230,42 @@ export const getUploadData = internalQuery({
         return { storageId: upload.storageId, fileName: upload.name };
     },
 });
+
+export const storeAssistant = internalMutation({
+    args: {
+        hubId: v.id("hubs"),
+        assistantId: v.string(),
+    },
+    handler: async (ctx, { assistantId, hubId }) => {
+        await ctx.db.insert("assistants", {
+            assistantId,
+            hubId,
+        });
+    },
+});
+
+export const getAssistantByHub = internalQuery({
+    args: {
+        hubId: v.id("hubs"),
+    },
+    handler: async (ctx, { hubId }) => {
+        const assistant = await ctx.db.query("assistants").withIndex("by_hub", (q) => q.eq("hubId", hubId)).first();
+        if (!assistant) {
+            return null;
+        }
+        return assistant;
+    }
+})
+
+export const getHub = internalQuery({
+    args: {
+        hubId: v.id("hubs"),
+    },
+    handler: async (ctx, { hubId }) => {
+        const hub = await ctx.db.get(hubId);
+        if (!hub) {
+            return null;
+        }
+        return hub;
+    }
+})
