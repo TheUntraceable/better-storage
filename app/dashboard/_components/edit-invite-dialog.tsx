@@ -225,9 +225,7 @@ export function EditInviteDialog({
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-muted-foreground text-sm">
-                                No emails added yet
-                            </p>
+                            <p className="text-sm">No emails added yet</p>
                         )}
                     </div>
                 </div>

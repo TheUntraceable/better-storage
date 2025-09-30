@@ -97,7 +97,7 @@ function ScrapeSuccessState({
                             </div>
                         )}
                         <div className="w-full min-w-0 rounded border bg-background p-2">
-                            <p className="m-0 text-muted-foreground text-sm">
+                            <p className="m-0 text-sm">
                                 Content extracted - click "View Full Content" to
                                 inspect or copy the full markdown.
                             </p>
@@ -401,9 +401,7 @@ export function UploadWithFirecrawlDialog({
                                     onKeyDown={handleKeyPress}
                                     onValueChange={setUrl}
                                     placeholder="https://example.com/page"
-                                    startContent={
-                                        <Globe className="h-4 w-4 text-muted-foreground" />
-                                    }
+                                    startContent={<Globe className="h-4 w-4" />}
                                     type="url"
                                     value={url}
                                     variant="faded"

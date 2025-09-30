@@ -254,7 +254,7 @@ export function ManageHubFilesDialog({
                                                         <span className="truncate">
                                                             {upload.name}
                                                         </span>
-                                                        <span className="text-muted-foreground text-xs">
+                                                        <span className="text-xs">
                                                             (
                                                             {formatFileSize(
                                                                 upload.size
@@ -311,7 +311,7 @@ export function ManageHubFilesDialog({
                                                     <p className="truncate font-medium text-sm">
                                                         {upload.name}
                                                     </p>
-                                                    <p className="text-muted-foreground text-xs">
+                                                    <p className="text-xs">
                                                         {formatFileSize(
                                                             upload.size
                                                         )}{" "}
@@ -337,7 +337,7 @@ export function ManageHubFilesDialog({
                                     })}
                                 </div>
                             ) : (
-                                <div className="py-8 text-center text-muted-foreground">
+                                <div className="py-8 text-center">
                                     <FolderOpen className="mx-auto mb-3 h-12 w-12 opacity-50" />
                                     <p className="text-sm">
                                         No files in this hub yet

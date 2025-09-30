@@ -10,6 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import VapiCallButton from "@/components/vapi-widget";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { showErrorToast, showSuccessToast } from "@/lib/toast";
@@ -24,7 +25,6 @@ import {
     Edit,
     FileIcon,
     FolderOpen,
-    MessageCircle,
     Plus,
     Search,
     Trash2,
@@ -32,7 +32,6 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { CreateHubDialog, EditHubDialog } from "./hub-dialogs";
 import { ManageHubFilesDialog } from "./manage-hub-files-dialog";
-import VapiCallButton from "@/components/vapi-widget";
 
 // Constants
 const UI_CONSTANTS = {
@@ -386,12 +385,12 @@ export function HubsTable({
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <span className="truncate text-muted-foreground">
+                                            <span className="truncate">
                                                 {hub.description ||
                                                     "No description"}
                                             </span>
                                         </TableCell>
-                                        <TableCell className="text-muted-foreground">
+                                        <TableCell className="">
                                             {formatDate(hub._creationTime)}
                                         </TableCell>
                                         <TableCell>
@@ -399,7 +398,6 @@ export function HubsTable({
                                                 <Tooltip content="Talk with">
                                                     <VapiCallButton
                                                         apiKey="796acfab-e24f-47cb-802f-aaac07888052"
-                                                        
                                                         hubId={hub._id}
                                                         hubName={hub.name}
                                                     />
