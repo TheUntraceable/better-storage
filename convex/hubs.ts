@@ -191,33 +191,6 @@ export const removeFileFromHub = mutation({
     },
 });
 
-export const attachFileToHub = mutation({
-    args: {
-        hubId: v.id("hubs"),
-        uploadId: v.id("uploads"),
-    },
-    handler: async (ctx, { hubId, uploadId }) => {
-        const user = await authComponent.safeGetAuthUser(ctx);
-        if (!user) {
-            throw new APIError("UNAUTHORIZED", {
-                message: "Not authenticated",
-            });
-        }
-        const hub = await ctx.db.get(hubId);
-        if (!hub) {
-            throw new APIError("NOT_FOUND", { message: "Hub not found" });
-        }
-        if (hub.ownerId !== user._id) {
-            throw new APIError("FORBIDDEN", { message: "Not authorized" });
-        }
-        await ctx.db.insert("hubFiles", {
-            hubId,
-            uploadId,
-        });
-        
-    },
-});
-
 export const getUploadData = internalQuery({
     args: {
         uploadId: v.id("uploads"),
@@ -243,29 +216,3 @@ export const storeAssistant = internalMutation({
         });
     },
 });
-
-export const getAssistantByHub = internalQuery({
-    args: {
-        hubId: v.id("hubs"),
-    },
-    handler: async (ctx, { hubId }) => {
-        const assistant = await ctx.db.query("assistants").withIndex("by_hub", (q) => q.eq("hubId", hubId)).first();
-        if (!assistant) {
-            return null;
-        }
-        return assistant;
-    }
-})
-
-export const getHub = internalQuery({
-    args: {
-        hubId: v.id("hubs"),
-    },
-    handler: async (ctx, { hubId }) => {
-        const hub = await ctx.db.get(hubId);
-        if (!hub) {
-            return null;
-        }
-        return hub;
-    }
-})

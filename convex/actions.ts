@@ -83,53 +83,12 @@ export const createAssistant = internalAction({
 
         const assistant = await vapi.assistants.create({
             ...assistantData,
+            name: `Assistant for Hub ${hubId}`,
         });
 
         await ctx.runMutation(internal.hubs.storeAssistant, {
             hubId,
             assistantId: assistant.id,
         });
-    },
-});
-
-export const attachFileToAssistant = internalAction({
-    args: {
-        hubId: v.id("hubs"),
-        uploadId: v.id("uploads"),
-    },
-    handler: async (ctx, { hubId, uploadId }) => {
-        const hub = await ctx.runQuery(internal.hubs.getHub, { hubId });
-        if (!hub) {
-            throw new APIError("NOT_FOUND", { message: "Hub not found" });
-        }
-        const assistant = await ctx.runQuery(internal.hubs.getAssistantByHub, {
-            hubId,
-        });
-        if (!assistant) {
-            throw new APIError("NOT_FOUND", {
-                message: "Assistant not found for hub",
-            });
-        }
-        const upload = await ctx.runQuery(internal.storage.getUpload, {
-            uploadId
-        })
-        if (!upload) {
-            throw new APIError("NOT_FOUND", { message: "Upload not found" });
-        }
-        const vapi = new VapiClient({
-            token: process.env.VAPI_API_KEY!,
-        });
-        const file = await ctx.storage.get(upload.storageId);
-        if (!file) {
-            throw new APIError("NOT_FOUND", { message: "File not found in storage" });
-        }
-        const arrayBuffer = await file.arrayBuffer();
-        const textContent = new TextDecoder().decode(arrayBuffer);
-        await vapi.files.create({
-            file: {
-                name: upload.name,
-                content: textContent,
-            }
-        })
     },
 });
