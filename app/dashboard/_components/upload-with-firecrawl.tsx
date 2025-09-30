@@ -42,7 +42,7 @@ type UploadWithFirecrawlDialogProps = {
 
 const urlRegex =
     /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
-const PREVIEW_LENGTH = 500;
+// preview length removed (unused)
 
 // Success state component
 function ScrapeSuccessState({
@@ -74,37 +74,33 @@ function ScrapeSuccessState({
             </Card>
 
             {/* Document Preview Section */}
-            <div className="space-y-3 rounded-lg border bg-muted/50 p-4">
+            <div className="max-h-72 space-y-3 rounded-lg border p-2">
                 <div className="space-y-2">
                     <Label className="flex items-center gap-2 font-medium text-sm">
                         <Globe className="h-4 w-4" />
                         Scraped Content
                     </Label>
                     <div className="space-y-2">
-                        <div className="text-muted-foreground text-xs">
+                        <div className="text-xs">
                             <strong>URL:</strong> {url}
                         </div>
                         {scrapedDocument.metadata?.title && (
-                            <div className="text-muted-foreground text-xs">
+                            <div className="text-xs">
                                 <strong>Title:</strong>{" "}
                                 {scrapedDocument.metadata.title}
                             </div>
                         )}
                         {scrapedDocument.metadata?.description && (
-                            <div className="text-muted-foreground text-xs">
+                            <div className="text-xs">
                                 <strong>Description:</strong>{" "}
                                 {scrapedDocument.metadata.description}
                             </div>
                         )}
-                        <div className="max-h-32 overflow-y-auto rounded border bg-background p-2 font-mono text-xs">
-                            {scrapedDocument.markdown?.substring(
-                                0,
-                                PREVIEW_LENGTH
-                            )}
-                            {scrapedDocument.markdown?.length &&
-                                scrapedDocument.markdown.length >
-                                    PREVIEW_LENGTH &&
-                                "..."}
+                        <div className="w-full min-w-0 rounded border bg-background p-2">
+                            <p className="m-0 text-muted-foreground text-sm">
+                                Content extracted - click "View Full Content" to
+                                inspect or copy the full markdown.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -112,7 +108,7 @@ function ScrapeSuccessState({
                 <div className="flex gap-2">
                     <Button
                         className="flex-1"
-                        color="secondary"
+                        color="danger"
                         isDisabled={isSaving}
                         onPress={onRetry}
                         size="sm"
@@ -245,11 +241,6 @@ export function UploadWithFirecrawlDialog({
             const document = await scrape({ url: url.trim() });
 
             setScrapedDocument(document);
-            showSuccessToast(
-                "Page scraped successfully!",
-                "Content has been extracted and is ready to use."
-            );
-
             if (onSuccess) {
                 onSuccess(document);
             }
@@ -325,7 +316,7 @@ export function UploadWithFirecrawlDialog({
     const handleRetry = () => {
         setScrapedDocument(null);
         setError(null);
-        setUrl("");
+        // setUrl("");
     };
 
     const handleClose = () => {
