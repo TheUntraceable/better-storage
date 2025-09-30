@@ -32,6 +32,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { CreateHubDialog, EditHubDialog } from "./hub-dialogs";
 import { ManageHubFilesDialog } from "./manage-hub-files-dialog";
+import VapiCallButton from "@/components/vapi-widget";
 
 // Constants
 const UI_CONSTANTS = {
@@ -396,13 +397,19 @@ export function HubsTable({
                                         <TableCell>
                                             <div className="flex items-center gap-1">
                                                 <Tooltip content="Talk with">
-                                                    <Button
+                                                    <VapiCallButton
+                                                        apiKey="796acfab-e24f-47cb-802f-aaac07888052"
+                                                        
+                                                        hubId={hub._id}
+                                                        hubName={hub.name}
+                                                    />
+                                                    {/* <Button
                                                         isIconOnly
                                                         size="sm"
                                                         variant="ghost"
                                                     >
                                                         <MessageCircle className="h-4 w-4" />
-                                                    </Button>
+                                                    </Button> */}
                                                 </Tooltip>
                                                 <Tooltip content="Edit hub">
                                                     <Button
