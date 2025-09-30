@@ -62,4 +62,4 @@ export const myProject = project({
     name: "Better Storage Assistant",
     description: "An assistant to help you manage your files.",
     graphs: () => [graph],
-})
+});

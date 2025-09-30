@@ -22,7 +22,6 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 
 const UNAUTHORIZED_STATUS = 401;
 
-
 app.post("/hubs/vapi", async (c) => {
     const authorization = c.req.raw.headers.get("Authorization");
 
