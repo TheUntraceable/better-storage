@@ -18,7 +18,7 @@ export default function Home() {
                     and collaborate seamlessly.
                 </p>
                 <div className="mb-12 flex items-center justify-center">
-                    <RainbowButton asChild>
+                    <RainbowButton asChild size="lg">
                         <Link href="/auth" size="lg">
                             Get Started
                         </Link>
