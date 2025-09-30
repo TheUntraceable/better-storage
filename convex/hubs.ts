@@ -216,3 +216,16 @@ export const storeAssistant = internalMutation({
         });
     },
 });
+
+export const storeScorecardProject = internalMutation({
+    args: {
+        hubId: v.id("hubs"),
+        projectId: v.string(),
+    },
+    handler: async (ctx, { projectId, hubId }) => {
+        await ctx.db.insert("scorecardProjects", {
+            projectId,
+            hubId,
+        });
+    },
+});

@@ -4,6 +4,7 @@ import { VapiClient } from "@vapi-ai/server-sdk";
 import { Autumn } from "autumn-js";
 import { APIError } from "better-auth";
 import { v } from "convex/values";
+import Scorecard from "scorecard-ai";
 import { internal } from "./_generated/api";
 import { action, internalAction } from "./_generated/server";
 import { authComponent } from "./auth";
@@ -90,5 +91,21 @@ export const createAssistant = internalAction({
             hubId,
             assistantId: assistant.id,
         });
+    },
+});
+
+export const createScorecardProject = internalAction({
+    args: {
+        hubId: v.id("hubs"),
+    },
+    handler: async (ctx, { hubId }) => {
+        const client = new Scorecard({
+            apiKey: process.env.SCORECARD_API_KEY!,
+        });
+        const project = await client.projects.create({
+            description: `Project for Hub ${hubId}`,
+            name: `Hub ${hubId}`,
+        });
+        await 
     },
 });
