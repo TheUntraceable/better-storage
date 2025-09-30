@@ -401,13 +401,6 @@ export function HubsTable({
                                                         hubId={hub._id}
                                                         hubName={hub.name}
                                                     />
-                                                    {/* <Button
-                                                        isIconOnly
-                                                        size="sm"
-                                                        variant="ghost"
-                                                    >
-                                                        <MessageCircle className="h-4 w-4" />
-                                                    </Button> */}
                                                 </Tooltip>
                                                 <Tooltip content="Edit hub">
                                                     <Button
