@@ -106,6 +106,9 @@ export const createScorecardProject = internalAction({
             description: `Project for Hub ${hubId}`,
             name: `Hub ${hubId}`,
         });
-        await 
+        await ctx.runMutation(internal.hubs.storeScorecardProject, {
+            hubId,
+            projectId: project.id
+        })
     },
 });
