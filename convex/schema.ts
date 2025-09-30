@@ -38,5 +38,6 @@ export default defineSchema({
     scorecardProjects: defineTable({
         hubId: v.id("hubs"),
         projectId: v.string(),
+        testsetId: v.string(),
     }).index("by_hub", ["hubId"]),
 });

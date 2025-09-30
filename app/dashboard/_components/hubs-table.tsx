@@ -19,12 +19,12 @@ import { Tooltip } from "@heroui/tooltip";
 import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import {
     ArrowUpDown,
-    AudioLines,
     ChevronDown,
     ChevronUp,
     Edit,
     FileIcon,
     FolderOpen,
+    MessageCircle,
     Plus,
     Search,
     Trash2,
@@ -401,7 +401,7 @@ export function HubsTable({
                                                         size="sm"
                                                         variant="ghost"
                                                     >
-                                                        <AudioLines />
+                                                        <MessageCircle className="h-4 w-4" />
                                                     </Button>
                                                 </Tooltip>
                                                 <Tooltip content="Edit hub">

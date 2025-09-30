@@ -84,7 +84,10 @@ export const createAssistant = internalAction({
 
         const assistant = await vapi.assistants.create({
             ...assistantData,
-            name: `Assistant for Hub ${hubId}`,
+            name: "Hub Assistant",
+            metadata: {
+                hubId
+            }
         });
 
         await ctx.runMutation(internal.hubs.storeAssistant, {
@@ -106,9 +109,51 @@ export const createScorecardProject = internalAction({
             description: `Project for Hub ${hubId}`,
             name: `Hub ${hubId}`,
         });
+        const testset = await client.testsets.create(project.id, {
+            name: "Hub File Comprehension (Multiple Files)",
+            description:
+                "Tests the AI's ability to answer questions using multiple files from a user's hub.",
+            jsonSchema: {
+                type: "object",
+                properties: {
+                    inputs: {
+                        type: "object",
+                        properties: {
+                            user_question: { type: "string" },
+                            file_contents: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        file_name: { type: "string" },
+                                        content: { type: "string" },
+                                    },
+                                    required: ["file_name", "content"],
+                                },
+                            },
+                        },
+                        required: ["user_question", "file_contents"],
+                    },
+                    expected: {
+                        type: "object",
+                        properties: {
+                            ideal_answer: { type: "string" },
+                        },
+                        required: ["ideal_answer"],
+                    },
+                },
+                required: ["inputs", "expected"],
+            },
+            fieldMapping: {
+                inputs: ["inputs"],
+                expected: ["expected"],
+                metadata: [],
+            },
+        });
         await ctx.runMutation(internal.hubs.storeScorecardProject, {
             hubId,
-            projectId: project.id
-        })
+            projectId: project.id,
+            testsetId: testset.id,
+        });
     },
 });
