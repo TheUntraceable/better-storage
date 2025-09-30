@@ -122,7 +122,7 @@ const VapiCallButton: React.FC<VapiCallButtonProps> = ({
             vapi.start({
                 model: {
                     provider: "openrouter",
-                    model: "google/gemini-2.5-flash-preview-09-2025",
+                    model: "openai/gpt-4.1-mini",
                     tools: [getFilesTool],
                     messages: [
                         {
