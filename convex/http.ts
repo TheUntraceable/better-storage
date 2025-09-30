@@ -22,58 +22,6 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 
 const UNAUTHORIZED_STATUS = 401;
 
-app.get("/hubs/:hubId", async (c) => {
-    console.log("Hard ID");
-    const authorization = c.req.raw.headers.get("Authorization");
-
-    if (!authorization) {
-        return c.json({ message: "Not authorized" }, UNAUTHORIZED_STATUS);
-    }
-
-    const [_, token] = authorization.split(" ");
-
-    if (token !== process.env.INKEEP_SECRET) {
-        return c.json({ message: "Not authorized" }, UNAUTHORIZED_STATUS);
-    }
-
-    const files = await c.env.runQuery(internal.hubs.getHubFiles, {
-        hubId: c.req.param("hubId") as Id<"hubs">,
-    });
-
-    const documents = await Promise.all(
-        files.map(async (file) => {
-            const { storageId, fileName } = await c.env.runQuery(
-                internal.hubs.getUploadData,
-                {
-                    uploadId: file.uploadId,
-                }
-            );
-            if (!storageId) {
-                return null;
-            }
-            const storageObject = await c.env.storage.get(storageId);
-            if (!storageObject) {
-                return null;
-            }
-            const arrayBuffer = await storageObject.arrayBuffer();
-            const base64 = btoa(
-                String.fromCharCode(...new Uint8Array(arrayBuffer))
-            );
-            return {
-                content: base64,
-                similarity: 1.0, // Default similarity since no search query provided
-                uuid: `${file.uploadId}-${fileName.replace(/[^a-zA-Z0-9]/g, "-")}`,
-            };
-        })
-    );
-
-    // Filter out null values
-    const validDocuments = documents.filter((doc) => doc !== null);
-
-    return c.json({
-        documents: validDocuments,
-    });
-});
 
 app.post("/hubs/vapi", async (c) => {
     const authorization = c.req.raw.headers.get("Authorization");
