@@ -30,6 +30,7 @@
         "@react-email/components": "0.5.5",
         "@react-email/render": "1.3.1",
         "@useautumn/convex": "^0.0.12",
+        "@vapi-ai/server-sdk": "^0.10.2",
         "autumn-js": "^0.1.39",
         "better-auth": "1.3.8",
         "class-variance-authority": "^0.7.1",
@@ -1178,6 +1179,8 @@
     "@ungap/structured-clone": ["@ungap/structured-clone@1.3.0", "", {}, "sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g=="],
 
     "@useautumn/convex": ["@useautumn/convex@0.0.12", "", { "dependencies": { "convex-helpers": "^0.1.104" }, "peerDependencies": { "autumn-js": "^0.1.24", "convex": "^1.25.0", "react": "^18.3.1 || ^19.0.0" } }, "sha512-zNaGI/ibaiTVB57oquD2oXDftxmJZCMUuhboB+aG1ctO5as0ROh8LeCqndmRYf7oqVXhLwJ0fVlYxdzoTmALUQ=="],
+
+    "@vapi-ai/server-sdk": ["@vapi-ai/server-sdk@0.10.2", "", {}, "sha512-+4ISX9Ej54Sx7SlsoA8VEnoi8UqOBkQHF9OpBUy126uR2DImnNju0DTweqbxnDRhY8Ao8jb+xhYrNxqkx6lTgA=="],
 
     "@vitest/expect": ["@vitest/expect@3.2.4", "", { "dependencies": { "@types/chai": "^5.2.2", "@vitest/spy": "3.2.4", "@vitest/utils": "3.2.4", "chai": "^5.2.0", "tinyrainbow": "^2.0.0" } }, "sha512-Io0yyORnB6sikFlt8QW5K7slY4OjqNX9jmJQ02QDda8lyM6B5oNgVWoSoKPac8/kgnCUzuHQKrSLtu/uOqqrig=="],
 

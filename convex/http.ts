@@ -23,6 +23,7 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 const UNAUTHORIZED_STATUS = 401;
 
 app.get("/hubs/:hubId", async (c) => {
+    console.log("Hard ID");
     const authorization = c.req.raw.headers.get("Authorization");
 
     if (!authorization) {
@@ -74,7 +75,7 @@ app.get("/hubs/:hubId", async (c) => {
     });
 });
 
-app.get("/hubs/:hubId/vapi", async (c) => {
+app.post("/hubs/vapi", async (c) => {
     const authorization = c.req.raw.headers.get("Authorization");
 
     if (!authorization) {
@@ -87,7 +88,10 @@ app.get("/hubs/:hubId/vapi", async (c) => {
         return c.json({ message: "Not authorized" }, UNAUTHORIZED_STATUS);
     }
 
-    const hubId = c.req.param("hubId") as Id<"hubs">;
+    const body = await c.req.json();
+    const { message } = body;
+    const { toolCallList } = message;
+    const hubId = toolCallList[0].function.arguments.hubId as Id<"hubs">;
 
     const files = await c.env.runQuery(internal.hubs.getHubFiles, { hubId });
 
@@ -110,8 +114,7 @@ app.get("/hubs/:hubId/vapi", async (c) => {
             const textContent = new TextDecoder().decode(arrayBuffer);
             return {
                 content: textContent,
-                similarity: 1.0,
-                uuid: `${file.uploadId}-${fileName.replace(/[^a-zA-Z0-9]/g, "-")}`,
+                uuid: fileName.replace(/[^a-zA-Z0-9]/g, "-"),
             };
         })
     );
@@ -119,7 +122,14 @@ app.get("/hubs/:hubId/vapi", async (c) => {
     const validDocuments = documents.filter((doc) => doc !== null);
 
     return c.json({
-        documents: validDocuments,
+        results: [
+            {
+                toolCallId: toolCallList[0].id,
+                result: {
+                    documents: validDocuments,
+                },
+            },
+        ],
     });
 });
 

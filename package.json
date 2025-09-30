@@ -37,6 +37,7 @@
     "@react-email/components": "0.5.5",
     "@react-email/render": "1.3.1",
     "@useautumn/convex": "^0.0.12",
+    "@vapi-ai/server-sdk": "^0.10.2",
     "autumn-js": "^0.1.39",
     "better-auth": "1.3.8",
     "class-variance-authority": "^0.7.1",
