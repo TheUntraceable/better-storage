@@ -76,7 +76,7 @@ export const create = mutation({
                 message: "Not authenticated",
             });
         }
-        const hub = await ctx.db.insert("hubs", {
+        const hubId = await ctx.db.insert("hubs", {
             name,
             description,
             ownerId: user._id,
@@ -86,12 +86,9 @@ export const create = mutation({
             0,
             internal.actions.createScorecardProject,
             {
-                hubId: hub,
+                hubId,
             }
         );
-        await ctx.scheduler.runAfter(0, internal.actions.createAssistant, {
-            hubId: hub,
-        });
     },
 });
 
@@ -146,13 +143,6 @@ export const deleteHub = mutation({
         });
         for (const file of hubFiles) {
             await ctx.db.delete(file._id);
-        }
-        const agent = await ctx.db
-            .query("assistants")
-            .withIndex("by_hub", (q) => q.eq("hubId", hubId))
-            .first();
-        if (agent) {
-            await ctx.db.delete(agent._id);
         }
         const scorecardProject = await ctx.db
             .query("scorecardProjects")
@@ -226,19 +216,6 @@ export const getUploadData = internalQuery({
             throw new APIError("NOT_FOUND", { message: "upload not found" });
         }
         return { storageId: upload.storageId, fileName: upload.name };
-    },
-});
-
-export const storeAssistant = internalMutation({
-    args: {
-        hubId: v.id("hubs"),
-        assistantId: v.string(),
-    },
-    handler: async (ctx, { assistantId, hubId }) => {
-        await ctx.db.insert("assistants", {
-            assistantId,
-            hubId,
-        });
     },
 });
 

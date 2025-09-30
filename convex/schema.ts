@@ -29,12 +29,6 @@ export default defineSchema({
         hubId: v.id("hubs"),
         uploadId: v.id("uploads"),
     }).index("by_hub_id", ["hubId"]),
-    assistants: defineTable({
-        hubId: v.id("hubs"),
-        assistantId: v.string(),
-    })
-        .index("by_hub", ["hubId"])
-        .index("by_assistant_id", ["assistantId"]),
     scorecardProjects: defineTable({
         hubId: v.id("hubs"),
         projectId: v.string(),

@@ -1,6 +1,5 @@
 "use node";
 import Firecrawl from "@mendable/firecrawl-js";
-import { VapiClient } from "@vapi-ai/server-sdk";
 import { Autumn } from "autumn-js";
 import { APIError } from "better-auth";
 import { v } from "convex/values";
@@ -58,42 +57,6 @@ export const scrape = action({
             value: (document.metadata?.creditsUsed as number) || 1,
         });
         return document;
-    },
-});
-
-export const createAssistant = internalAction({
-    args: {
-        hubId: v.id("hubs"),
-    },
-    handler: async (ctx, { hubId }) => {
-        const vapi = new VapiClient({
-            token: process.env.VAPI_API_KEY!,
-        });
-        const mainAgent = await vapi.assistants.get(
-            "c02184bb-9971-4ee2-b1c0-007814852d29"
-        );
-        const {
-            id: _id,
-            orgId: _orgId,
-            createdAt: _createdAt,
-            updatedAt: _updatedAt,
-            // @ts-expect-error Property does not exist on type
-            isServerUrlSecretSet: _isServerUrlSecretSet,
-            ...assistantData
-        } = mainAgent;
-
-        const assistant = await vapi.assistants.create({
-            ...assistantData,
-            name: "Hub Assistant",
-            metadata: {
-                hubId
-            }
-        });
-
-        await ctx.runMutation(internal.hubs.storeAssistant, {
-            hubId,
-            assistantId: assistant.id,
-        });
     },
 });
 
