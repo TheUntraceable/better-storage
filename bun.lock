@@ -48,6 +48,7 @@
         "react-email": "^4.2.12",
         "react-scan": "^0.4.3",
         "resend": "^6.1.1",
+        "scorecard-ai": "^2.1.1",
         "tailwind-merge": "^2.0.0",
         "tailwindcss-animate": "^1.0.7",
         "ultracite": "^5.0.46",
@@ -2532,6 +2533,8 @@
     "safer-buffer": ["safer-buffer@2.1.2", "", {}, "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="],
 
     "scheduler": ["scheduler@0.23.2", "", { "dependencies": { "loose-envify": "^1.1.0" } }, "sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ=="],
+
+    "scorecard-ai": ["scorecard-ai@2.1.1", "", {}, "sha512-PtyQmGO4fzKBGqD0VnFn2iiPuU+2BCj1JFumUR3CIAAywY3RyyYgpHML00mooTAb3m4KBBQAZjlNm/Jal7dPBA=="],
 
     "secure-json-parse": ["secure-json-parse@4.0.0", "", {}, "sha512-dxtLJO6sc35jWidmLxo7ij+Eg48PM/kleBsxpC8QJE0qJICe+KawkDQmvCMZUr9u7WKVHgMW6vy3fQ7zMiFZMA=="],
 
