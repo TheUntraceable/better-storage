@@ -358,7 +358,7 @@ export function UploadWithFirecrawlDialog({
 
     return (
         <Dialog onOpenChange={handleClose} open={isOpen}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="max-w-md lg:max-w-xl">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Upload className="h-5 w-5" />
