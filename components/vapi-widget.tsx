@@ -46,7 +46,7 @@ const getFilesTool = {
         },
     },
     server: {
-        url: "https://jovial-quail-361.convex.site/hubs/vapi",
+        url: "https://shocking-marlin-643.convex.site/hubs/vapi",
         headers: {
             Authorization: "Bearer 3b4a405c056b715e90d6413631222170",
         },
