@@ -602,7 +602,6 @@ export function FilesTable({
                                                             <Eye className="h-4 w-4" />
                                                         </Link>
                                                     </Tooltip>
-                                                    <Tooltip content="Download file">
                                                         <DownloadButton
                                                             invite={{
                                                                 link: upload.link,
@@ -611,7 +610,6 @@ export function FilesTable({
                                                             }}
                                                             isIconOnly
                                                         />
-                                                    </Tooltip>
                                                     <Tooltip content="Share file">
                                                         <Button
                                                             isIconOnly
