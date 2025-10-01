@@ -599,7 +599,7 @@ export function FileUploader({ remainingMb }: { remainingMb: number }) {
                                 onPress={handleDialogUpload}
                                 startContent={
                                     uploadState.isUploading ? (
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        <></>
                                     ) : (
                                         <Upload className="mr-2 h-4 w-4" />
                                     )
