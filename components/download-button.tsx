@@ -13,7 +13,7 @@ export const DownloadButton = ({
     isIconOnly?: boolean;
 }) => {
     return (
-        <Tooltip content="Download file">
+        <Tooltip content="Download file" isDisabled={!isIconOnly}>
             <Button
                 className="flex-1"
                 isIconOnly={isIconOnly}
