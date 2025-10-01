@@ -291,11 +291,6 @@ export function UploadWithFirecrawlDialog({
                 name: markdownFile.name,
             });
 
-            showSuccessToast(
-                "File saved successfully!",
-                "Scraped content has been saved as a markdown file."
-            );
-
             if (onSaveSuccess) {
                 onSaveSuccess();
             }
