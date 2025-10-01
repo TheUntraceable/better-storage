@@ -102,7 +102,8 @@ export function CreateHubDialog({ isOpen, onClose }: CreateHubDialogProps) {
                         </Button>
                         <Button
                             color="primary"
-                            isLoading={isCreating || !name.trim()}
+                            isDisabled={!name.trim()}
+                            isLoading={isCreating}
                             type="submit"
                             variant="shadow"
                         >

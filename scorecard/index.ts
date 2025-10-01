@@ -49,6 +49,41 @@ type SystemOutput = {
     tool_calls: ToolCall[];
 };
 
+const getFilesTool = {
+    type: "function" as const,
+    function: {
+        name: "get_file_names",
+        description: "Get the names of the files a user has.",
+        parameters: {
+            type: "object" as const,
+            properties: {
+                hubId: {
+                    description: "The ID of the hub the user wants to access.",
+                    type: "string" as const,
+                },
+            },
+            required: ["hubId"],
+        },
+    },
+    // Add inputSchema to satisfy the provider Tool typing requirements
+    inputSchema: {
+        type: "object" as const,
+        properties: {
+            hubId: {
+                description: "The ID of the hub the user wants to access.",
+                type: "string" as const,
+            },
+        },
+        required: ["hubId"],
+    },
+    server: {
+        url: "https://shocking-marlin-643.convex.site/hubs/vapi",
+        headers: {
+            Authorization: `Bearer ${process.env.INKEEP_SECRET}`,
+        },
+    },
+};
+
 export async function runMyAISystem(
     inputs: SystemInputs
 ): Promise<SystemOutput> {
@@ -65,6 +100,7 @@ export async function runMyAISystem(
                 content: userQuery,
             },
         ],
+        tools: [getFilesTool],
     });
     const formattedToolCalls: ToolCall[] = [];
     for (const call of toolCalls) {
@@ -75,5 +111,3 @@ export async function runMyAISystem(
         tool_calls: formattedToolCalls,
     };
 }
-
-
