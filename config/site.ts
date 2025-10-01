@@ -1,6 +1,6 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-    name: "Better Files",
+    name: "Better Storage",
     description: "The better way to share and store files.",
 };

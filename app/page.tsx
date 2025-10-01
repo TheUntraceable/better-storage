@@ -7,7 +7,7 @@ export default function Home() {
         <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 px-4 dark:from-zinc-800 dark:to-zinc-900">
             <div className="max-w-4xl text-center">
                 <h1 className="mb-6 font-bold text-5xl tracking-tight sm:text-6xl lg:text-7xl">
-                    <span className="text-primary">Better Files</span>
+                    <span className="text-primary">Better Storage</span>
                 </h1>
                 <p className="mtext-xl mb-2 sm:text-2xl">
                     The best file sharing and storage solution for your team.

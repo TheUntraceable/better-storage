@@ -41,7 +41,7 @@ export async function NavigationHeader() {
                     </div>
                     <div className="flex flex-col">
                         <p className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text font-bold text-transparent text-xl">
-                            Better Files
+                            Better Storage
                         </p>
                         <p className="font-medium text-xs text-zinc-400">
                             Secure & Simple
